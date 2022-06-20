@@ -14,3 +14,4 @@ DATE: 6/20/22
     2. Testing GPT finetune POC notebook using the ICC data.
         - This was done with no issues and training started.
     2. Converting notebooks to scripts and running on the HPC.
+        - Created script for finetuning GPT and the associated configuration file.
