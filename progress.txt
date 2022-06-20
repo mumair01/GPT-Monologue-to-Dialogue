@@ -5,3 +5,12 @@ DATE: 6/19/22
         Completed 3.0-MU-GPT-SurprisalInference-POC.ipynb notebook.
     2. Creating 4.0-MU-GPT-ICC-preprocess-POC.ipynb notebook for POC of the ICC
         data preprocessing required for the final experiment.
+
+DATE: 6/20/22
+
+- Progress:
+    1. Generating train / val / test data from ICC POC notebook.
+        - This was done without problems.
+    2. Testing GPT finetune POC notebook using the ICC data.
+        - This was done with no issues and training started.
+    2. Converting notebooks to scripts and running on the HPC.
