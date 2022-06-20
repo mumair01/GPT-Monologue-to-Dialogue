@@ -22,6 +22,6 @@ module load cuda/10.0
 #activate conda environment
 source activate /cluster/tufts/deruiterlab/mumair01/condaenv/jpt
 
-python /cluster/tufts/deruiterlab/mumair01/projects/jpt/scripts/finetune_pt_slurm.py
+python /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/src/model_scripts/huggingface_gpt_finetune.py --config /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/src/configs/model_configs/huggingface_gpt_finetune.yaml
 
 conda deactivate

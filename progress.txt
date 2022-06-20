@@ -15,3 +15,4 @@ DATE: 6/20/22
         - This was done with no issues and training started.
     2. Converting notebooks to scripts and running on the HPC.
         - Created script for finetuning GPT and the associated configuration file.
+        - Submitted a batch job to the cluster and waiting for results
