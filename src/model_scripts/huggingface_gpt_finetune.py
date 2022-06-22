@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-22 13:52:02
+# @Last Modified time: 2022-06-22 15:13:14
 
 from cgitb import reset
 import sys
@@ -81,6 +81,9 @@ EOS_TOKEN = "<|endoftext|>"
 TOKENIZER_CHECKPOINT = "gpt2"
 TOKENIZER_BATCH_SIZE = 128
 
+# Custom dataset vars.
+CUSTOM_DATASET_CHUNK_SIZE = 128
+
 # Model vars.
 MODEL_CHECKPOINT = "distilgpt2" if LIMITED_RESOURCES else "gpt2-large"
 
@@ -98,6 +101,8 @@ class Configs:
     # Save paths
     save_model_dir : str
     reports_dir : str
+    # Dataset args
+    custom_dataset : bool
     # Training args
     num_train_epochs : int
     per_device_train_batch_size : int
@@ -125,6 +130,8 @@ def config_env(config_path):
             os.path.join(configs["root"],configs["dataset"]["train_path"]),
             os.path.join(configs["root"],configs["results"]["save_model_dir"]),
             os.path.join(configs["root"],configs["results"]["reports_dir"]),
+            # Dataset args
+            configs["dataset"]["custom"],
             # Training args
             configs["training"]["num_train_epochs"],
             configs["training"]["per_device_train_batch_size"],
@@ -138,6 +145,25 @@ def config_env(config_path):
         assert os.path.isfile(configs.train_path)
         assert os.path.isfile(configs.val_path)
         return configs
+
+
+# --- Custom Dataset methods
+
+def tokenize_fn(tokenizer):
+    return lambda data: tokenizer(data["Utterance"], truncation=True)
+
+def chunk_tokenized_samples(tokenized_samples,chunk_size=CUSTOM_DATASET_CHUNK_SIZE):
+    # Concatenate all the utterances
+    keys =  ('input_ids','attention_mask')
+    concatenated_examples = {k : sum(tokenized_samples[k],[]) for k in keys}
+    total_length = len(concatenated_examples[keys[0]])
+    total_length = (total_length // chunk_size) * chunk_size
+    chunks = {
+        k : [concatenated_examples[k][i:i+ chunk_size] \
+            for i in range(0, total_length,chunk_size)]  for k in keys
+    }
+    return chunks
+
 
 # -------------------- MAIN METHODS ----------------------
 
@@ -161,15 +187,28 @@ def finetune(configs : Configs):
         tokenizer=tokenizer,
         mlm=False,
         return_tensors="pt")
-    # Loading text dataset using new method
-    print("Loading dataset...")
-    dataset = {}
-    for name, path in zip(('train','validation'),(configs.train_path, configs.val_path)):
-        dataset[name] = TextDataset(
-            tokenizer=tokenizer,
-            file_path=path,
-            block_size= 128 # TODO: Make this configurable variable later.
-        )
+    # Loading the dataset based on the configuration.
+    if configs.custom_dataset:
+        print("Loading custom dataset...")
+        dataset = load_dataset("csv", data_files={
+            'train' : configs.train_path,
+            'validation' : configs.val_path})
+        # Once loaded, the dataset needs to be processed
+        tokenized_datasets = dataset.map(
+            tokenize_fn(tokenizer), batched=True,
+            batch_size=TOKENIZER_BATCH_SIZE,
+            remove_columns=["Unnamed: 0","convID","Utterance"])
+        lm_datasets = tokenized_datasets.map(
+            chunk_tokenized_samples,batched=True)
+    else:
+        print("Loading TextDataset...")
+        lm_datasets = {}
+        for name, path in zip(('train','validation'),(configs.train_path, configs.val_path)):
+            lm_datasets[name] = TextDataset(
+                tokenizer=tokenizer,
+                file_path=path,
+                block_size= 128 # TODO: Make this configurable variable later.
+            )
     # Load the model
     print("Loading model: {}".format(MODEL_CHECKPOINT))
     model = AutoModelForCausalLM.from_pretrained(
@@ -204,8 +243,8 @@ def finetune(configs : Configs):
         model=model,
         args=training_args,
         data_collator=data_collator,
-        train_dataset=dataset['train'],
-        eval_dataset=dataset['validation'])
+        train_dataset=lm_datasets['train'],
+        eval_dataset=lm_datasets['validation'])
     print("Starting training...")
     trainer.train()
     print("Saving trained model...")
