@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-21 08:30:45
+# @Last Modified time: 2022-06-22 13:52:02
 
 from cgitb import reset
 import sys
@@ -141,9 +141,6 @@ def config_env(config_path):
 
 # -------------------- MAIN METHODS ----------------------
 
-# Once loaded, the dataset needs to be processed
-def tokenize_fn(tokenizer):
-    return lambda data: tokenizer(data["Utterance"], truncation=True)
 
 def finetune(configs : Configs):
     print("Starting finetuning using device {}...".format(GLOBAL_DEVICE))
@@ -166,11 +163,13 @@ def finetune(configs : Configs):
         return_tensors="pt")
     # Loading text dataset using new method
     print("Loading dataset...")
-    dataset = load_dataset(configs.dataset_type, data_files={
-        "train" : configs.train_path,
-        "validation" : configs.val_path})
-    tokenized_datasets = dataset.map(
-        tokenize_fn(tokenizer), batched=True, batch_size=TOKENIZER_BATCH_SIZE)
+    dataset = {}
+    for name, path in zip(('train','validation'),(configs.train_path, configs.val_path)):
+        dataset[name] = TextDataset(
+            tokenizer=tokenizer,
+            file_path=path,
+            block_size= 128 # TODO: Make this configurable variable later.
+        )
     # Load the model
     print("Loading model: {}".format(MODEL_CHECKPOINT))
     model = AutoModelForCausalLM.from_pretrained(
@@ -179,6 +178,9 @@ def finetune(configs : Configs):
         eos_token_id = tokenizer.eos_token_id
     )
     model.resize_token_embeddings(len(tokenizer))
+    print("Clearing CUDA cache...")
+    torch.cuda.empty_cache()
+    gc.collect()
     # Create training args and train
     # Defining training arguments
     print("Preparing training arguments...")
@@ -202,11 +204,9 @@ def finetune(configs : Configs):
         model=model,
         args=training_args,
         data_collator=data_collator,
-        train_dataset=tokenized_datasets['train'],
-        eval_dataset=tokenized_datasets['validation'])
-    # Clear caches before training
-    torch.cuda.empty_cache()
-    gc.collect()
+        train_dataset=dataset['train'],
+        eval_dataset=dataset['validation'])
+    print("Starting training...")
     trainer.train()
     print("Saving trained model...")
     trainer.save_model()
