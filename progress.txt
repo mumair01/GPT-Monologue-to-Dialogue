@@ -16,3 +16,20 @@ DATE: 6/20/22
     2. Converting notebooks to scripts and running on the HPC.
         - Created script for finetuning GPT and the associated configuration file.
         - Submitted a batch job to the cluster and waiting for results
+
+DATE: 6/21/22
+- Progress:
+    1. Attempting to fix CUDA runtime errors.
+        - Fixed this by using the following configuration:
+            - torch == 10.1
+            - python=3.8
+            - Cuda version = cuda/10.2
+    2. Attempting to fix Cuda out of memory error on the first training epoch.
+        - Need to experiment with the size of the loaded Dataset.
+            - Probably the easiest solution is to just use TextDataset.
+
+
+DATE: 6/22/22
+- Progress:
+    1. Attempting to resolve the CUDA memory error issue
+        - doing different tests in the POC notebook.

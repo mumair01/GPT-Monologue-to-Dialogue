@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-20 10:12:57
+# @Last Modified time: 2022-06-21 08:30:45
 
 from cgitb import reset
 import sys
@@ -146,7 +146,7 @@ def tokenize_fn(tokenizer):
     return lambda data: tokenizer(data["Utterance"], truncation=True)
 
 def finetune(configs : Configs):
-    print("Starting finetuning...")
+    print("Starting finetuning using device {}...".format(GLOBAL_DEVICE))
     # Load the tokenizer with special tokens defined.
     print("Loading tokenizer: {}".format(TOKENIZER_CHECKPOINT))
     tokenizer = AutoTokenizer.from_pretrained(
@@ -181,6 +181,7 @@ def finetune(configs : Configs):
     model.resize_token_embeddings(len(tokenizer))
     # Create training args and train
     # Defining training arguments
+    print("Preparing training arguments...")
     training_args = TrainingArguments(
             output_dir=configs.save_model_dir,
             overwrite_output_dir=True,
@@ -196,6 +197,7 @@ def finetune(configs : Configs):
             logging_dir=configs.reports_dir)
     # Create the trainer
     # NOTE: Trainer should automatically put the model and dataset to GPU
+    print("Initializing Trainer...")
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -205,7 +207,6 @@ def finetune(configs : Configs):
     # Clear caches before training
     torch.cuda.empty_cache()
     gc.collect()
-    print("Starting training...")
     trainer.train()
     print("Saving trained model...")
     trainer.save_model()

@@ -17,10 +17,12 @@
 module load anaconda/3
 
 #load anaconda module
-module load cuda/10.0
+module load cuda/10.2
+
+# module load cuda/11.0 cudnn/8.0.4-11.0
 
 #activate conda environment
-source activate /cluster/tufts/deruiterlab/mumair01/condaenv/jpt
+source activate /cluster/tufts/deruiterlab/mumair01/condaenv/gpt_proj
 
 python /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/src/model_scripts/huggingface_gpt_finetune.py --config /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/src/configs/model_configs/huggingface_gpt_finetune.yaml
 
