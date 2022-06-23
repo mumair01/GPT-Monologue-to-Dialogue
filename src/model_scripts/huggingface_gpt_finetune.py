@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-22 15:13:14
+# @Last Modified time: 2022-06-23 09:38:42
 
 from cgitb import reset
 import sys
@@ -82,7 +82,7 @@ TOKENIZER_CHECKPOINT = "gpt2"
 TOKENIZER_BATCH_SIZE = 128
 
 # Custom dataset vars.
-CUSTOM_DATASET_CHUNK_SIZE = 128
+CUSTOM_DATASET_CHUNK_SIZE = 32
 
 # Model vars.
 MODEL_CHECKPOINT = "distilgpt2" if LIMITED_RESOURCES else "gpt2-large"
@@ -145,7 +145,6 @@ def config_env(config_path):
         assert os.path.isfile(configs.train_path)
         assert os.path.isfile(configs.val_path)
         return configs
-
 
 # --- Custom Dataset methods
 
@@ -229,13 +228,14 @@ def finetune(configs : Configs):
             num_train_epochs=configs.num_train_epochs,
             per_device_train_batch_size=configs.per_device_train_batch_size,
             per_device_eval_batch_size=configs.per_device_eval_batch_size,
-            eval_steps=configs.eval_steps,
+            # eval_steps=configs.eval_steps,
             save_strategy="epoch",
             # save_steps=configs.save_steps,
             warmup_steps=configs.warmup_steps,
             prediction_loss_only=True,
             evaluation_strategy='epoch',
-            logging_dir=configs.reports_dir)
+            # logging_dir=configs.reports_dir
+        )
     # Create the trainer
     # NOTE: Trainer should automatically put the model and dataset to GPU
     print("Initializing Trainer...")

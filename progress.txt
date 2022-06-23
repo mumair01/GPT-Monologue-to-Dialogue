@@ -33,3 +33,11 @@ DATE: 6/22/22
 - Progress:
     1. Attempting to resolve the CUDA memory error issue
         - doing different tests in the POC notebook.
+    2. Ran first successful finetuning with custom dataset and limited batch size
+        on the cluster.
+        - Can't download all the trained models because they are 264 Gigs...
+
+DATE: 6/23/22
+- Progress:
+    1. Determine how to plot the loss from trained model.
+
