@@ -46,4 +46,32 @@ DATE: 6/28/22
     1. Augmenting the preprocessing notebook to ensure that the dataset is
         produced in the correct format for both the TextDataset and the custom
         dataset.
-    2. Tokenizer special tokens issue.
+            - Modified the data preprocessing POC notebook to produce text files
+            as well.
+    2. Finetuning script changes:
+        - Created an *_exp finetuning script with the following changes:
+            1. tokenizer does not know special tokens.
+            2. txt data files are used.
+            3. The save /eval steps are changed.
+        - Created a copy of all configs on the cluster for ease of separation
+        - TODO:
+            - If this does not produce the expected result, need to add a mechanism
+                that saves the model / evaluates it every epoch (instead of the
+                number of steps).
+            - If works, create multiple configuration files for multiple use cases.
+            - One other problem is that the .csv / .txt data is not in the order
+                as Julia's data - there must be a shuffle happening somewhere that
+                needs to be fixed.
+            - One other approach could be to use the same tokens as were being used
+                by Julia.
+                    - This might be important because in Julia's experiment, the
+                        tokenizer separately tokenizes the speaker identity tokens.
+                    - In my version, the tokenizer is
+    3. Custom vs. TextDataset:
+        - The results for bot the datasets are the same except there are no newlines
+        in custom dataset and block size is different.
+        - custom dataset is discarding the last chunk.
+
+    4. Running Julia's given script on the data on the HPC.
+
+
