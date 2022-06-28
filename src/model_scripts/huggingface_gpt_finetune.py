@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-23 09:38:42
+# @Last Modified time: 2022-06-27 15:56:25
 
 from cgitb import reset
 import sys
@@ -234,6 +234,8 @@ def finetune(configs : Configs):
             warmup_steps=configs.warmup_steps,
             prediction_loss_only=True,
             evaluation_strategy='epoch',
+            gradient_accumulation_steps=2,
+            eval_accumulation_steps=1
             # logging_dir=configs.reports_dir
         )
     # Create the trainer

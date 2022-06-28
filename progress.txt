@@ -41,3 +41,9 @@ DATE: 6/23/22
 - Progress:
     1. Determine how to plot the loss from trained model.
 
+DATE: 6/28/22
+- Progress:
+    1. Augmenting the preprocessing notebook to ensure that the dataset is
+        produced in the correct format for both the TextDataset and the custom
+        dataset.
+    2. Tokenizer special tokens issue.
