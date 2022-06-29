@@ -1,0 +1,28 @@
+# @Author: Muhammad Umair
+# @Date:   2022-06-20 09:12:20
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2022-06-29 09:56:34
+
+
+name : "1.0-GPT-Finetune-TextDataset-HPC"
+root : "/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue"
+# Input data dirs.
+dataset:
+  name : "in_conversation_corpus_poc"
+  type : "csv"
+  train_path : "data/processed/in_conversation_corpus_poc/train.txt"
+  val_path : "data/processed/in_conversation_corpus_poc/validation.txt"
+  custom : false
+# Result paths
+results:
+  save_model_dir : "models/gpt_finetune_script"
+  reports_dir : "reports/gpt_finetune_script"
+# Training args
+training:
+    num_train_epochs : 30
+    per_device_train_batch_size : 16
+    per_device_eval_batch_size : 16
+    eval_steps : 200
+    warmup_steps : 300
+
+

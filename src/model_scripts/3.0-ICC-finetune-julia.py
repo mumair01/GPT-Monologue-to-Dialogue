@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-03-05 20:02:44
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-28 14:45:05
+# @Last Modified time: 2022-06-28 14:39:50
 #!/usr/bin/env python
 # coding: utf-8
 
@@ -15,8 +15,7 @@ import transformers
 import gc
 import os
 train_num = 'five'
-root = "."
-# /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/raw/in_conversation_corpus_poc
+root = "/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/raw/in_conversation_corpus_poc"
 train_file_path = os.path.join(root,'five_train_data.cha')
 test_file_path = os.path.join(root,'rest_test_data.cha')
 

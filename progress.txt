@@ -74,4 +74,7 @@ DATE: 6/28/22
 
     4. Running Julia's given script on the data on the HPC.
 
-
+DATE: 6/29/22
+- Progress:
+    1. Creating separate branches for notebooks dev, script dev, and finetuning etc.
+        - Adding additional configs and scripts for finetuning.
