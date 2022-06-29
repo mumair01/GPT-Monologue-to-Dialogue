@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-29 09:54:20
+# @Last Modified time: 2022-06-29 11:04:54
 
 # NOTE: This is an experimental version of the script - any changes here should
 # be merged back into the original script. s
@@ -224,19 +224,17 @@ def finetune(configs : Configs):
     training_args = TrainingArguments(
             output_dir=configs.save_model_dir,
             overwrite_output_dir=True,
-            num_train_epochs=configs.num_train_epochs,
-            per_device_train_batch_size=configs.per_device_train_batch_size,
-            per_device_eval_batch_size=configs.per_device_eval_batch_size,
+            num_train_epochs=30,
+            per_device_train_batch_size=16,
+            per_device_eval_batch_size=16,
             # eval_steps=configs.eval_steps,
             # save_strategy="epoch",
             # save_steps=configs.save_steps,
-            eval_steps=300,
-            save_steps=300,
-            warmup_steps=configs.warmup_steps,
+            eval_steps=200,
+            save_steps=400,
+            warmup_steps=300,
             prediction_loss_only=True,
             evaluation_strategy='epoch',
-            gradient_accumulation_steps=2,
-            eval_accumulation_steps=1
             # logging_dir=configs.reports_dir
         )
     # Create the trainer

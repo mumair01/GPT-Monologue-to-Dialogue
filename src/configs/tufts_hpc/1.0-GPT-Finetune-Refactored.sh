@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J gpt_finetune_refactored #job name
+#SBATCH -J gpt_finetune_refactored_a100_1 #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -8,8 +8,8 @@
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
 #SBATCH --mem=120g #requesting 60GB of RAM total
-#SBATCH --output=./reports/%x/%j/myjob.%j.%N.out #saving standard output to file
-#SBATCH --error=./reports/%x/%j/myjob.%j.%N.err # saving standard error to file
+#SBATCH --output=./reports/%x.%j.%N.out #saving standard output to file
+#SBATCH --error=./reports/%x.%j.%N.err # saving standard error to file
 #SBATCH --mail-type=ALL # email optitions
 #SBATCH --mail-user=muhammad.umair@tufts.edu
 
