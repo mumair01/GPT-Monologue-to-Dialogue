@@ -2,20 +2,21 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-29 11:04:54
+# @Last Modified time: 2022-06-29 14:21:21
 
 # NOTE: This is an experimental version of the script - any changes here should
 # be merged back into the original script. s
 
-from cgitb import reset
 import sys
 import os
+from typing import Text
 import yaml
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import argparse
 from dataclasses import dataclass
+from copy import deepcopy
 
 import random
 import pprint
@@ -90,8 +91,6 @@ TEXT_DATASET_BLOCK_SIZE = 128
 
 # Model vars.
 MODEL_CHECKPOINT = "distilgpt2" if LIMITED_RESOURCES else "gpt2-large"
-
-
 # -------------------- HELPER METHODS --------------------
 
 @dataclass
@@ -112,7 +111,7 @@ class Configs:
     per_device_train_batch_size : int
     per_device_eval_batch_size : int
     eval_steps : int
-    # save_steps : int
+    save_steps : int
     warmup_steps : int
 
 
@@ -131,7 +130,7 @@ def config_env(config_path):
             configs["dataset"]["name"],
             configs["dataset"]["type"],
             os.path.join(configs['root'],configs["dataset"]["train_path"]),
-            os.path.join(configs["root"],configs["dataset"]["train_path"]),
+            os.path.join(configs["root"],configs["dataset"]["val_path"]),
             os.path.join(configs["root"],configs["results"]["save_model_dir"]),
             os.path.join(configs["root"],configs["results"]["reports_dir"]),
             # Dataset args
@@ -141,7 +140,7 @@ def config_env(config_path):
             configs["training"]["per_device_train_batch_size"],
             configs["training"]["per_device_eval_batch_size"],
             configs["training"]["eval_steps"],
-            # configs["training"]["save_steps"],
+            configs["training"]["save_steps"],
             configs["training"]["warmup_steps"])
         # Check dirs.
         reset_dir(configs.save_model_dir)
@@ -176,15 +175,15 @@ def finetune(configs : Configs):
     # Load the tokenizer with special tokens defined.
     print("Loading tokenizer: {}".format(TOKENIZER_CHECKPOINT))
     tokenizer = AutoTokenizer.from_pretrained(
-        TOKENIZER_CHECKPOINT)
+        TOKENIZER_CHECKPOINT,
+        pad_token=PAD_TOKEN,
+        eos_token=EOS_TOKEN,
+        additional_special_tokens=(
+            SPEAKER_1_TOKEN, SPEAKER_2_TOKEN, CONV_START_TOKEN,
+            CONV_END_TOKEN))
     # Save the tokenizer after adding new tokens
     tokenizer.save_pretrained(configs.save_model_dir)
-    # Create the data collator, which is responsible for creating batches from the
-    # datasets during training.
-    data_collator = DataCollatorForLanguageModeling(
-        tokenizer=tokenizer,
-        mlm=False,
-        return_tensors="pt")
+    print(tokenizer)
     # Loading the dataset based on the configuration.
     if configs.custom_dataset:
         print("Loading custom dataset...")
@@ -194,7 +193,6 @@ def finetune(configs : Configs):
         # Once loaded, the dataset needs to be processed
         tokenized_datasets = dataset.map(
             tokenize_fn(tokenizer), batched=True,
-            batch_size=TOKENIZER_BATCH_SIZE,
             remove_columns=["Unnamed: 0","convID","Utterance"])
         lm_datasets = tokenized_datasets.map(
             chunk_tokenized_samples,batched=True)
@@ -202,11 +200,20 @@ def finetune(configs : Configs):
         print("Loading TextDataset...")
         lm_datasets = {}
         for name, path in zip(('train','validation'),(configs.train_path, configs.val_path)):
-            lm_datasets[name] = TextDataset(
+            # TODO: Determine if I need this deepcopy.
+            lm_datasets[name] = deepcopy(TextDataset(
                 tokenizer=tokenizer,
                 file_path=path,
                 block_size= TEXT_DATASET_BLOCK_SIZE # TODO: Make this configurable variable later.
-            )
+            ))
+    print("Tokenizer length after loading datasets: {}".format(len(tokenizer)))
+    # Create the data collator, which is responsible for creating batches from the
+    # datasets during training.
+    print("Creating data collator...")
+    data_collator = DataCollatorForLanguageModeling(
+        tokenizer=tokenizer,
+        mlm=False,
+        return_tensors="pt")
     # Load the model
     print("Loading model: {}".format(MODEL_CHECKPOINT))
     model = AutoModelForCausalLM.from_pretrained(
@@ -214,25 +221,23 @@ def finetune(configs : Configs):
         pad_token_id = tokenizer.pad_token_id,
         eos_token_id = tokenizer.eos_token_id
     )
+    print("Resizing model embeddings...")
     model.resize_token_embeddings(len(tokenizer))
-    print("Clearing CUDA cache...")
-    torch.cuda.empty_cache()
-    gc.collect()
     # Create training args and train
     # Defining training arguments
     print("Preparing training arguments...")
     training_args = TrainingArguments(
             output_dir=configs.save_model_dir,
             overwrite_output_dir=True,
-            num_train_epochs=30,
+            num_train_epochs=configs.num_train_epochs,
             per_device_train_batch_size=16,
             per_device_eval_batch_size=16,
             # eval_steps=configs.eval_steps,
             # save_strategy="epoch",
             # save_steps=configs.save_steps,
-            eval_steps=200,
-            save_steps=400,
-            warmup_steps=300,
+            eval_steps=configs.eval_steps,
+            save_steps=configs.save_steps,
+            warmup_steps=configs.warmup_steps,
             prediction_loss_only=True,
             evaluation_strategy='epoch',
             # logging_dir=configs.reports_dir
@@ -246,6 +251,9 @@ def finetune(configs : Configs):
         data_collator=data_collator,
         train_dataset=lm_datasets['train'],
         eval_dataset=lm_datasets['validation'])
+    print("Clearing CUDA cache...")
+    torch.cuda.empty_cache()
+    gc.collect()
     print("Starting training...")
     trainer.train()
     print("Saving trained model...")
