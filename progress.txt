@@ -81,8 +81,12 @@ DATE: 6/29/22
     3. Debugging finetuning using refactored code on TextDataset.
         - This works in the POC notebook using the same trainer args as Julia.
     4. Debugging finetuning using refactored code on custom dataset.
+<<<<<<< Updated upstream
         - It seems that the tokenizer needs to have the pad + eos tokens set.
 DATE: 6/29/22
 - Progress:
     1. Creating separate branches for notebooks dev, script dev, and finetuning etc.
         - Adding additional configs and scripts for finetuning.
+=======
+        - It seems that the tokenizer needs to have the pad + eos tokens set.
+>>>>>>> Stashed changes
