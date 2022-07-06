@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 6_29_22_2_18_gpt_finetune_refactored_textdataset #job name
+#SBATCH -J 7_6_22_11_22_gpt_finetune_textDataset #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -17,7 +17,7 @@
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 SLURM_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}src/model_scripts/2.0-GPT-finetune-experimental.py
+SCRIPT_PATH=${PROJECT_PATH}src/model_scripts/1.0-GPT-finetune.py
 CONFIG_PATH=${PROJECT_PATH}src/configs/model_configs/1.0-GPT-Finetune-TextDataset-HPC.yaml
 
 #load anaconda module
