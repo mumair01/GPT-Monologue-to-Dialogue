@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-06 10:45:20
+# @Last Modified time: 2022-07-06 11:18:23
 
 import sys
 import os
@@ -53,8 +53,9 @@ mpl.rc('xtick', labelsize=12)
 mpl.rc('ytick', labelsize=12)
 
 import logging
-# Enable all level loggers for this script.
-logging.getLogger(__name__).setLevel(logging.NOTSET)
+# Setup logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 # -------------------- ENV. VARS. ------------------------
@@ -143,7 +144,7 @@ def parse_configs(config_path):
 
 def config_env(config_path):
     # Parse configs
-    logging.info("Loading configurations from path: {}".format(config_path))
+    logger.info("Loading configurations from path: {}".format(config_path))
     configs = parse_configs(config_path)
     # Set seed if required
     if configs.env.seed != None:
@@ -179,9 +180,9 @@ def chunk_tokenized_samples(tokenized_samples,chunk_size):
 
 
 def finetune(configs : Configs):
-    logging.info("Starting finetuning using device {}...".format(TORCH_DEVICE))
+    logger.info("Using device {}".format(TORCH_DEVICE))
     # Load the tokenizer with special tokens defined.
-    logging.info("Loading tokenizer: {}".format(configs.training.tokenizer_checkpoint))
+    logger.info("Loading tokenizer: {}".format(configs.training.tokenizer_checkpoint))
     tokenizer = AutoTokenizer.from_pretrained(
         configs.training.tokenizer_checkpoint,
         pad_token=TOKENIZER_PAD_TOKEN,
@@ -191,11 +192,10 @@ def finetune(configs : Configs):
     # Save the tokenizer after adding new tokens in a separate dir.
     tokenizer_save_dir = os.path.join(configs.results.save_dir,"tokenizer")
     tokenizer.save_pretrained(tokenizer_save_dir)
-    logging.info("Using tokenizer:\n{}".format(tokenizer))
     # Loading the dataset based on the configuration.
     if configs.dataset.custom_dataset:
-        logging.info("Loading data as custom dataset...")
-        logging.warn("Custom dataset expects .csv files.")
+        logger.info("Loading data as custom dataset...")
+        logger.warn("Custom dataset expects .csv files.")
         dataset = load_dataset("csv", data_files={
             'train' : configs.dataset.train_path,
             'validation' : configs.dataset.val_path})
@@ -207,8 +207,8 @@ def finetune(configs : Configs):
             partial(chunk_tokenized_samples,
                 chunk_size=configs.training.data_block_size),batched=True)
     else:
-        logging.info("Loading data as TextDataset...")
-        logging.warn("TextDataset expects .txt files.")
+        logger.info("Loading data as TextDataset...")
+        logger.warn("TextDataset expects .txt files.")
         lm_datasets = {}
         for name, path in zip(('train','validation'),
                 (configs.dataset.train_path, configs.dataset.val_path)):
@@ -218,26 +218,26 @@ def finetune(configs : Configs):
                 file_path=path,
                 block_size= configs.training.data_block_size
             ))
-    logging.info("Tokenizer length after loading datasets: {}".format(len(tokenizer)))
+    logger.info("Tokenizer length after loading datasets: {}".format(len(tokenizer)))
     # Create the data collator, which is responsible for creating batches from the
     # datasets during training.
-    logging.info("Creating data collator...")
+    logger.info("Creating data collator.")
     data_collator = DataCollatorForLanguageModeling(
         tokenizer=tokenizer,
         mlm=False,
         return_tensors="pt")
     # Load the model
-    logging.info("Loading model: {}".format(configs.training.model_checkpoint))
+    logger.info("Loading model: {}".format(configs.training.model_checkpoint))
     model = AutoModelForCausalLM.from_pretrained(
         configs.training.model_checkpoint,
         pad_token_id = tokenizer.pad_token_id,
         eos_token_id = tokenizer.eos_token_id
     )
-    logging.info("Resizing model embeddings to {}".format(len(tokenizer)))
+    logger.info("Resizing model embeddings to {}".format(len(tokenizer)))
     model.resize_token_embeddings(len(tokenizer))
     # Create training args and train
     # Defining training arguments
-    logging.info("Preparing training arguments...")
+    logger.info("Preparing training arguments.")
     training_args = TrainingArguments(
             output_dir = os.path.join(configs.results.save_dir,"trainer"),
             overwrite_output_dir=True,
@@ -253,29 +253,42 @@ def finetune(configs : Configs):
         )
     # Create the trainer
     # NOTE: Trainer should automatically put the model and dataset to GPU
-    logging.info("Initializing Trainer...")
+    logger.info("Initializing Trainer")
     trainer = Trainer(
         model=model,
         args=training_args,
         data_collator=data_collator,
         train_dataset=lm_datasets['train'],
         eval_dataset=lm_datasets['validation'])
-    logging.info("Clearing CUDA cache...")
+    logger.info("Clearing CUDA cache")
     torch.cuda.empty_cache()
     gc.collect()
-    logging.info("Starting training...")
+    logger.info("Starting training...")
     trainer.train()
-    logging.info("Saving trained model...")
+    logger.info("Saving trained model...")
     trainer.save_model()
-    logging.info("Completed!")
+    logger.info("Completed!")
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--config",type=str,required=True, help="Configuration file path")
     args = parser.parse_args()
     # Load the configuration file and parse it
     configs = config_env(args.config)
+    # -- Create loggers for this script
+    formatter = logging.Formatter(
+        "%(asctime)s | %(name)s | %(levelname)s | %(message)s")
+    fh = logging.FileHandler(os.path.join(configs.results.reports_dir,"finetuning.log"))
+    fh.setLevel(logging.DEBUG)
+    fh.setFormatter(formatter)
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.DEBUG)
+    ch.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    # Starting finetuning.
     finetune(configs)
 
 

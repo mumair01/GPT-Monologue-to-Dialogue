@@ -1,7 +1,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:12:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-06 10:44:43
+# @Last Modified time: 2022-07-06 11:18:51
 
 
 name : 2.0-GPT-Finetune-CustomDataset-HPC
@@ -17,7 +17,7 @@ dataset:
 # Result paths
 results:
   save_dir : models/gpt_finetune_script/customDataset
-  reports_dir : reports/gpt_finetune_script/customDataset
+  reports_dir : models/gpt_finetune_script/customDataset
 # Training args
 training:
     # model_checkpoint : gpt2-large
