@@ -2,14 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-29 14:21:21
+# @Last Modified time: 2022-07-06 10:32:35
 
 # NOTE: This is an experimental version of the script - any changes here should
-# be merged back into the original script. s
+# be merged back into the original script.
 
 import sys
 import os
-from typing import Text
 import yaml
 import pandas as pd
 import numpy as np
@@ -17,9 +16,15 @@ from tqdm import tqdm
 import argparse
 from dataclasses import dataclass
 from copy import deepcopy
+from typing import Union, List
+from datetime import datetime
+from functools import partial
 
-import random
+import logging
+logging.basicConfig(level=logging.NOTSET) # All level logging messages will be shown.
+
 import pprint
+import random
 import gc
 import shutil
 # Scikit-Learn ≥0.20 is required
@@ -55,106 +60,110 @@ mpl.rc('ytick', labelsize=12)
 
 # -------------------- ENV. VARS. ------------------------
 
+TOKENIZER_PAD_TOKEN = "<PAD>"
+TOKENIZER_EOS_TOKEN = "<|endoftext|>"
+
 # --  Set environment global vars.
 
-# Shared env. vars.
-GLOBAL_SEED = 42
-IS_CUDA_ENV = torch.cuda.is_available()
-GLOBAL_DEVICE = torch.device('cuda') if IS_CUDA_ENV else torch.device('cpu')
-SET_SEED = True # If true, sets the global seed.
-# If true, assumes that there are limited resources available and uses limited data / models.
-LIMITED_RESOURCES = not IS_CUDA_ENV
-
-# Configuring env.
-if SET_SEED:
-    # to make this notebook's output stable across runs
-    np.random.seed(GLOBAL_SEED)
-    torch.manual_seed(GLOBAL_SEED)
-
-# --- Other vars.
-
-# NOTE: The below should be the same in the dataset - assuming there are 2 speakers!
-SPEAKER_1_TOKEN = "<SP1>"
-SPEAKER_2_TOKEN = "<SP2>"
-CONV_START_TOKEN = "<START>"
-CONV_END_TOKEN = "<END>"
-PAD_TOKEN = "<PAD>"
-EOS_TOKEN = "<|endoftext|>"
-
-# Tokenizer vars.
-TOKENIZER_CHECKPOINT = "gpt2"
-TOKENIZER_BATCH_SIZE = 128
-
-# Custom dataset vars.
-CUSTOM_DATASET_CHUNK_SIZE = 128
-TEXT_DATASET_BLOCK_SIZE = 128
-
-# Model vars.
-MODEL_CHECKPOINT = "distilgpt2" if LIMITED_RESOURCES else "gpt2-large"
+CUDA_ENV = torch.cuda.is_available()
+TORCH_DEVICE = torch.device('cuda') if CUDA_ENV else torch.device('cpu')
 # -------------------- HELPER METHODS --------------------
 
 @dataclass
 class Configs:
+
+    @dataclass
+    class Env:
+        seed : Union[int, None]
+    @dataclass
+    class Dataset:
+        dataset_name : str
+        train_path : str
+        val_path : str
+        custom_dataset : bool
+    @dataclass
+    class Results:
+        # Save paths
+        save_dir : str
+        reports_dir : str
+    @dataclass
+    class Training:
+        # Training args
+        model_checkpoint : str
+        tokenizer_checkpoint : str
+        tokenizer_additional_special_tokens : List[str]
+        data_block_size : int
+        num_train_epochs : int
+        per_device_train_batch_size : int
+        per_device_eval_batch_size : int
+        warmup_steps : int
+
     root : str
-    # Data paths
-    dataset_name : str
-    dataset_type : str
-    train_path : str
-    val_path : str
-    # Save paths
-    save_model_dir : str
-    reports_dir : str
-    # Dataset args
-    custom_dataset : bool
-    # Training args
-    num_train_epochs : int
-    per_device_train_batch_size : int
-    per_device_eval_batch_size : int
-    eval_steps : int
-    save_steps : int
-    warmup_steps : int
+    name : str
+    env : Env
+    dataset : Dataset
+    results : Results
+    training : Training
 
 
-def reset_dir(dir_path):
-    if os.path.isdir(dir_path):
-        shutil.rmtree(dir_path)
-    os.makedirs(dir_path)
+def parse_configs(config_path):
+    with open(config_path,"r") as f:
+        configs_data = yaml.safe_load(f)
+        pprint.pprint(configs_data)
+        # Obtaining timestamp for output.
+        now = datetime.now()
+        ts = now.strftime('%m-%d-%Y_%H-%M-%S')
+        # Creating configs
+        configs = Configs(
+            root=configs_data['root'],
+            name=configs_data["dataset"]["name"],
+            env=configs_data.Env(
+                seed=configs_data['env']['seed']
+            ),
+            dataset=Configs.Dataset(
+                dataset_name=configs_data['dataset']['name'],
+                train_path=os.path.join(configs_data['root'],configs_data["dataset"]["train_path"]),
+                val_path=os.path.join(configs_data["root"],configs_data["dataset"]["val_path"]),
+                custom_dataset=configs_data['dataset']['custom']
+            ),
+            results=Configs.Results(
+                save_dir=os.path.join(configs_data["root"],configs_data["results"]["save_dir"],ts),
+                reports_dir=os.path.join(configs_data["root"],configs_data["results"]["reports_dir"],ts),
+            ),
+            training=Configs.Training(
+                model_checkpoint=configs_data["training"]["model_checkpoint"],
+                tokenizer_checkpoint=configs_data["training"]["tokenizer_checkpoint"],
+                tokenizer_additional_special_tokens=configs_data['training']['tokenizer_additional_special_tokens'],
+                data_block_size=configs_data['training']['data_block_size'],
+                num_train_epochs=configs_data["training"]["num_train_epochs"],
+                per_device_train_batch_size=configs_data["training"]["per_device_train_batch_size"],
+                per_device_eval_batch_size=configs_data["training"]["per_device_eval_batch_size"],
+                warmup_steps=configs_data["training"]["warmup_steps"])
+            )
+        return configs
 
 def config_env(config_path):
-    print("Loading configurations from path: {}".format(config_path))
-    with open(config_path,"r") as f:
-        configs = yaml.safe_load(f)
-        pprint.pprint(configs)
-        configs = Configs(
-            configs['root'],
-            configs["dataset"]["name"],
-            configs["dataset"]["type"],
-            os.path.join(configs['root'],configs["dataset"]["train_path"]),
-            os.path.join(configs["root"],configs["dataset"]["val_path"]),
-            os.path.join(configs["root"],configs["results"]["save_model_dir"]),
-            os.path.join(configs["root"],configs["results"]["reports_dir"]),
-            # Dataset args
-            configs["dataset"]["custom"],
-            # Training args
-            configs["training"]["num_train_epochs"],
-            configs["training"]["per_device_train_batch_size"],
-            configs["training"]["per_device_eval_batch_size"],
-            configs["training"]["eval_steps"],
-            configs["training"]["save_steps"],
-            configs["training"]["warmup_steps"])
-        # Check dirs.
-        reset_dir(configs.save_model_dir)
-        reset_dir(configs.reports_dir)
-        assert os.path.isfile(configs.train_path)
-        assert os.path.isfile(configs.val_path)
-        return configs
+    # Parse configs
+    logging.info("Loading configurations from path: {}".format(config_path))
+    configs = parse_configs(config_path)
+    # Set seed if required
+    if configs.env.seed != None:
+        np.random.seed(configs.env.seed)
+        torch.manual_seed(configs.env.seed)
+    # Check input files exist
+    assert os.path.isfile(configs.dataset.train_path)
+    assert os.path.isfile(configs.dataset.val_path)
+    # Create output directories
+    os.makedirs(configs.results.save_dir)
+    os.makedirs(configs.results.reports_dir,exist_ok=True)
+    return configs
 
 # --- Custom Dataset methods
 
 def tokenize_fn(tokenizer):
     return lambda data: tokenizer(data["Utterance"], truncation=True)
 
-def chunk_tokenized_samples(tokenized_samples,chunk_size=CUSTOM_DATASET_CHUNK_SIZE):
+def chunk_tokenized_samples(tokenized_samples,chunk_size):
     # Concatenate all the utterances
     keys =  ('input_ids','attention_mask')
     concatenated_examples = {k : sum(tokenized_samples[k],[]) for k in keys}
@@ -171,94 +180,95 @@ def chunk_tokenized_samples(tokenized_samples,chunk_size=CUSTOM_DATASET_CHUNK_SI
 
 
 def finetune(configs : Configs):
-    print("Starting finetuning using device {}...".format(GLOBAL_DEVICE))
+    logging.info("Starting finetuning using device {}...".format(TORCH_DEVICE))
     # Load the tokenizer with special tokens defined.
-    print("Loading tokenizer: {}".format(TOKENIZER_CHECKPOINT))
+    logging.info("Loading tokenizer: {}".format(configs.training.tokenizer_checkpoint))
     tokenizer = AutoTokenizer.from_pretrained(
-        TOKENIZER_CHECKPOINT,
-        pad_token=PAD_TOKEN,
-        eos_token=EOS_TOKEN,
-        additional_special_tokens=(
-            SPEAKER_1_TOKEN, SPEAKER_2_TOKEN, CONV_START_TOKEN,
-            CONV_END_TOKEN))
-    # Save the tokenizer after adding new tokens
-    tokenizer.save_pretrained(configs.save_model_dir)
-    print(tokenizer)
+        configs.training.tokenizer_checkpoint,
+        pad_token=TOKENIZER_PAD_TOKEN,
+        eos_token=TOKENIZER_EOS_TOKEN,
+        additional_special_tokens=
+            configs.training.tokenizer_additional_special_tokens)
+    # Save the tokenizer after adding new tokens in a separate dir.
+    tokenizer_save_dir = os.path.join(configs.results.save_dir,"tokenizer")
+    tokenizer.save_pretrained(tokenizer_save_dir)
+    logging.info("Using tokenizer:\n{}".format(tokenizer))
     # Loading the dataset based on the configuration.
-    if configs.custom_dataset:
-        print("Loading custom dataset...")
+    if configs.dataset.custom_dataset:
+        logging.info("Loading data as custom dataset...")
+        logging.warn("Custom dataset expects .csv files.")
         dataset = load_dataset("csv", data_files={
-            'train' : configs.train_path,
-            'validation' : configs.val_path})
+            'train' : configs.dataset.train_path,
+            'validation' : configs.dataset.val_path})
         # Once loaded, the dataset needs to be processed
         tokenized_datasets = dataset.map(
             tokenize_fn(tokenizer), batched=True,
             remove_columns=["Unnamed: 0","convID","Utterance"])
         lm_datasets = tokenized_datasets.map(
-            chunk_tokenized_samples,batched=True)
+            partial(chunk_tokenized_samples,
+                chunk_size=configs.training.data_block_size),batched=True)
     else:
-        print("Loading TextDataset...")
+        logging.info("Loading data as TextDataset...")
+        logging.warn("TextDataset expects .txt files.")
         lm_datasets = {}
-        for name, path in zip(('train','validation'),(configs.train_path, configs.val_path)):
+        for name, path in zip(('train','validation'),
+                (configs.dataset.train_path, configs.dataset.val_path)):
             # TODO: Determine if I need this deepcopy.
             lm_datasets[name] = deepcopy(TextDataset(
                 tokenizer=tokenizer,
                 file_path=path,
-                block_size= TEXT_DATASET_BLOCK_SIZE # TODO: Make this configurable variable later.
+                block_size= configs.training.data_block_size
             ))
-    print("Tokenizer length after loading datasets: {}".format(len(tokenizer)))
+    logging.info("Tokenizer length after loading datasets: {}".format(len(tokenizer)))
     # Create the data collator, which is responsible for creating batches from the
     # datasets during training.
-    print("Creating data collator...")
+    logging.info("Creating data collator...")
     data_collator = DataCollatorForLanguageModeling(
         tokenizer=tokenizer,
         mlm=False,
         return_tensors="pt")
     # Load the model
-    print("Loading model: {}".format(MODEL_CHECKPOINT))
+    logging.info("Loading model: {}".format(configs.training.model_checkpoint))
     model = AutoModelForCausalLM.from_pretrained(
-        MODEL_CHECKPOINT,
+        configs.training.model_checkpoint,
         pad_token_id = tokenizer.pad_token_id,
         eos_token_id = tokenizer.eos_token_id
     )
-    print("Resizing model embeddings...")
+    logging.info("Resizing model embeddings to {}".format(len(tokenizer)))
     model.resize_token_embeddings(len(tokenizer))
     # Create training args and train
     # Defining training arguments
-    print("Preparing training arguments...")
+    logging.info("Preparing training arguments...")
     training_args = TrainingArguments(
-            output_dir=configs.save_model_dir,
+            output_dir = os.path.join(configs.results.save_dir,"trainer"),
             overwrite_output_dir=True,
-            num_train_epochs=configs.num_train_epochs,
-            per_device_train_batch_size=16,
-            per_device_eval_batch_size=16,
-            # eval_steps=configs.eval_steps,
-            # save_strategy="epoch",
-            # save_steps=configs.save_steps,
-            eval_steps=configs.eval_steps,
-            save_steps=configs.save_steps,
+            num_train_epochs=configs.training.num_train_epochs,
+            per_device_train_batch_size=configs.training.per_device_train_batch_size,
+            per_device_eval_batch_size=configs.training.per_device_eval_batch_size,
             warmup_steps=configs.warmup_steps,
             prediction_loss_only=True,
+            save_strategy="epoch",
             evaluation_strategy='epoch',
-            # logging_dir=configs.reports_dir
+            logging_strategy="epoch",
+            logging_dir=os.path.join(configs.results.reports_dir,"trainer_logs")
         )
     # Create the trainer
     # NOTE: Trainer should automatically put the model and dataset to GPU
-    print("Initializing Trainer...")
+    logging.info("Initializing Trainer...")
     trainer = Trainer(
         model=model,
         args=training_args,
         data_collator=data_collator,
         train_dataset=lm_datasets['train'],
         eval_dataset=lm_datasets['validation'])
-    print("Clearing CUDA cache...")
+    logging.info("Clearing CUDA cache...")
     torch.cuda.empty_cache()
     gc.collect()
-    print("Starting training...")
+    logging.info("Starting training...")
     trainer.train()
-    print("Saving trained model...")
+    logging.info("Saving trained model...")
     trainer.save_model()
-    print("Completed!")
+    logging.info("Completed!")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
