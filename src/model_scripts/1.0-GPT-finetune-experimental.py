@@ -2,10 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-06 10:32:35
-
-# NOTE: This is an experimental version of the script - any changes here should
-# be merged back into the original script.
+# @Last Modified time: 2022-07-06 10:45:20
 
 import sys
 import os
@@ -20,8 +17,6 @@ from typing import Union, List
 from datetime import datetime
 from functools import partial
 
-import logging
-logging.basicConfig(level=logging.NOTSET) # All level logging messages will be shown.
 
 import pprint
 import random
@@ -56,6 +51,10 @@ import matplotlib.pyplot as plt
 mpl.rc('axes', labelsize=14)
 mpl.rc('xtick', labelsize=12)
 mpl.rc('ytick', labelsize=12)
+
+import logging
+# Enable all level loggers for this script.
+logging.getLogger(__name__).setLevel(logging.NOTSET)
 
 
 # -------------------- ENV. VARS. ------------------------
@@ -117,7 +116,7 @@ def parse_configs(config_path):
         configs = Configs(
             root=configs_data['root'],
             name=configs_data["dataset"]["name"],
-            env=configs_data.Env(
+            env=Configs.Env(
                 seed=configs_data['env']['seed']
             ),
             dataset=Configs.Dataset(
@@ -245,7 +244,7 @@ def finetune(configs : Configs):
             num_train_epochs=configs.training.num_train_epochs,
             per_device_train_batch_size=configs.training.per_device_train_batch_size,
             per_device_eval_batch_size=configs.training.per_device_eval_batch_size,
-            warmup_steps=configs.warmup_steps,
+            warmup_steps=configs.training.warmup_steps,
             prediction_loss_only=True,
             save_strategy="epoch",
             evaluation_strategy='epoch',
