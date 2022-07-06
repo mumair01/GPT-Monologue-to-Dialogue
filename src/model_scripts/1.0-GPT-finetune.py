@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-06 11:18:23
+# @Last Modified time: 2022-07-06 14:03:24
 
 import sys
 import os
@@ -106,46 +106,50 @@ class Configs:
     training : Training
 
 
-def parse_configs(config_path):
-    with open(config_path,"r") as f:
-        configs_data = yaml.safe_load(f)
-        pprint.pprint(configs_data)
-        # Obtaining timestamp for output.
-        now = datetime.now()
-        ts = now.strftime('%m-%d-%Y_%H-%M-%S')
-        # Creating configs
-        configs = Configs(
-            root=configs_data['root'],
-            name=configs_data["dataset"]["name"],
-            env=Configs.Env(
-                seed=configs_data['env']['seed']
-            ),
-            dataset=Configs.Dataset(
-                dataset_name=configs_data['dataset']['name'],
-                train_path=os.path.join(configs_data['root'],configs_data["dataset"]["train_path"]),
-                val_path=os.path.join(configs_data["root"],configs_data["dataset"]["val_path"]),
-                custom_dataset=configs_data['dataset']['custom']
-            ),
-            results=Configs.Results(
-                save_dir=os.path.join(configs_data["root"],configs_data["results"]["save_dir"],ts),
-                reports_dir=os.path.join(configs_data["root"],configs_data["results"]["reports_dir"],ts),
-            ),
-            training=Configs.Training(
-                model_checkpoint=configs_data["training"]["model_checkpoint"],
-                tokenizer_checkpoint=configs_data["training"]["tokenizer_checkpoint"],
-                tokenizer_additional_special_tokens=configs_data['training']['tokenizer_additional_special_tokens'],
-                data_block_size=configs_data['training']['data_block_size'],
-                num_train_epochs=configs_data["training"]["num_train_epochs"],
-                per_device_train_batch_size=configs_data["training"]["per_device_train_batch_size"],
-                per_device_eval_batch_size=configs_data["training"]["per_device_eval_batch_size"],
-                warmup_steps=configs_data["training"]["warmup_steps"])
-            )
-        return configs
+def parse_configs(configs_data):
+    pprint.pprint(configs_data)
+    # Obtaining timestamp for output.
+    now = datetime.now()
+    ts = now.strftime('%m-%d-%Y_%H-%M-%S')
+    # Creating configs
+    configs = Configs(
+        root=configs_data['root'],
+        name=configs_data["dataset"]["name"],
+        env=Configs.Env(
+            seed=configs_data['env']['seed']
+        ),
+        dataset=Configs.Dataset(
+            dataset_name=configs_data['dataset']['name'],
+            train_path=os.path.join(configs_data['root'],configs_data["dataset"]["train_path"]),
+            val_path=os.path.join(configs_data["root"],configs_data["dataset"]["val_path"]),
+            custom_dataset=configs_data['dataset']['custom']
+        ),
+        results=Configs.Results(
+            save_dir=os.path.join(configs_data["root"],configs_data["results"]["save_dir"],ts),
+            reports_dir=os.path.join(configs_data["root"],configs_data["results"]["reports_dir"],ts),
+        ),
+        training=Configs.Training(
+            model_checkpoint=configs_data["training"]["model_checkpoint"],
+            tokenizer_checkpoint=configs_data["training"]["tokenizer_checkpoint"],
+            tokenizer_additional_special_tokens=configs_data['training']['tokenizer_additional_special_tokens'],
+            data_block_size=configs_data['training']['data_block_size'],
+            num_train_epochs=configs_data["training"]["num_train_epochs"],
+            per_device_train_batch_size=configs_data["training"]["per_device_train_batch_size"],
+            per_device_eval_batch_size=configs_data["training"]["per_device_eval_batch_size"],
+            warmup_steps=configs_data["training"]["warmup_steps"])
+        )
+    return configs
+
+def save_configs(configs_data, file_path):
+    with open(file_path,'w') as f:
+        yaml.dump(configs_data,f)
 
 def config_env(config_path):
     # Parse configs
     logger.info("Loading configurations from path: {}".format(config_path))
-    configs = parse_configs(config_path)
+    with open(config_path,"r") as f:
+        configs_data = yaml.safe_load(f)
+        configs = parse_configs(configs_data)
     # Set seed if required
     if configs.env.seed != None:
         np.random.seed(configs.env.seed)
@@ -156,6 +160,8 @@ def config_env(config_path):
     # Create output directories
     os.makedirs(configs.results.save_dir)
     os.makedirs(configs.results.reports_dir,exist_ok=True)
+    # Save the configs data to output dir.
+    save_configs(configs_data, "{}/configs.yaml".format(configs.results.save_dir))
     return configs
 
 # --- Custom Dataset methods

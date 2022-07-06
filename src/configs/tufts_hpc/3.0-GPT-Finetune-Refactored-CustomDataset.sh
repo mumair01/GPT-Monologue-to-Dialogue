@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH -J 7_6_22_11_22_gpt_finetune_customDataset #job name
+#SBATCH -J 7_6_22_1_55_gpt_finetune_customDataset #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
 #SBATCH -n 32   #30 number of cores (number of threads)
-#SBATCH --gres=gpu:a100:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
+#SBATCH --gres=gpu:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
 #SBATCH --mem=120g #requesting 60GB of RAM total
@@ -24,9 +24,9 @@ CONFIG_PATH=${PROJECT_PATH}src/configs/model_configs/2.0-GPT-Finetune-CustomData
 module load anaconda/2021.11
 
 # NOTE: If not using a100 GPU, load the appropriate cuda version.
-# module load cuda/10.2 cudnn/7.1
+module load cuda/10.2 cudnn/7.1
 
-module load cuda/11.0 cudnn/8.0.4-11.0
+# module load cuda/11.0 cudnn/8.0.4-11.0
 
 # Get the GPU details
 nvidia-smi
