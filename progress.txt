@@ -74,4 +74,22 @@ DATE: 6/28/22
 
     4. Running Julia's given script on the data on the HPC.
 
+DATE: 7/6/22
+- Progress:
+    1. Evaluating the results of running finetuning on the cluster.
+        - Custom dataset
+            - The custom dataset finetuning completed successfully and it seems
+                that the eval loss decreases until epoch 7 before starting to
+                increase. It is printed at every epoch.
+            - The training loss decreases over time but is only printed twice -
+                not at every epoch.
+            - Runtime for the custom dataset was much faster.
+        - TextDataset
+            - Training also completed in this case and the eval loss
+                decreased to epoch 4 before increasing.
+            - The training loss continued to decrease but was only printed twice.
+        - Inconsistencies:
+            1. The number of examples used by the customdataset is less than the
+                textdataset. This is probably because the last chunk is dropped
+                by the custom dataset.
 
