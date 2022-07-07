@@ -103,4 +103,4 @@ DATE: 7/6/22
         - This means I can just run the inference scripts and see.
     2. Evaluating the finetuning results:
         - Training seems to end abruptly - emailed Delilah regarding this issue.
-
+    3. Added a script to visualize the trainer losses after training

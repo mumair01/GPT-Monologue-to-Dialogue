@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:31:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-07 11:16:41
+# @Last Modified time: 2022-07-07 15:22:26
 
 
 from lib2to3.pgen2 import token
@@ -251,10 +251,13 @@ def surprisal_inference(configs : Configs):
         eos_token_id = tokenizer.eos_token_id
     )
     model.resize_token_embeddings(len(tokenizer))
-    model.to(TORCH_DEVICE)
+    model.to(TORCH_DEVICE) # NOTE: Moving to GPU works only for single-GPU inference.
     # Generate conditional probabilities for each conversation_df
     logger.info("Generating conditional probabilities")
     data = []
+    df_columns = [
+        'conversationNumber', 'turnNumber','wordNumber','context','word',
+        'probability']
     for i, conversation_df in enumerate(conversation_dfs):
         results = generate_conditional_probs(
             model=model,
@@ -263,12 +266,17 @@ def surprisal_inference(configs : Configs):
             N=configs.inference.n_probs,
             context_buffer_size=configs.inference.context_buffer_size,
             conv_no=i)
+        # Load the data as a single dataframe and save (important if the
+        # program crashes).
+        pd.DataFrame(results,columns=df_columns).to_csv(
+            os.path.join(configs.results.save_dir,
+                "conditional_probs_conversation_{}.csv".format(i)))
         data.extend(results)
     # Save the results as a dataframe
-    results_df = pd.DataFrame(data, columns=['conversationNumber',
-            'turnNumber','wordNumber','context','word','probability'])
+    results_df = pd.DataFrame(data, columns=df_columns)
     logger.info("Saving results")
-    results_df.to_csv(os.path.join(configs.results.save_dir,"inference_results.csv"))
+    results_df.to_csv(
+        os.path.join(configs.results.save_dir,"conditional_probs_combined.csv"))
     logger.info("Complete!")
 
 
