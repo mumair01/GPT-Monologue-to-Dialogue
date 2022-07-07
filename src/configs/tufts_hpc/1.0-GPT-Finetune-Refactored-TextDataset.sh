@@ -8,8 +8,8 @@
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
 #SBATCH --mem=120g #requesting 60GB of RAM total
-#SBATCH --output=./reports/%x.%j.%N.out #saving standard output to file
-#SBATCH --error=./reports/%x.%j.%N.err # saving standard error to file
+#SBATCH --output=./finetuning_reports/%x.%j.%N.out #saving standard output to file
+#SBATCH --error=./finetuning_reports/%x.%j.%N.err # saving standard error to file
 #SBATCH --mail-type=ALL # email optitions
 #SBATCH --mail-user=muhammad.umair@tufts.edu
 

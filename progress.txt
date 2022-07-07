@@ -93,3 +93,14 @@ DATE: 7/6/22
                 textdataset. This is probably because the last chunk is dropped
                 by the custom dataset.
 
+DATE: 7/6/22
+- Progress:
+    1. Inference script
+        - It turns out that the transformers can use a single GPU by default since
+            the model performance was much faster on the cluster - using srun.
+        - We probably need onnx tho. for using GPUs for complicated tasks in a
+            multi-threaded way.
+        - This means I can just run the inference scripts and see.
+    2. Evaluating the finetuning results:
+        - Training seems to end abruptly - emailed Delilah regarding this issue.
+

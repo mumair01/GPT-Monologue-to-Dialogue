@@ -1,0 +1,27 @@
+# @Author: Muhammad Umair
+# @Date:   2022-07-06 15:33:03
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2022-07-07 11:23:25
+
+
+env:
+  name : 1.0-Surprisal-Inference
+  root :  /Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue
+  seed : null
+dataset :
+  path : data/processed/daily_dialog_poc/test.csv
+  start_conversation_no : 0
+  end_conversation_no : -1
+results:
+  save_dir : reports/surprisal_inference_script
+inference:
+  model_checkpoint : /Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/models/gpt_finetune_script/textDataset/07-06-2022_11-51-40/checkpoint-1218
+  tokenizer_checkpoint : /Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/models/gpt_finetune_script/textDataset/07-06-2022_11-51-40/tokenizer
+  tokenizer_additional_special_tokens :
+    - <SP1> # Speaker 1 token
+    - <SP2> # Speaker 2 token
+    - <START> # Conversation start token
+    - <END> # Conversation end token
+  n_probs : -1
+  context_buffer_size : 512
+

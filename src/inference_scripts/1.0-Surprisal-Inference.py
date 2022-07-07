@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:31:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-06 16:53:13
+# @Last Modified time: 2022-07-07 11:16:41
 
 
 from lib2to3.pgen2 import token
@@ -155,6 +155,8 @@ def get_last_word_prob(model, tokenizer, text):
     whole_text_encoding = tokenizer.encode(
         sentence_so_far, return_tensors="pt")
     cw_encoding = whole_text_encoding[:, context_encoding.shape[1]:]
+    # move to the appropriate device before inference
+    whole_text_encoding = whole_text_encoding.to(TORCH_DEVICE)
     output = model(whole_text_encoding)
     # Obtain the logits for the last hidden state and the logits
     # that provide values for the tokens in the critical word.
@@ -239,18 +241,19 @@ def surprisal_inference(configs : Configs):
             configs.inference.tokenizer_additional_special_tokens)
     # Save the tokenizer after adding new tokens in a separate dir.
     tokenizer_save_dir = os.path.join(configs.results.save_dir,"tokenizer")
-    logging.info("Saving tokenizer: {}".format(tokenizer_save_dir))
+    logger.info("Saving tokenizer: {}".format(tokenizer_save_dir))
     tokenizer.save_pretrained(tokenizer_save_dir)
     # Load the model
-    logging.info("Loading model checkpoint: {}".format(configs.inference.model_checkpoint))
+    logger.info("Loading model checkpoint: {}".format(configs.inference.model_checkpoint))
     model = AutoModelForCausalLM.from_pretrained(
         configs.inference.model_checkpoint,
         pad_token_id = tokenizer.pad_token_id,
         eos_token_id = tokenizer.eos_token_id
     )
     model.resize_token_embeddings(len(tokenizer))
+    model.to(TORCH_DEVICE)
     # Generate conditional probabilities for each conversation_df
-    logging.info("Generating conditional probabilities")
+    logger.info("Generating conditional probabilities")
     data = []
     for i, conversation_df in enumerate(conversation_dfs):
         results = generate_conditional_probs(
@@ -264,9 +267,9 @@ def surprisal_inference(configs : Configs):
     # Save the results as a dataframe
     results_df = pd.DataFrame(data, columns=['conversationNumber',
             'turnNumber','wordNumber','context','word','probability'])
-    logging.info("Saving results")
+    logger.info("Saving results")
     results_df.to_csv(os.path.join(configs.results.save_dir,"inference_results.csv"))
-    logging.info("Complete!")
+    logger.info("Complete!")
 
 
 if __name__ == "__main__":

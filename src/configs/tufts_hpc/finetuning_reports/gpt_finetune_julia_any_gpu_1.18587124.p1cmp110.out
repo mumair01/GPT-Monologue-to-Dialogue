@@ -1,0 +1,86 @@
+Wed Jun 29 10:37:41 2022       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 450.80.02    Driver Version: 450.80.02    CUDA Version: 11.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  A100-PCIE-40GB      On   | 00000000:D8:00.0 Off |                    0 |
+| N/A   32C    P0    42W / 250W |      0MiB / 40537MiB |      0%      Default |
+|                               |                      |             Disabled |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+downloaded model, ready to train
+{'eval_loss': 2.741607666015625, 'eval_runtime': 18.5155, 'eval_samples_per_second': 203.127, 'eval_steps_per_second': 12.746, 'epoch': 1.0}
+{'train_runtime': 29.3576, 'train_samples_per_second': 19.348, 'train_steps_per_second': 1.226, 'train_loss': 4.736198001437717, 'epoch': 1.0}
+trained 1 epochs
+saved model
+{'eval_loss': 2.2748947143554688, 'eval_runtime': 18.6535, 'eval_samples_per_second': 201.625, 'eval_steps_per_second': 12.652, 'epoch': 1.0}
+{'train_runtime': 29.8481, 'train_samples_per_second': 19.03, 'train_steps_per_second': 1.206, 'train_loss': 2.5283966064453125, 'epoch': 1.0}
+trained 2 epochs
+saved model
+{'eval_loss': 2.1070690155029297, 'eval_runtime': 18.7222, 'eval_samples_per_second': 200.885, 'eval_steps_per_second': 12.605, 'epoch': 1.0}
+{'train_runtime': 29.9408, 'train_samples_per_second': 18.971, 'train_steps_per_second': 1.202, 'train_loss': 2.1264040205213757, 'epoch': 1.0}
+trained 3 epochs
+saved model
+{'eval_loss': 2.0100836753845215, 'eval_runtime': 18.7679, 'eval_samples_per_second': 200.395, 'eval_steps_per_second': 12.575, 'epoch': 1.0}
+{'train_runtime': 30.0359, 'train_samples_per_second': 18.911, 'train_steps_per_second': 1.199, 'train_loss': 1.932787365383572, 'epoch': 1.0}
+trained 4 epochs
+saved model
+{'eval_loss': 1.942948579788208, 'eval_runtime': 18.8192, 'eval_samples_per_second': 199.849, 'eval_steps_per_second': 12.54, 'epoch': 1.0}
+{'train_runtime': 30.122, 'train_samples_per_second': 18.857, 'train_steps_per_second': 1.195, 'train_loss': 1.7876122792561848, 'epoch': 1.0}
+trained 5 epochs
+saved model
+{'eval_loss': 1.9106470346450806, 'eval_runtime': 18.8211, 'eval_samples_per_second': 199.829, 'eval_steps_per_second': 12.539, 'epoch': 1.0}
+{'train_runtime': 30.0442, 'train_samples_per_second': 18.905, 'train_steps_per_second': 1.198, 'train_loss': 1.665215916103787, 'epoch': 1.0}
+trained 6 epochs
+saved model
+{'eval_loss': 1.901515245437622, 'eval_runtime': 18.8422, 'eval_samples_per_second': 199.605, 'eval_steps_per_second': 12.525, 'epoch': 1.0}
+{'train_runtime': 30.1116, 'train_samples_per_second': 18.863, 'train_steps_per_second': 1.196, 'train_loss': 1.560503323872884, 'epoch': 1.0}
+trained 7 epochs
+saved model
+{'eval_loss': 1.9499486684799194, 'eval_runtime': 18.8151, 'eval_samples_per_second': 199.893, 'eval_steps_per_second': 12.543, 'epoch': 1.0}
+{'train_runtime': 30.1185, 'train_samples_per_second': 18.859, 'train_steps_per_second': 1.195, 'train_loss': 1.4672362009684246, 'epoch': 1.0}
+trained 8 epochs
+saved model
+{'eval_loss': 1.9371634721755981, 'eval_runtime': 18.7961, 'eval_samples_per_second': 200.094, 'eval_steps_per_second': 12.556, 'epoch': 1.0}
+{'train_runtime': 30.0882, 'train_samples_per_second': 18.878, 'train_steps_per_second': 1.196, 'train_loss': 1.3961338467068143, 'epoch': 1.0}
+trained 9 epochs
+saved model
+{'eval_loss': 1.9542007446289062, 'eval_runtime': 19.0283, 'eval_samples_per_second': 197.653, 'eval_steps_per_second': 12.403, 'epoch': 1.0}
+{'train_runtime': 30.3113, 'train_samples_per_second': 18.739, 'train_steps_per_second': 1.188, 'train_loss': 1.317720201280382, 'epoch': 1.0}
+trained 10 epochs
+saved model
+total train is now:  11
+{'eval_loss': 1.9916183948516846, 'eval_runtime': 18.8121, 'eval_samples_per_second': 199.925, 'eval_steps_per_second': 12.545, 'epoch': 1.0}
+{'eval_loss': 1.7970339059829712, 'eval_runtime': 19.0986, 'eval_samples_per_second': 196.925, 'eval_steps_per_second': 12.357, 'epoch': 2.0}
+{'eval_loss': 1.8165247440338135, 'eval_runtime': 18.9244, 'eval_samples_per_second': 198.738, 'eval_steps_per_second': 12.471, 'epoch': 3.0}
+{'eval_loss': 1.7852894067764282, 'eval_runtime': 20.014, 'eval_samples_per_second': 187.919, 'eval_steps_per_second': 11.792, 'epoch': 4.0}
+{'eval_loss': 1.8365676403045654, 'eval_runtime': 18.9691, 'eval_samples_per_second': 198.269, 'eval_steps_per_second': 12.441, 'epoch': 5.0}
+{'train_runtime': 150.2667, 'train_samples_per_second': 18.9, 'train_steps_per_second': 1.198, 'train_loss': 1.3509539286295573, 'epoch': 5.0}
+trained 16 epochs
+saved model
+{'eval_loss': 1.95210862159729, 'eval_runtime': 18.9131, 'eval_samples_per_second': 198.856, 'eval_steps_per_second': 12.478, 'epoch': 1.0}
+{'eval_loss': 1.9463210105895996, 'eval_runtime': 18.9452, 'eval_samples_per_second': 198.52, 'eval_steps_per_second': 12.457, 'epoch': 2.0}
+{'eval_loss': 2.0114359855651855, 'eval_runtime': 18.9557, 'eval_samples_per_second': 198.41, 'eval_steps_per_second': 12.45, 'epoch': 3.0}
+{'eval_loss': 2.0752432346343994, 'eval_runtime': 18.9682, 'eval_samples_per_second': 198.279, 'eval_steps_per_second': 12.442, 'epoch': 4.0}
+{'eval_loss': 2.0957086086273193, 'eval_runtime': 18.9781, 'eval_samples_per_second': 198.176, 'eval_steps_per_second': 12.435, 'epoch': 5.0}
+{'train_runtime': 149.4045, 'train_samples_per_second': 19.009, 'train_steps_per_second': 1.205, 'train_loss': 0.8127850850423177, 'epoch': 5.0}
+trained 21 epochs
+saved model
+{'eval_loss': 2.2519168853759766, 'eval_runtime': 18.911, 'eval_samples_per_second': 198.879, 'eval_steps_per_second': 12.48, 'epoch': 1.0}
+{'eval_loss': 2.272331714630127, 'eval_runtime': 18.9352, 'eval_samples_per_second': 198.624, 'eval_steps_per_second': 12.464, 'epoch': 2.0}
+{'eval_loss': 2.379457950592041, 'eval_runtime': 18.969, 'eval_samples_per_second': 198.271, 'eval_steps_per_second': 12.441, 'epoch': 3.0}
+{'eval_loss': 2.388496160507202, 'eval_runtime': 18.961, 'eval_samples_per_second': 198.355, 'eval_steps_per_second': 12.447, 'epoch': 4.0}
+{'eval_loss': 2.3704915046691895, 'eval_runtime': 18.9603, 'eval_samples_per_second': 198.362, 'eval_steps_per_second': 12.447, 'epoch': 5.0}
+{'train_runtime': 149.8232, 'train_samples_per_second': 18.956, 'train_steps_per_second': 1.201, 'train_loss': 0.4296145968967014, 'epoch': 5.0}
+trained 26 epochs
+saved model

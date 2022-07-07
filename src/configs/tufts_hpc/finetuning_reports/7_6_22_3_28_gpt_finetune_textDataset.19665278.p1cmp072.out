@@ -1,0 +1,87 @@
+Wed Jul  6 16:54:56 2022       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 450.80.02    Driver Version: 450.80.02    CUDA Version: 11.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  Tesla V100-PCIE...  On   | 00000000:5E:00.0 Off |                    0 |
+| N/A   32C    P0    38W / 250W |      0MiB / 32510MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+{'dataset': {'custom': False,
+             'name': 'in_conversation_corpus_poc',
+             'train_path': 'data/processed/in_conversation_corpus_poc/train.txt',
+             'val_path': 'data/processed/in_conversation_corpus_poc/validation.txt'},
+ 'env': {'seed': None},
+ 'name': '1.0-GPT-Finetune-TextDataset-HPC',
+ 'results': {'reports_dir': 'models/gpt_finetune_script/textDataset',
+             'save_dir': 'models/gpt_finetune_script/textDataset'},
+ 'root': '/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue',
+ 'training': {'data_block_size': 128,
+              'model_checkpoint': 'gpt2-large',
+              'num_train_epochs': 30,
+              'per_device_eval_batch_size': 16,
+              'per_device_train_batch_size': 16,
+              'tokenizer_additional_special_tokens': ['<SP1>',
+                                                      '<SP2>',
+                                                      '<START>',
+                                                      '<END>'],
+              'tokenizer_checkpoint': 'gpt2',
+              'warmup_steps': 300}}
+2022-07-06 16:55:08,219 | __main__ | INFO | Using device cuda
+2022-07-06 16:55:08,220 | __main__ | INFO | Loading tokenizer: gpt2
+2022-07-06 16:55:09,437 | __main__ | INFO | Loading data as TextDataset...
+2022-07-06 16:55:09,437 | __main__ | WARNING | TextDataset expects .txt files.
+2022-07-06 16:55:09,617 | __main__ | INFO | Tokenizer length after loading datasets: 50262
+2022-07-06 16:55:09,617 | __main__ | INFO | Creating data collator.
+2022-07-06 16:55:09,617 | __main__ | INFO | Loading model: gpt2-large
+2022-07-06 16:55:19,987 | __main__ | INFO | Resizing model embeddings to 50262
+2022-07-06 16:55:20,753 | __main__ | INFO | Preparing training arguments.
+2022-07-06 16:55:20,758 | __main__ | INFO | Initializing Trainer
+2022-07-06 16:55:27,409 | __main__ | INFO | Clearing CUDA cache
+2022-07-06 16:55:27,565 | __main__ | INFO | Starting training...
+{'loss': 4.155, 'learning_rate': 7.000000000000001e-06, 'epoch': 1.0}
+{'eval_loss': 2.908468008041382, 'eval_runtime': 44.793, 'eval_samples_per_second': 51.749, 'eval_steps_per_second': 3.237, 'epoch': 1.0}
+{'loss': 2.791, 'learning_rate': 1.4000000000000001e-05, 'epoch': 2.0}
+{'eval_loss': 2.7307939529418945, 'eval_runtime': 44.9249, 'eval_samples_per_second': 51.597, 'eval_steps_per_second': 3.228, 'epoch': 2.0}
+{'loss': 2.5666, 'learning_rate': 2.1e-05, 'epoch': 3.0}
+{'eval_loss': 2.6791768074035645, 'eval_runtime': 44.95, 'eval_samples_per_second': 51.568, 'eval_steps_per_second': 3.226, 'epoch': 3.0}
+{'loss': 2.3394, 'learning_rate': 2.8000000000000003e-05, 'epoch': 4.0}
+{'eval_loss': 2.650839328765869, 'eval_runtime': 44.941, 'eval_samples_per_second': 51.579, 'eval_steps_per_second': 3.226, 'epoch': 4.0}
+{'loss': 2.0886, 'learning_rate': 3.5e-05, 'epoch': 5.0}
+{'eval_loss': 2.715708017349243, 'eval_runtime': 44.9714, 'eval_samples_per_second': 51.544, 'eval_steps_per_second': 3.224, 'epoch': 5.0}
+{'loss': 1.8015, 'learning_rate': 4.2e-05, 'epoch': 6.0}
+{'eval_loss': 2.827363967895508, 'eval_runtime': 44.9892, 'eval_samples_per_second': 51.524, 'eval_steps_per_second': 3.223, 'epoch': 6.0}
+{'loss': 1.4985, 'learning_rate': 4.9e-05, 'epoch': 7.0}
+{'eval_loss': 2.9658379554748535, 'eval_runtime': 44.9905, 'eval_samples_per_second': 51.522, 'eval_steps_per_second': 3.223, 'epoch': 7.0}
+{'loss': 1.1996, 'learning_rate': 4.8125000000000004e-05, 'epoch': 8.0}
+{'eval_loss': 3.1081974506378174, 'eval_runtime': 44.9924, 'eval_samples_per_second': 51.52, 'eval_steps_per_second': 3.223, 'epoch': 8.0}
+{'loss': 0.9242, 'learning_rate': 4.59375e-05, 'epoch': 9.0}
+{'eval_loss': 3.293783664703369, 'eval_runtime': 44.993, 'eval_samples_per_second': 51.519, 'eval_steps_per_second': 3.223, 'epoch': 9.0}
+{'loss': 0.7027, 'learning_rate': 4.375e-05, 'epoch': 10.0}
+{'eval_loss': 3.439753770828247, 'eval_runtime': 44.9111, 'eval_samples_per_second': 51.613, 'eval_steps_per_second': 3.229, 'epoch': 10.0}
+{'loss': 0.5338, 'learning_rate': 4.156250000000001e-05, 'epoch': 11.0}
+{'eval_loss': 3.582584857940674, 'eval_runtime': 44.9103, 'eval_samples_per_second': 51.614, 'eval_steps_per_second': 3.229, 'epoch': 11.0}
+{'loss': 0.4075, 'learning_rate': 3.9375e-05, 'epoch': 12.0}
+{'eval_loss': 3.723984479904175, 'eval_runtime': 44.9316, 'eval_samples_per_second': 51.59, 'eval_steps_per_second': 3.227, 'epoch': 12.0}
+{'loss': 0.3115, 'learning_rate': 3.71875e-05, 'epoch': 13.0}
+{'eval_loss': 3.835960626602173, 'eval_runtime': 44.9239, 'eval_samples_per_second': 51.598, 'eval_steps_per_second': 3.228, 'epoch': 13.0}
+{'loss': 0.245, 'learning_rate': 3.5e-05, 'epoch': 14.0}
+{'eval_loss': 3.933638334274292, 'eval_runtime': 44.9104, 'eval_samples_per_second': 51.614, 'eval_steps_per_second': 3.229, 'epoch': 14.0}
+{'loss': 0.1985, 'learning_rate': 3.2812500000000005e-05, 'epoch': 15.0}
+{'eval_loss': 4.052748680114746, 'eval_runtime': 44.9412, 'eval_samples_per_second': 51.578, 'eval_steps_per_second': 3.226, 'epoch': 15.0}
+{'loss': 0.1643, 'learning_rate': 3.0625000000000006e-05, 'epoch': 16.0}
+{'eval_loss': 4.092708110809326, 'eval_runtime': 44.9165, 'eval_samples_per_second': 51.607, 'eval_steps_per_second': 3.228, 'epoch': 16.0}
+{'loss': 0.1352, 'learning_rate': 2.84375e-05, 'epoch': 17.0}
+{'eval_loss': 4.2042999267578125, 'eval_runtime': 44.9186, 'eval_samples_per_second': 51.604, 'eval_steps_per_second': 3.228, 'epoch': 17.0}
+{'loss': 0.1177, 'learning_rate': 2.625e-05, 'epoch': 18.0}
