@@ -1,0 +1,42 @@
+Thu Jul  7 19:17:49 2022       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 450.80.02    Driver Version: 450.80.02    CUDA Version: 11.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  A100-PCIE-40GB      On   | 00000000:1D:00.0 Off |                    0 |
+| N/A   29C    P0    41W / 250W |      0MiB / 40537MiB |      0%      Default |
+|                               |                      |             Disabled |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+{'dataset': {'end_conversation_no': -1,
+             'path': 'data/processed/in_conversation_corpus_poc/test.csv',
+             'start_conversation_no': 0},
+ 'env': {'name': '1.0-Surprisal-Inference-HPC',
+         'root': '/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue',
+         'seed': None},
+ 'inference': {'context_buffer_size': 512,
+               'model_checkpoint': '/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/models/gpt_finetune_script/textDataset/07-06-2022_16-55-08/trainer/checkpoint-756',
+               'n_probs': -1,
+               'tokenizer_additional_special_tokens': ['<SP1>',
+                                                       '<SP2>',
+                                                       '<START>',
+                                                       '<END>'],
+               'tokenizer_checkpoint': 'gpt2'},
+ 'results': {'save_dir': 'reports/surprisal_inference_script'}}
+2022-07-07 19:18:04,247 | __main__ | INFO | Loading inference dataset: /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/processed/in_conversation_corpus_poc/test.csv
+2022-07-07 19:18:04,290 | __main__ | INFO | Loading tokenizer checkpoint: gpt2
+2022-07-07 19:18:05,200 | __main__ | INFO | Saving tokenizer: /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/reports/surprisal_inference_script/07-07-2022_19-18-04/tokenizer
+2022-07-07 19:18:05,365 | __main__ | INFO | Loading model checkpoint: /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/models/gpt_finetune_script/textDataset/07-06-2022_16-55-08/trainer/checkpoint-756
+2022-07-07 19:18:28,771 | __main__ | INFO | Generating conditional probabilities
+2022-07-07 22:10:46,004 | __main__ | INFO | Saving results
+2022-07-07 22:10:56,068 | __main__ | INFO | Complete!

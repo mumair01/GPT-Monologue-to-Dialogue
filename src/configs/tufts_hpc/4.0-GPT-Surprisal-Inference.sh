@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 7_7_22_12_08_gpt2-large-textDataset-17-epochs_gpt_surprisal_inference #job name
+#SBATCH -J 7_7_22_3_23_gpt2-large-textDataset-17-epochs_gpt_surprisal_inference #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes

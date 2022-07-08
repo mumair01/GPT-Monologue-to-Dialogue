@@ -104,3 +104,15 @@ DATE: 7/6/22
     2. Evaluating the finetuning results:
         - Training seems to end abruptly - emailed Delilah regarding this issue.
     3. Added a script to visualize the trainer losses after training
+
+
+DATE: 7/8/22
+- Progress:
+    1. Inference results
+        - Both the inference jobs on gpt2 large finetuned to 17 epochs works.
+        - A100 is much faster than the other GPUs for inference. This is a
+            validation that inference is actually using GPUs.
+    2. Finetuning code issues:
+        - Finetuning with the custom dataset did not run:
+            - Exit code = 1
+            - Job ID: = 19665294
