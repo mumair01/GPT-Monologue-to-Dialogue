@@ -17,7 +17,7 @@
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 SLURM_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}src/finetuning/3.0-ICC-finetune-julia.py
+SCRIPT_PATH=${PROJECT_PATH}src/finetuning/gpt_finetune_exp_julia.py
 
 #load anaconda module
 module load anaconda/2021.11

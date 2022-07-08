@@ -1,7 +1,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:33:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-08 11:04:43
+# @Last Modified time: 2022-07-08 11:24:11
 
 
 env:
@@ -13,7 +13,7 @@ dataset :
   start_conversation_no : 0
   end_conversation_no : -1
 results:
-  save_dir : data/reports/1.0-Surprisal-Inference-Local
+  save_dir : data/reports/1.0-ConditionalProb-Inference-Local
 inference:
   model_checkpoint : distilgpt2
   tokenizer_checkpoint : gpt2

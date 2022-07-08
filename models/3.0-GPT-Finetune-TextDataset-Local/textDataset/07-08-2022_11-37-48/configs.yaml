@@ -1,0 +1,25 @@
+dataset:
+  custom: false
+  name: in_conversation_corpus_poc
+  train_path: data/datasets/processed/ICC/julia_dissertation/train.txt
+  val_path: data/datasets/processed/ICC/julia_dissertation/validation.txt
+env:
+  seed: null
+name: 1.0-GPT-Finetune-TextDataset-HPC
+results:
+  reports_dir: models/3.0-GPT-Finetune-TextDataset-Local/textDataset
+  save_dir: models/3.0-GPT-Finetune-TextDataset-Local/textDataset
+root: /Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue
+training:
+  data_block_size: 128
+  model_checkpoint: distilgpt2
+  num_train_epochs: 30
+  per_device_eval_batch_size: 16
+  per_device_train_batch_size: 16
+  tokenizer_additional_special_tokens:
+  - <SP1>
+  - <SP2>
+  - <START>
+  - <END>
+  tokenizer_checkpoint: gpt2
+  warmup_steps: 300

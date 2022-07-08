@@ -17,7 +17,7 @@
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 SLURM_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}src/finetuning/1.0-GPT-finetune.py
+SCRIPT_PATH=${PROJECT_PATH}src/finetuning/transformers_gpt_finetune.py
 CONFIG_PATH=${PROJECT_PATH}src/configs/finetuning/2.0-GPT-Finetune-CustomDataset-HPC.yaml
 
 #load anaconda module
