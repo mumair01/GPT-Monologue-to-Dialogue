@@ -130,7 +130,6 @@ dmypy.json
 
 
 # Custom
-/data/
-models/
-reports/
+data/
+previous/
 .vscode
