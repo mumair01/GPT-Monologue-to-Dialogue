@@ -1,27 +1,27 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:12:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-06 11:19:01
+# @Last Modified time: 2022-07-08 11:06:17
 
 
 name : 1.0-GPT-Finetune-TextDataset-HPC
-root: /Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue
+root : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue
 env:
   seed : null
 # Input data dirs.
 dataset:
   name : in_conversation_corpus_poc
-  train_path : data/processed/in_conversation_corpus_poc/train.txt
-  val_path : data/processed/in_conversation_corpus_poc/validation.txt
+  train_path : data/datasets/processed/ICC/julia_dissertation/train.txt
+  val_path : data/datasets/processed/ICC/julia_dissertation/validation.txt
   custom : false
 # Result paths
 results:
-  save_dir : models/gpt_finetune_script/textDataset
-  reports_dir : models/gpt_finetune_script/textDataset
+  save_dir : data/models/1.0-GPT-Finetune-TextDataset-HPC/textDataset
+  reports_dir : data/models/1.0-GPT-Finetune-TextDataset-HPC/textDataset
 # Training args
 training:
-    # model_checkpoint : gpt2-large
-    model_checkpoint : distilgpt2
+    model_checkpoint : gpt2-large
+    # model_checkpoint : distilgpt2
     tokenizer_checkpoint : gpt2
     tokenizer_additional_special_tokens :
       - <SP1> # Speaker 1 token

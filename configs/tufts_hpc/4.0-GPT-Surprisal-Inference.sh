@@ -17,8 +17,8 @@
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 SLURM_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}src/inference_scripts/1.0-Surprisal-Inference.py
-CONFIG_PATH=${PROJECT_PATH}src/configs/inference_configs/2.0-Suprisal-Inference-HPC.yaml
+SCRIPT_PATH=${PROJECT_PATH}src/inference/1.0-Surprisal-Inference.py
+CONFIG_PATH=${PROJECT_PATH}src/configs/inference/2.0-Suprisal-Inference-HPC.yaml
 
 #load anaconda module
 module load anaconda/2021.11

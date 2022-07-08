@@ -1,7 +1,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:12:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-06 11:19:05
+# @Last Modified time: 2022-07-08 11:08:14
 
 
 name : 2.0-GPT-Finetune-CustomDataset-HPC
@@ -11,13 +11,13 @@ env:
 # Input data dirs.
 dataset:
   name : in_conversation_corpus_poc
-  train_path : data/processed/in_conversation_corpus_poc/train.csv
-  val_path : data/processed/in_conversation_corpus_poc/validation.csv
+  train_path : data/datasets/processed/ICC/julia_dissertation/train.csv
+  val_path : data/datasets/processed/ICC/julia_dissertation/validation.csv
   custom : false
 # Result paths
 results:
-  save_dir : models/gpt_finetune_script/customDataset
-  reports_dir : models/gpt_finetune_script/customDataset
+  save_dir : models/4.0-GPT-Finetune-CustomDataset-Local/customDataset
+  reports_dir : models/4.0-GPT-Finetune-CustomDataset-Local/customDataset
 # Training args
 training:
     # model_checkpoint : gpt2-large

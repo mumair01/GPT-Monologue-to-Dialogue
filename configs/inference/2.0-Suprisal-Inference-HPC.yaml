@@ -1,7 +1,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:33:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-07 12:34:30
+# @Last Modified time: 2022-07-08 11:05:10
 
 
 env:
@@ -9,11 +9,11 @@ env:
   root :  /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue
   seed : null
 dataset :
-  path : data/processed/in_conversation_corpus_poc/test.csv
+  path : data/datasets/processed/ICC/julia_dissertation/test.csv
   start_conversation_no : 0
   end_conversation_no : -1
 results:
-  save_dir : reports/surprisal_inference_script
+  save_dir : data/reports/1.0-Surprisal-Inference-HPC
 inference:
   model_checkpoint : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/models/gpt_finetune_script/textDataset/07-06-2022_16-55-08/trainer/checkpoint-756 # NOTE: Should be replaced with finetuned model
   tokenizer_checkpoint : gpt2 # NOTE: Should be replaced with training tokenizer
