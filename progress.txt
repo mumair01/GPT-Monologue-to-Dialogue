@@ -74,4 +74,45 @@ DATE: 6/28/22
 
     4. Running Julia's given script on the data on the HPC.
 
+DATE: 7/6/22
+- Progress:
+    1. Evaluating the results of running finetuning on the cluster.
+        - Custom dataset
+            - The custom dataset finetuning completed successfully and it seems
+                that the eval loss decreases until epoch 7 before starting to
+                increase. It is printed at every epoch.
+            - The training loss decreases over time but is only printed twice -
+                not at every epoch.
+            - Runtime for the custom dataset was much faster.
+        - TextDataset
+            - Training also completed in this case and the eval loss
+                decreased to epoch 4 before increasing.
+            - The training loss continued to decrease but was only printed twice.
+        - Inconsistencies:
+            1. The number of examples used by the customdataset is less than the
+                textdataset. This is probably because the last chunk is dropped
+                by the custom dataset.
 
+DATE: 7/6/22
+- Progress:
+    1. Inference script
+        - It turns out that the transformers can use a single GPU by default since
+            the model performance was much faster on the cluster - using srun.
+        - We probably need onnx tho. for using GPUs for complicated tasks in a
+            multi-threaded way.
+        - This means I can just run the inference scripts and see.
+    2. Evaluating the finetuning results:
+        - Training seems to end abruptly - emailed Delilah regarding this issue.
+    3. Added a script to visualize the trainer losses after training
+
+
+DATE: 7/8/22
+- Progress:
+    1. Inference results
+        - Both the inference jobs on gpt2 large finetuned to 17 epochs works.
+        - A100 is much faster than the other GPUs for inference. This is a
+            validation that inference is actually using GPUs.
+    2. Finetuning code issues:
+        - Finetuning with the custom dataset did not run:
+            - Exit code = 1
+            - Job ID: = 19665294
