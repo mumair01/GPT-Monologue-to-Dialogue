@@ -1,7 +1,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:12:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-08 11:08:14
+# @Last Modified time: 2022-07-08 11:42:08
 
 
 name : 2.0-GPT-Finetune-CustomDataset-HPC
@@ -16,8 +16,8 @@ dataset:
   custom : false
 # Result paths
 results:
-  save_dir : models/4.0-GPT-Finetune-CustomDataset-Local/customDataset
-  reports_dir : models/4.0-GPT-Finetune-CustomDataset-Local/customDataset
+  save_dir : data/models/4.0-GPT-Finetune-CustomDataset-Local/customDataset
+  reports_dir : data/models/4.0-GPT-Finetune-CustomDataset-Local/customDataset
 # Training args
 training:
     # model_checkpoint : gpt2-large
