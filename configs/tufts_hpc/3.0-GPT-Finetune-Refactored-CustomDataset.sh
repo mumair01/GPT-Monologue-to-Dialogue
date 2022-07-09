@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 7_8_22_4_42_gpt_finetune_customDataset #job name
+#SBATCH -J 7_9_22_12_44_gpt_finetune_customDataset #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -18,7 +18,7 @@ USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 SLURM_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
 SCRIPT_PATH=${PROJECT_PATH}src/finetuning/transformers_gpt_finetune.py
-CONFIG_PATH=${PROJECT_PATH}src/configs/finetuning/2.0-GPT-Finetune-CustomDataset-HPC.yaml
+CONFIG_PATH=${PROJECT_PATH}configs/finetuning/2.0-GPT-Finetune-CustomDataset-HPC.yaml
 
 #load anaconda module
 module load anaconda/2021.11

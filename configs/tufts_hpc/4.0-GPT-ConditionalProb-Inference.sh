@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 7_7_22_3_23_gpt2-large_textDataset/07-08-2022_13-32-24_gpt_surprisal_inference #job name
+#SBATCH -J 7_9_22_12_39_gpt2-large_textDataset/07-08-2022_13-32-24_gpt_surprisal_inference #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -18,7 +18,7 @@ USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 SLURM_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
 SCRIPT_PATH=${PROJECT_PATH}src/inference/gpt_conditional_probs.py
-CONFIG_PATH=${PROJECT_PATH}src/configs/inference/2.0-ConditionalProb-Inference-HPC.yaml
+CONFIG_PATH=${PROJECT_PATH}configs/inference/2.0-ConditionalProb-Inference-HPC.yaml
 
 #load anaconda module
 module load anaconda/2021.11
