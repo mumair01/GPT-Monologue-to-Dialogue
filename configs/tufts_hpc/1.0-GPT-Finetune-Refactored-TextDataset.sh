@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH -J 7_6_22_3_28_gpt_finetune_textDataset #job name
+#SBATCH -J 7_8_22_1_15_gpt_finetune_textDataset #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
 #SBATCH -n 32   #30 number of cores (number of threads)
-#SBATCH --gres=gpu:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
+#SBATCH --gres=gpu:a100:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
 #SBATCH --mem=120g #requesting 60GB of RAM total

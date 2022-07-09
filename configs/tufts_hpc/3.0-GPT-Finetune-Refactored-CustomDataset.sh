@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 7_6_22_3_28_gpt_finetune_customDataset #job name
+#SBATCH -J 7_8_22_4_42_gpt_finetune_customDataset #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -24,9 +24,9 @@ CONFIG_PATH=${PROJECT_PATH}src/configs/finetuning/2.0-GPT-Finetune-CustomDataset
 module load anaconda/2021.11
 
 # NOTE: If not using a100 GPU, load the appropriate cuda version.
-# module load cuda/10.2 cudnn/7.1
+module load cuda/10.2 cudnn/7.1
 
-module load cuda/11.0 cudnn/8.0.4-11.0
+# module load cuda/11.0 cudnn/8.0.4-11.0
 
 # Get the GPU details
 nvidia-smi

@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH -J 7_7_22_3_23_gpt2-large-textDataset-17-epochs_gpt_surprisal_inference #job name
+#SBATCH -J 7_7_22_3_23_gpt2-large_textDataset/07-08-2022_13-32-24_gpt_surprisal_inference #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
 #SBATCH -n 32   #30 number of cores (number of threads)
-#SBATCH --gres=gpu:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
+#SBATCH --gres=gpu:a100:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
 #SBATCH --mem=120g #requesting 60GB of RAM total
