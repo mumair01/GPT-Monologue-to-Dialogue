@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-08 11:35:03
+# @Last Modified time: 2022-07-09 13:48:10
 
 import sys
 import os
@@ -208,7 +208,7 @@ def finetune(configs : Configs):
         # Once loaded, the dataset needs to be processed
         tokenized_datasets = dataset.map(
             tokenize_fn(tokenizer), batched=True,
-            remove_columns=["Unnamed: 0","convID","Utterance"])
+            remove_columns=["Unnamed: 0","convName","convID","Utterance"])
         lm_datasets = tokenized_datasets.map(
             partial(chunk_tokenized_samples,
                 chunk_size=configs.training.data_block_size),batched=True)

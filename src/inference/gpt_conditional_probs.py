@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:31:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-07 15:22:26
+# @Last Modified time: 2022-07-09 13:11:45
 
 
 from lib2to3.pgen2 import token
@@ -217,7 +217,7 @@ def generate_conditional_probs(model, tokenizer, conversation_df,
             word_no = turn_length - n_probs + result_no
             context, word, prob = result
             results_list.append((
-                turn.convID, turn_no, word_no, context,word,prob))
+                turn.convName,turn.convID, turn_no, word_no, context,word,prob))
         pbar.update()
     return results_list
 
@@ -256,8 +256,8 @@ def surprisal_inference(configs : Configs):
     logger.info("Generating conditional probabilities")
     data = []
     df_columns = [
-        'conversationNumber', 'turnNumber','wordNumber','context','word',
-        'probability']
+        'conversationName','conversationNumber', 'turnNumber','wordNumber','context',
+        'word', 'probability']
     for i, conversation_df in enumerate(conversation_dfs):
         results = generate_conditional_probs(
             model=model,
