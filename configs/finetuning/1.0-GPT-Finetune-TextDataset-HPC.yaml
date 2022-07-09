@@ -1,7 +1,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:12:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-08 11:06:17
+# @Last Modified time: 2022-07-09 18:08:57
 
 
 name : 1.0-GPT-Finetune-TextDataset-HPC
@@ -10,18 +10,17 @@ env:
   seed : null
 # Input data dirs.
 dataset:
-  name : in_conversation_corpus_poc
+  name : ICC
   train_path : data/datasets/processed/ICC/julia_dissertation/train.txt
   val_path : data/datasets/processed/ICC/julia_dissertation/validation.txt
   custom : false
 # Result paths
 results:
-  save_dir : data/models/1.0-GPT-Finetune-TextDataset-HPC/textDataset
-  reports_dir : data/models/1.0-GPT-Finetune-TextDataset-HPC/textDataset
+  save_dir : data/models/1.0-GPT-Finetune-TextDataset-HPC/
+  reports_dir : data/models/1.0-GPT-Finetune-TextDataset-HPC/
 # Training args
 training:
     model_checkpoint : gpt2-large
-    # model_checkpoint : distilgpt2
     tokenizer_checkpoint : gpt2
     tokenizer_additional_special_tokens :
       - <SP1> # Speaker 1 token
