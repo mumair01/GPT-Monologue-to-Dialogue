@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-09 13:48:10
+# @Last Modified time: 2022-07-09 18:05:59
 
 import sys
 import os
@@ -114,7 +114,7 @@ def parse_configs(configs_data):
     # Creating configs
     configs = Configs(
         root=configs_data['root'],
-        name=configs_data["dataset"]["name"],
+        name=configs_data["name"],
         env=Configs.Env(
             seed=configs_data['env']['seed']
         ),
@@ -125,8 +125,12 @@ def parse_configs(configs_data):
             custom_dataset=configs_data['dataset']['custom']
         ),
         results=Configs.Results(
-            save_dir=os.path.join(configs_data["root"],configs_data["results"]["save_dir"],ts),
-            reports_dir=os.path.join(configs_data["root"],configs_data["results"]["reports_dir"],ts),
+            save_dir=os.path.join(
+                configs_data["root"],configs_data["results"]["save_dir"],
+                "{}_{}".format(configs_data["name"],ts)),
+            reports_dir=os.path.join(
+                configs_data["root"],configs_data["results"]["reports_dir"],
+                "{}_{}".format(configs_data["name"],ts)),
         ),
         training=Configs.Training(
             model_checkpoint=configs_data["training"]["model_checkpoint"],

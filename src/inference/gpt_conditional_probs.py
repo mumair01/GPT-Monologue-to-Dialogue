@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:31:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-09 17:49:48
+# @Last Modified time: 2022-07-09 18:03:36
 
 
 from lib2to3.pgen2 import token
@@ -95,7 +95,8 @@ def parse_configs(configs_data):
             end_conversation_no=configs_data["dataset"]["end_conversation_no"]
         ),
         Configs.Results(
-            save_dir=os.path.join(configs_data["env"]["root"],configs_data["results"]["save_dir"],ts)
+            save_dir=os.path.join(configs_data["env"]["root"],
+                configs_data["results"]["save_dir"],"{}_{}".format(configs_data["env"]["name"],ts))
         ),
         Configs.Inference(
             model_checkpoint=configs_data["inference"]["model_checkpoint"],
