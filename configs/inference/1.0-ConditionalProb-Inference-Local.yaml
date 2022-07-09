@@ -1,7 +1,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:33:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-09 13:10:32
+# @Last Modified time: 2022-07-09 17:54:16
 
 
 env:
@@ -9,9 +9,9 @@ env:
   root :  /Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue
   seed : null
 dataset :
-  path : data/datasets/processed/ICC/julia_dissertation/test.csv
+  path : data/datasets/processed/daily_dialog/1.0-MU-DailyDialog-preprocess-POC/test.csv
   start_conversation_no : 0
-  end_conversation_no : 1
+  end_conversation_no : 2
 results:
   save_dir : data/reports/1.0-ConditionalProb-Inference-Local
 inference:

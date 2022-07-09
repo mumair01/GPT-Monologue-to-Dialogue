@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:31:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-09 13:11:45
+# @Last Modified time: 2022-07-09 17:49:48
 
 
 from lib2to3.pgen2 import token
@@ -270,7 +270,7 @@ def surprisal_inference(configs : Configs):
         # program crashes).
         pd.DataFrame(results,columns=df_columns).to_csv(
             os.path.join(configs.results.save_dir,
-                "conditional_probs_conversation_{}.csv".format(i)))
+                "{}_conditional_probs.csv".format(results[0][0])))
         data.extend(results)
     # Save the results as a dataframe
     results_df = pd.DataFrame(data, columns=df_columns)
