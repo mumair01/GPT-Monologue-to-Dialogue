@@ -1,10 +1,10 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:12:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-09 18:09:21
+# @Last Modified time: 2022-07-09 18:42:33
 
 
-name : 2.0-GPT-Finetune-CustomDataset-HPC
+name : gpt2_large_ICC_attempt_1
 root : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue
 env:
   seed : null

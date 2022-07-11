@@ -1,4 +1,4 @@
-Thu Jul  7 12:37:30 2022       
+Sat Jul  9 18:53:58 2022       
 +-----------------------------------------------------------------------------+
 | NVIDIA-SMI 450.80.02    Driver Version: 450.80.02    CUDA Version: 11.0     |
 |-------------------------------+----------------------+----------------------+
@@ -6,8 +6,8 @@ Thu Jul  7 12:37:30 2022
 | Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
 |                               |                      |               MIG M. |
 |===============================+======================+======================|
-|   0  Tesla V100-PCIE...  On   | 00000000:5E:00.0 Off |                    0 |
-| N/A   32C    P0    38W / 250W |      0MiB / 32510MiB |      0%      Default |
+|   0  Tesla V100-PCIE...  On   | 00000000:3B:00.0 Off |                    0 |
+| N/A   29C    P0    23W / 250W |      0MiB / 32510MiB |      0%      Default |
 |                               |                      |                  N/A |
 +-------------------------------+----------------------+----------------------+
                                                                                
@@ -19,24 +19,24 @@ Thu Jul  7 12:37:30 2022
 |  No running processes found                                                 |
 +-----------------------------------------------------------------------------+
 {'dataset': {'end_conversation_no': -1,
-             'path': 'data/processed/in_conversation_corpus_poc/test.csv',
+             'path': 'data/datasets/processed/ICC/julia_dissertation/test.csv',
              'start_conversation_no': 0},
- 'env': {'name': '1.0-Surprisal-Inference-HPC',
+ 'env': {'name': 'gpt2_large_untrained',
          'root': '/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue',
          'seed': None},
  'inference': {'context_buffer_size': 512,
-               'model_checkpoint': '/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/models/gpt_finetune_script/textDataset/07-06-2022_16-55-08/trainer/checkpoint-756',
+               'model_checkpoint': 'gpt2-large',
                'n_probs': -1,
                'tokenizer_additional_special_tokens': ['<SP1>',
                                                        '<SP2>',
                                                        '<START>',
                                                        '<END>'],
                'tokenizer_checkpoint': 'gpt2'},
- 'results': {'save_dir': 'reports/surprisal_inference_script'}}
-2022-07-07 12:37:44,816 | __main__ | INFO | Loading inference dataset: /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/processed/in_conversation_corpus_poc/test.csv
-2022-07-07 12:37:44,851 | __main__ | INFO | Loading tokenizer checkpoint: gpt2
-2022-07-07 12:37:45,743 | __main__ | INFO | Saving tokenizer: /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/reports/surprisal_inference_script/07-07-2022_12-37-44/tokenizer
-2022-07-07 12:37:45,919 | __main__ | INFO | Loading model checkpoint: /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/models/gpt_finetune_script/textDataset/07-06-2022_16-55-08/trainer/checkpoint-756
-2022-07-07 12:38:00,845 | __main__ | INFO | Generating conditional probabilities
-2022-07-07 20:37:02,003 | __main__ | INFO | Saving results
-2022-07-07 20:37:11,796 | __main__ | INFO | Complete!
+ 'results': {'save_dir': 'data/reports/2.0-ConditionalProb-Inference-HPC'}}
+2022-07-09 18:54:10,558 | __main__ | INFO | Loading inference dataset: /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/datasets/processed/ICC/julia_dissertation/test.csv
+2022-07-09 18:54:10,606 | __main__ | INFO | Loading tokenizer checkpoint: gpt2
+2022-07-09 18:54:11,450 | __main__ | INFO | Saving tokenizer: /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/reports/2.0-ConditionalProb-Inference-HPC/gpt2_large_untrained_07-09-2022_18-54-10/tokenizer
+2022-07-09 18:54:11,576 | __main__ | INFO | Loading model checkpoint: gpt2-large
+2022-07-09 18:54:26,064 | __main__ | INFO | Generating conditional probabilities
+2022-07-10 02:51:12,043 | __main__ | INFO | Saving results
+2022-07-10 02:51:21,559 | __main__ | INFO | Complete!
