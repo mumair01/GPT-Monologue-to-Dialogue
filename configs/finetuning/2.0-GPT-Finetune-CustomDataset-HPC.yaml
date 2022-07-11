@@ -1,18 +1,18 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:12:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-09 18:42:33
+# @Last Modified time: 2022-07-11 15:25:11
 
 
-name : gpt2_large_ICC_attempt_1
+name : gpt2_large_ICC_experiment_28_train_14_test
 root : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue
 env:
   seed : null
 # Input data dirs.
 dataset:
   name : ICC
-  train_path : data/datasets/processed/ICC/julia_dissertation/train.csv
-  val_path : data/datasets/processed/ICC/julia_dissertation/validation.csv
+  train_path : data/datasets/processed/ICC/julia_finetune_experiments/28_train_14_test_set/train_28_conversations.csv
+  val_path : data/datasets/processed/ICC/julia_finetune_experiments/28_train_14_test_set/validation_14_conversations.csv
   custom : true
 # Result paths
 results:
