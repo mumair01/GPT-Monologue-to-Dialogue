@@ -1,22 +1,21 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:33:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-09 18:53:15
+# @Last Modified time: 2022-07-14 12:26:50
 
 
 env:
-  name : gpt2_large_untrained
+  name : gpt2_large_ICC_experiment_28_train_14_test_07-12-2022_16-55-36_customDataset_speaker_identity_stims
   root :  /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue
   seed : null
 dataset :
-  path : data/datasets/processed/ICC/julia_dissertation/test.csv
+  path : data/datasets/processed/speaker_identity_stims/test.csv
   start_conversation_no : 0
   end_conversation_no : -1
 results:
   save_dir : data/reports/2.0-ConditionalProb-Inference-HPC
 inference:
-  # model_checkpoint : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/models/1.0-GPT-Finetune-TextDataset-HPC/gpt2_large_17_epochs_07-08-2022_13-32-24/trainer/checkpoint-1260
-  model_checkpoint : gpt2-large
+  model_checkpoint : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/models/2.0-GPT-Finetune-CustomDataset-HPC/gpt2_large_ICC_experiment_28_train_14_test_07-12-2022_16-55-36/trainer/checkpoint-672
   tokenizer_checkpoint : gpt2 # NOTE: Should be replaced with training tokenizer
   tokenizer_additional_special_tokens :
     - <SP1> # Speaker 1 token

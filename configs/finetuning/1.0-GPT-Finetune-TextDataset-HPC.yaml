@@ -1,10 +1,10 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:12:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-11 15:25:03
+# @Last Modified time: 2022-07-12 15:22:24
 
 
-name : gpt2_large_ICC_experiment_23_train_14_test
+name : gpt2_large_ICC_experiment_28_train_14_test
 root : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue
 env:
   seed : null
@@ -29,8 +29,8 @@ training:
       - <END> # Conversation end token
     data_block_size : 128
     num_train_epochs : 30
-    per_device_train_batch_size : 16
-    per_device_eval_batch_size : 16
+    per_device_train_batch_size : 8
+    per_device_eval_batch_size : 8
     warmup_steps : 300
 
 
