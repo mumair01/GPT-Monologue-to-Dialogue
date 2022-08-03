@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-03 13:19:41
+# @Last Modified time: 2022-08-03 16:02:54
 
 
 ############################
@@ -288,12 +288,12 @@ class TurnGPT(pl.LightningModule):
         """
         # Extract the task labels
         lm_labels = self._extract_labels(
-            input_ids=batch['input_ids'],mask=batch['attention'])
+            input_ids=batch['input_ids'],mask=batch['attention_mask'])
 
         trp_labels = None
         if self.trp_projection_steps > 0:
             trp_labels = self._extract_mc_labels(
-                input_ids=batch['input_ids'],mask=batch['attention'])
+                input_ids=batch['input_ids'],mask=batch['attention_mask'])
 
         if self.omit_speaker_ids:
             batch['speaker_ids'] = None
@@ -319,12 +319,12 @@ class TurnGPT(pl.LightningModule):
         """This step is for calculating and logging interesting metrics for validation"""
          # Extract the task labels
         lm_labels = self._extract_labels(
-            input_ids=batch['input_ids'],mask=batch['attention'])
+            input_ids=batch['input_ids'],mask=batch['attention_mask'])
 
         trp_labels = None
         if self.trp_projection_steps > 0:
             trp_labels = self._extract_mc_labels(
-                input_ids=batch['input_ids'],mask=batch['attention'])
+                input_ids=batch['input_ids'],mask=batch['attention_mask'])
 
         if self.omit_speaker_ids:
             batch['speaker_ids'] = None

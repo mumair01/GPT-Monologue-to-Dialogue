@@ -2,17 +2,18 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-03 13:21:54
+# @Last Modified time: 2022-08-03 15:55:48
 
 import pytest
 import sys
 
 from transformers import AutoTokenizer, GPT2LMHeadModel
 import transformers
-
+import pytorch_lightning as pl
 
 from gpt_dialogue.turngpt.tokenizer import SpokenNormalizer, SpokenDialogueTokenizer
 from gpt_dialogue.turngpt.model import TurnGPT
+from gpt_dialogue.turngpt.dm import TurnGPTDM
 
 
 def test_spoken_normalizer():
@@ -132,3 +133,30 @@ def test_original():
     print(model.tokenizer.decode(toks['input_ids'][0]))
     out = model(**toks)
 
+def test_dm():
+    tokenizer = SpokenDialogueTokenizer("gpt2")
+
+    dm = TurnGPTDM(
+        tokenizer=tokenizer,
+        dataset="icc",
+    )
+    dm.prepare_data()
+    dm.setup()
+
+    batch = next(iter(dm.train_dataloader()))
+    print(batch['input_ids'].shape)
+
+def test_finetuning():
+    model = TurnGPT(
+        pretrained_model_name_or_path="gpt2",
+        load_pretrained_configs=True,
+        learning_rate= 1e-4
+    )
+    dm = TurnGPTDM(
+        tokenizer=model._tokenizer,
+        dataset="icc",
+    )
+    dm.prepare_data()
+    trainer = pl.Trainer()
+    print("Starting training...")
+    trainer.fit(model, datamodule=dm)

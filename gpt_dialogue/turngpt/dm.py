@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-29 09:59:20
+# @Last Modified time: 2022-08-03 15:48:39
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT
@@ -22,7 +22,6 @@ from torch.utils.data import DataLoader
 from datasets import concatenate_datasets, load_from_disk, load_dataset
 import pytorch_lightning as pl
 
-from gpt_dialogue.turngpt.tokenizer import SpokenDialogTokenizer
 
 # TODO: Eventually, don't hard code this.
 _ROOT_PATH = '/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue'
@@ -34,6 +33,7 @@ _ICC_PATHS = {
 _SETUP_SAVE_DIR = os.path.join(_ROOT_PATH,'data/turngpt_dm_test')
 
 
+# TODO: What should I do about the conversation start and end tokens?
 class TurnGPTDM(pl.LightningDataModule):
 
     _DATASETS = ("icc")
@@ -63,24 +63,58 @@ class TurnGPTDM(pl.LightningDataModule):
         return data
 
     def encode(self, examples):
-        t = self.tokenizer(examples["dialog"])
-        return {"input_ids": t["input_ids"], "speaker_ids": t["speaker_ids"]}
+        toks = self.tokenizer(examples["Utterance"])
+        return toks
+        # return {"input_ids": toks["input_ids"], "speaker_ids": toks["speaker_ids"]}
 
     def collate_fn(self, batch):
-        print(batch)
-        sys.exit(-1)
+        ret = self.tokenizer.pad(
+            {"input_ids": [b["input_ids"][: self.max_length] for b in batch]}
+        )
+        ret["speaker_ids"] = self.tokenizer.pad(
+            {"input_ids": [b["speaker_ids"][: self.max_length] for b in batch]}
+        )["input_ids"]
+        for k, v in ret.items():
+            ret[k] = torch.tensor(v)
+        return ret
+
+    def chunk_tokenized_samples(self, tokenized_samples,chunk_size=128):
+        # Concatenate all the utterances
+        keys =  ('input_ids','attention_mask','speaker_ids')
+        concatenated_examples = {k : sum([tokenized_samples[k]],[]) for k in keys}
+        total_length = len(concatenated_examples[keys[0]])
+        total_length = (total_length // chunk_size) * chunk_size
+        chunks = {
+            k : [concatenated_examples[k][i:i+ chunk_size] \
+                for i in range(0, total_length,chunk_size)]  for k in keys
+        }
+        return chunks
+
 
     ######################## OVERRIDDEN METHODS ##############################
 
     # TODO: There is a hashing issue here with map for some reason.
     def prepare_data(self):
         dataset = load_dataset("csv", data_files=_ICC_PATHS)
+        # Clean the speaker labels i.e., remove them from the data.
         dataset = dataset.map(
             self.clean_speaker_labels,
             batched=False,
             remove_columns=["Unnamed: 0","convName","convID"]
         )
+        dataset = dataset.map(
+            self.encode,
+            batched=True,
+            num_proc=self.num_proc,
+            remove_columns=dataset["train"].column_names
+        )
+        # Chunk the data
+        dataset = dataset.map(
+            self.chunk_tokenized_samples,
+            batched=True)
+
         # Tokenize the dataset as well
+        dataset.set_format(type="torch")
         dataset.save_to_disk(_SETUP_SAVE_DIR)
 
     def setup(self, stage = None):
@@ -126,18 +160,3 @@ class TurnGPTDM(pl.LightningDataModule):
     def add_data_specific_args(parent_parser):
         pass
 
-if __name__ == "__main__":
-    TOKENIZER_CHECKPOINT = "gpt2"
-    TRAIN_PATH = ""
-    # Load tokenizer
-    tokenizer = SpokenDialogTokenizer(TOKENIZER_CHECKPOINT)
-
-    dm = TurnGPTDM(
-        tokenizer=tokenizer,
-        dataset="icc",
-    )
-    dm.prepare_data()
-    dm.setup()
-
-    batch = next(iter(dm.train_dataloader()))
-    print(batch)
