@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-03 15:55:48
+# @Last Modified time: 2022-08-03 16:44:54
 
 import pytest
 import sys
@@ -15,6 +15,7 @@ from gpt_dialogue.turngpt.tokenizer import SpokenNormalizer, SpokenDialogueToken
 from gpt_dialogue.turngpt.model import TurnGPT
 from gpt_dialogue.turngpt.dm import TurnGPTDM
 
+from gpt_dialogue.turngpt.inference import surprisal_inference
 
 def test_spoken_normalizer():
     normalizer = SpokenNormalizer()
@@ -160,3 +161,7 @@ def test_finetuning():
     trainer = pl.Trainer()
     print("Starting training...")
     trainer.fit(model, datamodule=dm)
+
+
+def test_inference():
+    surprisal_inference()
