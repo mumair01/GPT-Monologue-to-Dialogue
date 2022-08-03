@@ -2,11 +2,18 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-01 16:32:03
+# @Last Modified time: 2022-08-03 13:21:54
 
 import pytest
+import sys
+
+from transformers import AutoTokenizer, GPT2LMHeadModel
+import transformers
+
+
 from gpt_dialogue.turngpt.tokenizer import SpokenNormalizer, SpokenDialogueTokenizer
 from gpt_dialogue.turngpt.model import TurnGPT
+
 
 def test_spoken_normalizer():
     normalizer = SpokenNormalizer()
@@ -58,5 +65,70 @@ def test_model():
     # Loading model with all default configs
     model = TurnGPT(
         pretrained_model_name_or_path="gpt2",
-        load_pretrained_configs=True
-    )
+        load_pretrained_configs=True,
+        learning_rate= 1e-4)
+    tokenizer = SpokenDialogueTokenizer("gpt2")
+
+    # print(model.tokenize([
+    #     [
+    #         "Hello, how are you doing?",
+    #         "I'm doing great! How about you?",
+    #         "Good - just chillin"
+    #     ],
+    #     [
+    #         "Hello, how are you doing?",
+    #         "Good - just chillin"
+    #     ],
+
+    # ]))
+    # print(model.tokenize([
+    #     "Hello, how are you doing?",
+    #     "I'm doing great! How about you?",
+    #     "Good - just chillin"
+    # ]))
+    # print(tokenizer.pad_token_id, tokenizer.pad_token)
+    # print(model.tokenize("Hello"))
+
+    # Tokenize and run through model.
+    tokens = tokenizer(["Hello, how are you doing?"],return_tensors="pt",)
+    print(tokens['input_ids'].shape)
+    print(tokens)
+    print(model._transformer.config)
+    print(model(**tokens))
+
+
+def test_huggingface_tokenizer():
+    print("Huggingface GPT")
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    toks = tokenizer(
+        ["Hello, how are you doing?"],return_tensors="pt")
+    print("Tokenizer input_ids shape ",toks['input_ids'].shape)
+    print("Tokenizer input ids ", toks['input_ids'])
+    print(tokenizer.decode(toks['input_ids'][0]))
+    model = GPT2LMHeadModel.from_pretrained("gpt2")
+    transformer_outputs = model.__call__(**toks)
+    print("Model results shape "  ,transformer_outputs[0].shape)
+
+    print("TurnGPT")
+    turngpt = TurnGPT(
+        pretrained_model_name_or_path="gpt2",
+        load_pretrained_configs=True,
+        learning_rate= 1e-4)
+    toks = turngpt.tokenize(["Hello, how are you doing?"],return_tensors="pt")
+    print(toks['input_ids'].shape)
+    print(toks['input_ids'])
+    print(turngpt.decode(toks['input_ids'][0]))
+    out =  turngpt(**toks)
+    print(out['logits'].shape)
+
+
+def test_original():
+    model = TurnGPT()
+    model.init_tokenizer()
+    model.initialize_special_embeddings()
+    toks = model.tokenize_strings(["Hello, how are you doing?"])
+    print(toks)
+    print(toks['input_ids'].shape)
+    print(model.tokenizer.decode(toks['input_ids'][0]))
+    out = model(**toks)
+

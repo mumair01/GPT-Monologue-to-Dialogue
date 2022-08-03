@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-01 16:23:44
+# @Last Modified time: 2022-08-02 18:23:08
 
 ############################
 # This module is a re-implementation of the TurnGPT tokenizer as a comparison to the
@@ -111,7 +111,7 @@ class SpokenDialogueTokenizer:
         # -- Load tokenizer
         # NOTE: The AutoTokenizer itself contains its own normalizer, pre-tokenizer etc.
         self._tokenizer : PreTrainedTokenizer = AutoTokenizer.from_pretrained(
-            pretrained_model_name_or_path)
+            pretrained_model_name_or_path, max_model_input_sizes=None)
         # Since we will construct the model - we set the maximum number of
         # input tokens the model can handle manually to a large integer
         self._tokenizer.model_max_length = self._LARGE_MODEL_MAX_LENGTH
@@ -155,6 +155,14 @@ class SpokenDialogueTokenizer:
     def sp2_token_id(self):
         return self._tokenizer.convert_tokens_to_ids(self.sp2_token)
 
+    @property
+    def pad_token(self):
+        return self._tokenizer.pad_token
+
+    @property
+    def pad_token_id(self):
+        return self._tokenizer.pad_token_id
+
     def pad(self, *args, **kwargs):
         return self._tokenizer.pad(*args, **kwargs)
 
@@ -172,6 +180,13 @@ class SpokenDialogueTokenizer:
 
     def convert_tokens_to_string(self, *args, **kwargs):
         return self._tokenizer.convert_tokens_to_string(*args, **kwargs).strip()
+
+    def convert_id_to_string(self, id):
+        """Convert an ID to a string"""
+        if isinstance(id, torch.Tensor):
+            id = id.item()
+        return self.convert_tokens_to_string(
+            self.convert_ids_to_tokens(id).strip())
 
     def normalize(self, s : str):
         return self.normalizer.normalize_str(s)
@@ -210,8 +225,23 @@ class SpokenDialogueTokenizer:
                     return_token_type_ids=return_token_type_ids
                 )
                 for k,v in output.items():
-                        ret[k].append(v)
-            return dict(ret)
+                    ret[k].append(torch.tensor(v))
+            # NOTE: Moving padding from model.tokenize_strings to here
+            ret = dict(ret)
+            if isinstance(ret['input_ids'], list):
+                temp_inp = []
+                temp_sp = []
+                for inp, sp in zip(ret['input_ids'], ret['speaker_ids']):
+                    temp_inp.append(torch.tensor(inp))
+                    temp_sp.append(torch.tensor(sp))
+                temp = self._tokenizer.pad({"input_ids" : temp_inp})
+                ret['input_ids'] = temp['input_ids']
+                ret['attention_mask'] = temp['attention_mask']
+                # NOTE: IMPORTANT: The speaker ID PAD value is the same as the
+                # input_ids PAD value.
+                ret['speaker_ids'] = self._tokenizer.pad({
+                    "input_ids" : temp_sp})['input_ids']
+            return ret
         elif self._is_list_of_strings(text):
             # List of strings gets combined into single larger string.
             dialog_string = " " if add_prefix_space else ""
