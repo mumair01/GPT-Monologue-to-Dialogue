@@ -1,0 +1,5 @@
+
+name : ICC
+train_path : data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/train_5_conversations.csv
+validation_path : data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/validation_37_conversations.csv
+test_path : null
