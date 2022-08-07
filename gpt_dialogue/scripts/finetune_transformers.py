@@ -2,13 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-07 15:57:59
+# @Last Modified time: 2022-08-07 16:57:38
 
 import os
 from typing import Union, List, get_origin
 from datetime import datetime
 from functools import partial
-from hydra.utils import get_original_cwd, to_absolute_path
 
 
 from omegaconf import DictConfig, OmegaConf

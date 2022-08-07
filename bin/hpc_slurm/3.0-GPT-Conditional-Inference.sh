@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 7_14_22_11_25_gpt_surprisal_inference_gpt2_large_ICC_experiment_28_train_14_test_07-12-2022_16-55-36_customDataset_speaker_identity_stims
+#SBATCH -J gpt_conditional_inference
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -15,15 +15,17 @@
 
 
 # Define paths
-USER_PATH=${HOME}
+USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
 SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/inference_transformers.py
 
 # Requires the finetuning dataset and env to be specified.
 HYDRA_ENV="hpc"
-DATASET=''
-HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET}"
+DATASET="inference/speaker_identity_stims"
+HYDRA_OVERWRITES=""
+HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
+
 
 #load anaconda module
 module load anaconda/2021.11
@@ -37,8 +39,8 @@ module load cuda/10.2 cudnn/7.1
 nvidia-smi
 
 #activate conda environment
-source activate $SLURM_ENV_PATH
+source activate $PYTHON_ENV_PATH
 
-python $SCRIPT_PATH --config $CONFIG_PATH
+python $SCRIPT_PATH ${HYDRA_ARGS}
 
 conda deactivate

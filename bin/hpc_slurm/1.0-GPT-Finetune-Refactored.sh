@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 7_12_22_3_23_gpt_finetune #job name
+#SBATCH -J 7_8_22_1_15_gpt_finetune_textDataset #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -14,15 +14,16 @@
 #SBATCH --mail-user=muhammad.umair@tufts.edu
 
 # Define paths
-USER_PATH=${HOME}
+USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
 SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/finetune_transformers.py
 
 # Requires the finetuning dataset and env to be specified.
 HYDRA_ENV="hpc"
-DATASET=''
-HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET}"
+DATASET="finetune/icc_5_train_37_test"
+HYDRA_OVERWRITES=""
+HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 
 #load anaconda module
 module load anaconda/2021.11
@@ -36,7 +37,7 @@ module load cuda/10.2 cudnn/7.1
 nvidia-smi
 
 #activate conda environment
-source activate $SLURM_ENV_PATH
+source activate $PYTHON_ENV_PATH
 
 python $SCRIPT_PATH ${HYDRA_ARGS}
 
