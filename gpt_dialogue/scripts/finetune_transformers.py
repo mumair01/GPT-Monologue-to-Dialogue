@@ -2,12 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-04 14:35:10
+# @Last Modified time: 2022-08-07 15:57:59
 
 import os
-from typing import Union, List
+from typing import Union, List, get_origin
 from datetime import datetime
 from functools import partial
+from hydra.utils import get_original_cwd, to_absolute_path
 
 
 from omegaconf import DictConfig, OmegaConf
@@ -47,11 +48,10 @@ logger.setLevel(logging.DEBUG)
 
 # -------------------- ENV. VARS. ------------------------
 
-TOKENIZER_PAD_TOKEN = "<PAD>"
-TOKENIZER_EOS_TOKEN = "<|endoftext|>"
-
 # --  Set environment global vars.
 
+HYDRA_CONFIG_RELATIVE_DIR = "../../conf"
+HYDRA_CONFIG_NAME = "finetune"
 CUDA_ENV = torch.cuda.is_available()
 TORCH_DEVICE = torch.device('cuda') if CUDA_ENV else torch.device('cpu')
 
@@ -78,6 +78,8 @@ def transformers_finetune(
         model_checkpoint : str,
         tokenizer_checkpoint : str,
         tokenizer_additional_special_tokens : List[str],
+        tokenizer_pad_token,
+        tokenizer_eos_token,
         save_dir : str,
         train_path : str,
         val_path : str,
@@ -91,8 +93,8 @@ def transformers_finetune(
     logger.info("Loading tokenizer: {}".format(tokenizer_checkpoint))
     tokenizer = AutoTokenizer.from_pretrained(
         tokenizer_checkpoint,
-        pad_token=TOKENIZER_PAD_TOKEN,
-        eos_token=TOKENIZER_EOS_TOKEN,
+        pad_token=tokenizer_pad_token,
+        eos_token=tokenizer_eos_token,
         additional_special_tokens=tokenizer_additional_special_tokens)
      # Save the tokenizer after adding new tokens in a separate dir.
     tokenizer_save_dir = os.path.join(save_dir,"tokenizer")
@@ -162,24 +164,31 @@ def transformers_finetune(
     logger.info("Completed!")
 
 
-@hydra.main(version_base=None, config_path="../../conf", config_name="finetune_transformers")
+@hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
 def main(cfg : DictConfig):
-    print(OmegaConf.to_yaml(cfg))
+    """
+    Runs script as a hydra app.
+    NOTE: This requires a +env and +dataset argument with the run command.
+    Ex: python finetune_transformers.py +env=local +dataset=finetune/icc
+    """
     # Parse the dataset
     transformers_finetune(
-        model_checkpoint=cfg.model.model_checkpoint,
-        tokenizer_checkpoint=cfg.model.tokenizer_checkpoint,
-        tokenizer_additional_special_tokens=list(cfg.model.tokenizer_additional_special_tokens),
-        save_dir=cfg.paths.save_dir,
-        train_path=cfg.dataset.train_path,
-        val_path=cfg.dataset.validation_path,
-        data_block_size=cfg.training.data_block_size,
-        num_train_epochs=cfg.training.num_train_epochs,
-        per_device_train_batch_size=cfg.training.per_device_train_batch_size,
-        per_device_eval_batch_size=cfg.training.per_device_eval_batch_size,
-        warmup_steps=cfg.training.warmup_steps
+        model_checkpoint=cfg.finetune.model.model_checkpoint,
+        tokenizer_checkpoint=cfg.finetune.model.tokenizer_checkpoint,
+        tokenizer_additional_special_tokens=list(cfg.finetune.model.tokenizer_additional_special_tokens),
+        tokenizer_pad_token=cfg.finetune.model.tokenizer_pad_token,
+        tokenizer_eos_token=cfg.finetune.model.tokenizer_eos_token,
+        save_dir=os.getcwd(),
+        train_path=os.path.join(cfg.env.paths.root, cfg.dataset.train_path),
+        val_path=os.path.join(cfg.env.paths.root,cfg.dataset.validation_path),
+        data_block_size=cfg.finetune.training.data_block_size,
+        num_train_epochs=cfg.finetune.training.num_train_epochs,
+        per_device_train_batch_size=cfg.finetune.training.per_device_train_batch_size,
+        per_device_eval_batch_size=cfg.finetune.training.per_device_eval_batch_size,
+        warmup_steps=cfg.finetune.training.warmup_steps
     )
 
 if __name__ == "__main__":
+    # Run the script as a hydra app.
     main()
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 7_12_22_3_25_gpt_finetune_customDataset_28_train_14_test #job name
+#SBATCH -J 7_12_22_3_23_gpt_finetune #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -14,11 +14,15 @@
 #SBATCH --mail-user=muhammad.umair@tufts.edu
 
 # Define paths
-USER_PATH=/cluster/tufts/deruiterlab/mumair01/
-SLURM_ENV_PATH=${USER_PATH}condaenv/gpt_proj
+USER_PATH=${HOME}
+PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}src/finetuning/transformers_gpt_finetune.py
-CONFIG_PATH=${PROJECT_PATH}configs/finetuning/2.0-GPT-Finetune-CustomDataset-HPC.yaml
+SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/finetune_transformers.py
+
+# Requires the finetuning dataset and env to be specified.
+HYDRA_ENV="hpc"
+DATASET=''
+HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET}"
 
 #load anaconda module
 module load anaconda/2021.11
@@ -34,6 +38,6 @@ nvidia-smi
 #activate conda environment
 source activate $SLURM_ENV_PATH
 
-python $SCRIPT_PATH --config $CONFIG_PATH
+python $SCRIPT_PATH ${HYDRA_ARGS}
 
 conda deactivate

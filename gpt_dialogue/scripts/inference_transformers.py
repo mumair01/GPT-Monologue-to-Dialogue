@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:31:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-05 11:52:44
+# @Last Modified time: 2022-08-07 16:12:43
 
 
 import sys
@@ -38,11 +38,10 @@ logger.setLevel(logging.DEBUG)
 
 # -----------------------=--- GLOBALS --------------------------------------
 
-TOKENIZER_PAD_TOKEN = "<PAD>"
-TOKENIZER_EOS_TOKEN = "<|endoftext|>"
-
 # --  Set environment global vars.
 
+HYDRA_CONFIG_RELATIVE_PATH = "../../conf"
+HYDRA_CONFIG_NAME = "inference"
 CUDA_ENV = torch.cuda.is_available()
 TORCH_DEVICE = torch.device('cuda') if CUDA_ENV else torch.device('cpu')
 
@@ -144,6 +143,8 @@ def surprisal_inference(
         model_checkpoint : str,
         tokenizer_checkpoint : str,
         tokenizer_additional_special_tokens : List[str],
+        tokenizer_pad_token : str,
+        tokenizer_eos_token : str,
         dataset_path : str,
         save_dir : str,
         start_conversation_no : int,
@@ -161,8 +162,8 @@ def surprisal_inference(
     logger.info("Loading tokenizer checkpoint: {}".format(tokenizer_checkpoint))
     tokenizer = AutoTokenizer.from_pretrained(
         tokenizer_checkpoint,
-        pad_token=TOKENIZER_PAD_TOKEN,
-        eos_token=TOKENIZER_EOS_TOKEN,
+        pad_token=tokenizer_pad_token,
+        eos_token=tokenizer_eos_token,
         additional_special_tokens=tokenizer_additional_special_tokens)
     # Save the tokenizer after adding new tokens in a separate dir.
     tokenizer_save_dir = os.path.join(save_dir,"tokenizer")
@@ -193,9 +194,10 @@ def surprisal_inference(
             conv_no=i)
         # Load the data as a single dataframe and save (important if the
         # program crashes).
-        pd.DataFrame(results,columns=df_columns).to_csv(
-            os.path.join(save_dir,
-                "{}_conditional_probs.csv".format(results[0][0])))
+        save_path = os.path.join(save_dir,
+                "{}_conditional_probs.csv".format(results[0][0]))
+        pd.DataFrame(results,columns=df_columns).to_csv(save_path)
+        logger.info(f"Saving results: {save_path}")
         data.extend(results)
     # Save the results as a dataframe
     results_df = pd.DataFrame(data, columns=df_columns)
@@ -206,33 +208,27 @@ def surprisal_inference(
 
 
 
-@hydra.main(version_base=None, config_path="../../conf", config_name="inference_transformers")
+@hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_PATH, config_name=HYDRA_CONFIG_NAME)
 def main(cfg : DictConfig):
-    print(OmegaConf.to_yaml(cfg))
-     # -- Create loggers for this script
-    formatter = logging.Formatter(
-        "%(asctime)s | %(name)s | %(levelname)s | %(message)s")
-    fh = logging.FileHandler(os.path.join(cfg.paths.save_dir,"inference.log"))
-    fh.setLevel(logging.DEBUG)
-    fh.setFormatter(formatter)
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.DEBUG)
-    ch.setFormatter(formatter)
-    logger.addHandler(fh)
-    logger.addHandler(ch)
-    # Parse the dataset
+    """
+    Runs script as a hydra app.
+    NOTE: This requires a +env and +dataset argument with the run command.
+    Ex: python inference_transformers.py +env=local +dataset=inference/icc
+    """
+    # Parse the configs and run.
     surprisal_inference(
-        model_checkpoint=cfg.model.model_checkpoint,
-        tokenizer_checkpoint=cfg.model.tokenizer_checkpoint,
-        tokenizer_additional_special_tokens=cfg.model.tokenizer_additional_special_tokens,
-        dataset_path=cfg.dataset_path,
-        save_dir = cfg.paths.save_dir,
+        model_checkpoint=cfg.inference.model.model_checkpoint,
+        tokenizer_checkpoint=cfg.inference.model.tokenizer_checkpoint,
+        tokenizer_additional_special_tokens=list(cfg.inference.model.tokenizer_additional_special_tokens),
+        tokenizer_pad_token=cfg.inference.model.tokenizer_pad_token,
+        tokenizer_eos_token=cfg.inference.model.tokenizer_eos_token,
+        dataset_path=os.path.join(cfg.env.paths.root,cfg.dataset.test_path),
+        save_dir=os.getcwd(),
         start_conversation_no=cfg.inference.start_conversation_no,
         end_conversation_no=cfg.inference.end_conversation_no,
         n_probs=cfg.inference.n_probs,
         context_buffer_size=cfg.inference.context_buffer_size
     )
-
 
 if __name__ == "__main__":
     main()

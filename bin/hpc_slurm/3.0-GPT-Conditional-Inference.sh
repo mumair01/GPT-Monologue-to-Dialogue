@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 7_12_22_3_23_gpt_finetune_textDataset_28_train_14_test #job name
+#SBATCH -J 7_14_22_11_25_gpt_surprisal_inference_gpt2_large_ICC_experiment_28_train_14_test_07-12-2022_16-55-36_customDataset_speaker_identity_stims
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -8,17 +8,22 @@
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
 #SBATCH --mem=120g #requesting 60GB of RAM total
-#SBATCH --output=./finetuning_reports/%x.%j.%N.out #saving standard output to file
-#SBATCH --error=./finetuning_reports/%x.%j.%N.err # saving standard error to file
+#SBATCH --output=./inference_reports/%x.%j.%N.out #saving standard output to file
+#SBATCH --error=./inference_reports/%x.%j.%N.err # saving standard error to file
 #SBATCH --mail-type=ALL # email optitions
 #SBATCH --mail-user=muhammad.umair@tufts.edu
 
+
 # Define paths
-USER_PATH=/cluster/tufts/deruiterlab/mumair01/
-SLURM_ENV_PATH=${USER_PATH}condaenv/gpt_proj
+USER_PATH=${HOME}
+PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}src/finetuning/transformers_gpt_finetune.py
-CONFIG_PATH=${PROJECT_PATH}configs/finetuning/1.0-GPT-Finetune-TextDataset-HPC.yaml
+SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/inference_transformers.py
+
+# Requires the finetuning dataset and env to be specified.
+HYDRA_ENV="hpc"
+DATASET=''
+HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET}"
 
 #load anaconda module
 module load anaconda/2021.11
