@@ -2,15 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-08 11:58:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 14:43:14
+# @Last Modified time: 2022-08-08 15:03:45
 
 
 #############################################################
 '''
-This is a finetuning script for TurnGPT. Additionally, it defines the data
-module that is required for the training - for our specific datasets/
+This is a finetuning script for TurnGPT.
 
-TODO: Potentially separate the data module into a separate script.
 '''
 #############################################################
 from omegaconf import DictConfig, OmegaConf

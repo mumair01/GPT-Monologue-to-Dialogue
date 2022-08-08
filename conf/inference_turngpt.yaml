@@ -1,12 +1,10 @@
-# Configure the finetune experiment
 hydra:
   run:
-    dir: ${env.paths.root}/data/results/finetune/turngpt_${finetune.experiment_name}_${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}/
+    dir: ${env.paths.root}/data/results/inference/turngpt_${inference.experiment_name}_${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}/
   job:
     chdir: True
 
-
-finetune:
+inference:
   experiment_name : gpt2
   model:
     pretrained_model_name_or_path : gpt2
@@ -19,12 +17,10 @@ finetune:
     tokenizer_additional_special_tokens :
       - <START> # Conversation start token
       - <END> # Conversation end token
-  dm:
-    batch_size : 16
-    max_length : 1024
-    num_workers : 8
-    pin_memory : False
+  dataset:
+    start_conv_no : 0
+    end_conv_no : -1
 
-  training:
-    min_epochs : 30
-
+  inference:
+    N : -1
+    context_buffer_size : 512
