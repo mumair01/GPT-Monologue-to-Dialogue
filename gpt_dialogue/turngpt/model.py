@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-03 16:02:54
+# @Last Modified time: 2022-08-08 10:29:28
 
 
 ############################
@@ -34,8 +34,6 @@ import torch
 import torch.nn as nn
 from torch.nn import CrossEntropyLoss, BCEWithLogitsLoss
 
-import einops
-
 from gpt_dialogue.turngpt.tokenizer import SpokenDialogueTokenizer
 
 
@@ -54,17 +52,14 @@ Below are some general notes based on my understanding of the original TurnGPT:
         do that? My use case is simply to get the P(token | context) on a model
         that is sensitive to the speaker --> So this task is different from
         TurnGPT.
-
-
 """
 
 
 # TODO: Investigate how this labeler is working.
 class ProjectionLabeler(nn.Module):
     """
-    This module generates labels for the trp projection task based on the input_ids.s
+    This module generates labels for the trp projection task based on the input_ids.
     """
-
 
     def __init__(self, projection_steps, token_id):
         super().__init__()
@@ -177,6 +172,8 @@ class TurnGPT(pl.LightningModule):
         # Initialize the TRP Projection head
         # NOTE: This is a unique contribution of TurnGPT
         self._initialize_trp_projection_head()
+        # save all the hyper-params passed to the model - accessible using model.hparams.
+        self.save_hyperparameters()
 
     ###################### LIGHTNING MODULE METHODS ##########################
 
@@ -277,7 +274,10 @@ class TurnGPT(pl.LightningModule):
 
     def on_load_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
         """Restore any additional pickleable object saved during a checkpoint"""
-        self._tokenizer = checkpoint['tokenizer']
+        if "tokenizer" in checkpoint:
+            self._tokenizer = checkpoint['tokenizer']
+            self._transformer.resize_token_embeddings(
+                new_num_tokens=len(self.tokenizer))
 
     def training_step(self, batch, batch_idx):
         """
@@ -350,16 +350,14 @@ class TurnGPT(pl.LightningModule):
     # --- Tokenizer Utility methods
     # These methods are built on top of the tokenizer
 
-    # TODO: Eventually, this should be in the tokenizer itself.
-    def tokenize(self, text,*args, **kwargs):
+    def tokenize(self, text ,*args, **kwargs):
         """
         Tokenize the given text 'after' applying padding.
-        Doing this here because the tokenzier itself does not apply padding.
+        Moves the tokens to the available device.
 
         Args:
             text (str or list of strings or lists of lists)
         """
-        # TODO: Debug issue with this.
         tokens = self._tokenizer(text, *args, **kwargs)
         # NOTE: Device is a property of the lightning module.
         for k,v in tokens.items():
@@ -440,7 +438,6 @@ class TurnGPT(pl.LightningModule):
     def _extract_mc_labels(self, input_ids, mask, value=-100):
         # NOTE: This requires the projection labeler - which is a separate model
         # that can generate the TRP projection labels on the fly.
-        # TODO: Get some more information regarding this.
         labeler = ProjectionLabeler(
             projection_steps=self.trp_projection_steps,
             token_id=self.tokenizer.eos_token_id,

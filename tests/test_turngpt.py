@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-03 16:44:54
+# @Last Modified time: 2022-08-08 11:53:14
 
 import pytest
 import sys
@@ -10,6 +10,7 @@ import sys
 from transformers import AutoTokenizer, GPT2LMHeadModel
 import transformers
 import pytorch_lightning as pl
+import numpy as np
 
 from gpt_dialogue.turngpt.tokenizer import SpokenNormalizer, SpokenDialogueTokenizer
 from gpt_dialogue.turngpt.model import TurnGPT
@@ -61,6 +62,26 @@ def test_spoken_tokenizer():
     # The encode method converts the text into individual tokens and then returns
     # the ids.
     print(tokenizer.encode("hello"))
+
+def test_spoken_dialogue_tokenizer():
+    tokenizer = SpokenDialogueTokenizer("gpt2")
+    msg = [
+        "Hello, how are you doing?",
+        "I'm doing great! How about you?",
+        "Good - just chillin",
+        "That's good",
+        "Just chillin",
+        "Good"
+    ]
+    toks = tokenizer(msg)
+    print(toks)
+    sp1_idx = np.where(np.asarray(toks['speaker_ids']) == 50259)
+    print(sp1_idx)
+    sp1_input_ids = np.take(toks['input_ids'], sp1_idx)
+    print(sp1_input_ids)
+    print(tokenizer.decode(*sp1_input_ids))
+    print(tokenizer.sp1_token_id)
+    print(tokenizer.sp2_token_id)
 
 
 def test_model():

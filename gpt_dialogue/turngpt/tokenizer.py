@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-02 18:23:08
+# @Last Modified time: 2022-08-08 11:55:24
 
 ############################
 # This module is a re-implementation of the TurnGPT tokenizer as a comparison to the
@@ -39,13 +39,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-TOKENIZER_PAD_TOKEN = "<|endoftext|>"
-TOKENIZER_EOS_TOKEN = "<ts>"
-BASE_SPEAKER_TOKEN = "<SP{}>"
-CONV_START_TOKEN = "<START>"
-CONV_END_TOKEN = "<END>"
-
-
 # TODO: Potentially change the PAD token. Originally, the <ts> token is used
 # as the end of text to indicate 'turn-switch', and each word is treated as
 # a separate sequence (since there are no turns initially).
@@ -78,8 +71,7 @@ class SpokenNormalizer:
         return s
 
 
-
-class SpokenDialogueTokenizer:
+class SpokenTokenizer:
     """
     Tokenizer that includes speaker identity embeddings. These embeddings are
     in the form of a speaker identity token for each input id.
@@ -95,6 +87,8 @@ class SpokenDialogueTokenizer:
     NOTE: We do not 'build' a new tokenizer object because we do not want to train it
     - instead, we are simply wrapping a pre-trained GPT-2 Tokenizer that
     has special embeddings.
+
+    This tokenizer is a base class for tokenizer that can specify the number of speakers.
     """
 
     _TESTED_TOKENIZERS = ("gpt2")
@@ -102,12 +96,25 @@ class SpokenDialogueTokenizer:
 
     def __init__(self,
             pretrained_model_name_or_path : str,
+            num_speakers : int,
+            base_speaker_token : str,
+            tokenizer_eos_token : str,
+            tokenizer_pad_token : str,
+            tokenizer_additional_special_tokens : List[str] = [],
         ):
         if not pretrained_model_name_or_path in self._TESTED_TOKENIZERS:
             print(f"WARNING: Using untested tokenizer: {pretrained_model_name_or_path}")
+        assert num_speakers > 0, f"ERROR: Invalid number of speakers: {num_speakers}"
 
         # Vars.
-        self.normalizer = SpokenNormalizer()
+        self.pretrained_model_name_or_path = pretrained_model_name_or_path
+        self.tokenizer_eos_token = tokenizer_eos_token
+        self.tokenizer_pad_token = tokenizer_pad_token
+        self.tokenizer_additional_special_tokens = tokenizer_additional_special_tokens
+        self.base_speaker_token = base_speaker_token
+        self.num_speakers = num_speakers
+
+        self._normalizer = SpokenNormalizer()
         # -- Load tokenizer
         # NOTE: The AutoTokenizer itself contains its own normalizer, pre-tokenizer etc.
         self._tokenizer : PreTrainedTokenizer = AutoTokenizer.from_pretrained(
@@ -115,21 +122,23 @@ class SpokenDialogueTokenizer:
         # Since we will construct the model - we set the maximum number of
         # input tokens the model can handle manually to a large integer
         self._tokenizer.model_max_length = self._LARGE_MODEL_MAX_LENGTH
-        # Add speaker tokens
-        self.sp1_token = BASE_SPEAKER_TOKEN.format("1")
-        self.sp2_token = BASE_SPEAKER_TOKEN.format("2")
-        # Adding new tokens to base tokenizer
+
+        # Create speaker tokens based on the number of speakers.
+        self.speaker_tokens_map = {
+            i + 1 : self.base_speaker_token.format(i + 1) for i in range(num_speakers)
+        }
         num_tokens_added = self._tokenizer.add_special_tokens({
-            "eos_token" : TOKENIZER_EOS_TOKEN,
-            "pad_token" : TOKENIZER_PAD_TOKEN,
-            "additional_special_tokens" : [
-                self.sp1_token, self.sp2_token,CONV_START_TOKEN, CONV_END_TOKEN]
-            })
+            "eos_token" : tokenizer_eos_token,
+            "pad_token" : tokenizer_pad_token,
+            "additional_special_tokens" : self.tokenizer_additional_special_tokens + \
+                list(self.speaker_tokens_map.values())
+        })
         msg = f"Special tokens added to tokenizer: {num_tokens_added}\n"
         msg = "Additional special tokens map:\n"
         for k,v in self._tokenizer.special_tokens_map.items():
             msg += f"\t{k}: {v}\n"
         print(msg)
+
 
     @property
     def unk_token(self):
@@ -146,14 +155,6 @@ class SpokenDialogueTokenizer:
     @property
     def eos_token_id(self):
         return self._tokenizer.eos_token_id
-
-    @property
-    def sp1_token_id(self):
-        return self._tokenizer.convert_tokens_to_ids(self.sp1_token)
-
-    @property
-    def sp2_token_id(self):
-        return self._tokenizer.convert_tokens_to_ids(self.sp2_token)
 
     @property
     def pad_token(self):
@@ -189,8 +190,7 @@ class SpokenDialogueTokenizer:
             self.convert_ids_to_tokens(id).strip())
 
     def normalize(self, s : str):
-        return self.normalizer.normalize_str(s)
-        return s
+        return self._normalizer.normalize_str(s)
 
     def __repr__(self):
         return self._tokenizer.__repr__()
@@ -283,21 +283,24 @@ class SpokenDialogueTokenizer:
             is_input_batch = False
             # Convert to batch dimension.
             input_ids = torch.tensor(input_ids).unsqueeze(0)
-        # Initialize all ids to sp1
-        speaker_ids = torch.ones_like(input_ids) * self.sp1_token_id
+
+        # Initialize all ids to the first speaker in mapping
+        speaker_ids = torch.ones_like(input_ids) * self._tokenizer.convert_tokens_to_ids(self.speaker_tokens_map[1])
         batch, eos_idx = torch.where(input_ids == self.eos_token_id)
+        # TODO: Eventually test this more but I think this generalizes to any number f speakers.
         for b in batch.unique():
             tmp_eos = eos_idx[batch == b]
-            if len(tmp_eos) == 1:
-                speaker_ids[b,eos_idx +1 : ] = self.sp2_token_id
-            else:
-                start = tmp_eos[0]
-                for i, eos in enumerate(tmp_eos[1:]):
-                    if i % 2 == 0:
-                        speaker_ids[b,start+1:eos+1] = self.sp2_token_id
-                    start = eos
-                if i % 2 == 1:
-                    speaker_ids[b,start+1:] = self.sp2_token_id
+            start = 0
+            for i, eos in enumerate(tmp_eos):
+                speaker_map_key = (i  % self.num_speakers) + 1
+                speaker_ids[b,start+1:eos+1] = \
+                        self._tokenizer.convert_tokens_to_ids(self.speaker_tokens_map[speaker_map_key])
+                start = eos
+            # Add speaker id to last sentence
+            speaker_map_key = ((i +1)  % self.num_speakers) + 1
+            speaker_ids[b,tmp_eos[-1] + 1 :] = \
+                self._tokenizer.convert_tokens_to_ids(self.speaker_tokens_map[speaker_map_key])
+
         if not is_input_batch:
             speaker_ids = speaker_ids.squeeze().tolist()
             if isinstance(speaker_ids,int):
@@ -341,3 +344,42 @@ class SpokenDialogueTokenizer:
                 return True
         return False
 
+
+class SpokenDialogueTokenizer(SpokenTokenizer):
+    """SpokenTokenizer for dialogue i.e., with two speakers"""
+
+    _NUM_SPEAKERS = 2
+
+    def __init__(
+            self,
+            pretrained_model_name_or_path : str = "gpt2",
+            base_speaker_token : str = "<SP{}>",
+            tokenizer_eos_token : str = "<ts>",
+            tokenizer_pad_token : str = "<|endoftext|>",
+            tokenizer_additional_special_tokens : List[str] = []
+    ):
+        super().__init__(
+            pretrained_model_name_or_path=pretrained_model_name_or_path,
+            num_speakers=self._NUM_SPEAKERS,
+            base_speaker_token=base_speaker_token,
+            tokenizer_eos_token=tokenizer_eos_token,
+            tokenizer_pad_token=tokenizer_pad_token,
+            tokenizer_additional_special_tokens=tokenizer_additional_special_tokens
+        )
+        print(f"NOTE: This tokenizer assumes that there are {self._NUM_SPEAKERS} speakers")
+
+    @property
+    def sp1_token(self):
+        return self.speaker_tokens_map[1]
+
+    @property
+    def sp2_token(self):
+        return self.speaker_tokens_map[2]
+
+    @property
+    def sp1_token_id(self):
+        return self._tokenizer.convert_tokens_to_ids(self.sp1_token)
+
+    @property
+    def sp2_token_id(self):
+        return self._tokenizer.convert_tokens_to_ids(self.sp2_token)

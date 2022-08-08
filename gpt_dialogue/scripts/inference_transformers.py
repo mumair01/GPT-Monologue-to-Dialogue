@@ -2,21 +2,21 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:31:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-07-09 18:03:36
+# @Last Modified time: 2022-08-07 16:12:43
 
 
-from lib2to3.pgen2 import token
 import sys
 import os
 import argparse
 import random
-import shutil
-import pprint
 from dataclasses import dataclass
 from datetime import datetime
 import yaml
 from tqdm import tqdm
 from typing import Union, List
+
+from omegaconf import DictConfig, OmegaConf
+import hydra
 
 import pandas as pd
 import numpy as np
@@ -38,99 +38,13 @@ logger.setLevel(logging.DEBUG)
 
 # -----------------------=--- GLOBALS --------------------------------------
 
-TOKENIZER_PAD_TOKEN = "<PAD>"
-TOKENIZER_EOS_TOKEN = "<|endoftext|>"
-
 # --  Set environment global vars.
 
+HYDRA_CONFIG_RELATIVE_PATH = "../../conf"
+HYDRA_CONFIG_NAME = "inference"
 CUDA_ENV = torch.cuda.is_available()
 TORCH_DEVICE = torch.device('cuda') if CUDA_ENV else torch.device('cpu')
 
-# --------------------------- CONFIGS --------------------------------------
-
-@dataclass
-class Configs:
-    @dataclass
-    class Env:
-        name : str
-        root : str
-        seed : Union[int, None]
-    @dataclass
-    class Dataset:
-        path : str
-        start_conversation_no : int
-        end_conversation_no : int
-    @dataclass
-    class Results:
-        save_dir : str
-    @dataclass
-    class Inference:
-        model_checkpoint : str
-        tokenizer_checkpoint : str
-        tokenizer_additional_special_tokens : List[str]
-        n_probs : int
-        context_buffer_size : int
-
-    env : Env
-    dataset : Dataset
-    results : Results
-    inference : Inference
-
-
-def parse_configs(configs_data):
-    pprint.pprint(configs_data)
-    # Obtaining timestamp for output.
-    now = datetime.now()
-    ts = now.strftime('%m-%d-%Y_%H-%M-%S')
-    # Creating configs
-    configs = Configs(
-        Configs.Env(
-            name=configs_data["env"]["name"],
-            root=configs_data["env"]["root"],
-            seed=configs_data["env"]["seed"]
-        ),
-        Configs.Dataset(
-            path=os.path.join(configs_data["env"]["root"],configs_data["dataset"]["path"]),
-            start_conversation_no=configs_data["dataset"]["start_conversation_no"],
-            end_conversation_no=configs_data["dataset"]["end_conversation_no"]
-        ),
-        Configs.Results(
-            save_dir=os.path.join(configs_data["env"]["root"],
-                configs_data["results"]["save_dir"],"{}_{}".format(configs_data["env"]["name"],ts))
-        ),
-        Configs.Inference(
-            model_checkpoint=configs_data["inference"]["model_checkpoint"],
-            tokenizer_checkpoint=configs_data["inference"]["tokenizer_checkpoint"],
-            tokenizer_additional_special_tokens=configs_data["inference"]["tokenizer_additional_special_tokens"],
-            n_probs=configs_data["inference"]["n_probs"],
-            context_buffer_size=configs_data["inference"]["context_buffer_size"]
-        )
-    )
-    return configs
-
-def save_configs(configs_data, file_path):
-    with open(file_path,'w') as f:
-        yaml.dump(configs_data,f)
-
-def config_env(config_path):
-    # Parse configs
-    logger.info("Loading configurations from path: {}".format(config_path))
-    with open(config_path,"r") as f:
-        configs_data = yaml.safe_load(f)
-        configs = parse_configs(configs_data)
-    # Set seed if required
-    if configs.env.seed != None:
-        np.random.seed(configs.env.seed)
-        torch.manual_seed(configs.env.seed)
-    # Check input files exist
-    assert os.path.isfile(configs.dataset.path)
-    # Create output directories
-    os.makedirs(configs.results.save_dir)
-    # Save the configs data to output dir.
-    save_configs(configs_data, "{}/configs.yaml".format(configs.results.save_dir))
-    return configs
-
-# ------------------------- DATASET HELPERS  -----------------------------
 
 # NOTE: Assuming that the dataset is in the correct format.
 def load_inference_dataset(csv_path, start_conv_no, end_conv_no):
@@ -225,29 +139,40 @@ def generate_conditional_probs(model, tokenizer, conversation_df,
 
 # ------------------------ INFERENCE MAIN  --------------------------------
 
-def surprisal_inference(configs : Configs):
+def surprisal_inference(
+        model_checkpoint : str,
+        tokenizer_checkpoint : str,
+        tokenizer_additional_special_tokens : List[str],
+        tokenizer_pad_token : str,
+        tokenizer_eos_token : str,
+        dataset_path : str,
+        save_dir : str,
+        start_conversation_no : int,
+        end_conversation_no : int,
+        n_probs : int,
+        context_buffer_size : int,
+    ):
     # Load the inference dataset
-    logger.info("Loading inference dataset: {}".format(configs.dataset.path))
+    logger.info("Loading inference dataset: {}".format(dataset_path))
     conversation_dfs = load_inference_dataset(
-        csv_path=configs.dataset.path,
-        start_conv_no=configs.dataset.start_conversation_no,
-        end_conv_no=configs.dataset.end_conversation_no)
+        csv_path=dataset_path,
+        start_conv_no=start_conversation_no,
+        end_conv_no=end_conversation_no)
     # Load the tokenizer
-    logger.info("Loading tokenizer checkpoint: {}".format(configs.inference.tokenizer_checkpoint))
+    logger.info("Loading tokenizer checkpoint: {}".format(tokenizer_checkpoint))
     tokenizer = AutoTokenizer.from_pretrained(
-        configs.inference.tokenizer_checkpoint,
-        pad_token=TOKENIZER_PAD_TOKEN,
-        eos_token=TOKENIZER_EOS_TOKEN,
-        additional_special_tokens=
-            configs.inference.tokenizer_additional_special_tokens)
+        tokenizer_checkpoint,
+        pad_token=tokenizer_pad_token,
+        eos_token=tokenizer_eos_token,
+        additional_special_tokens=tokenizer_additional_special_tokens)
     # Save the tokenizer after adding new tokens in a separate dir.
-    tokenizer_save_dir = os.path.join(configs.results.save_dir,"tokenizer")
+    tokenizer_save_dir = os.path.join(save_dir,"tokenizer")
     logger.info("Saving tokenizer: {}".format(tokenizer_save_dir))
     tokenizer.save_pretrained(tokenizer_save_dir)
     # Load the model
-    logger.info("Loading model checkpoint: {}".format(configs.inference.model_checkpoint))
+    logger.info("Loading model checkpoint: {}".format(model_checkpoint))
     model = AutoModelForCausalLM.from_pretrained(
-        configs.inference.model_checkpoint,
+        model_checkpoint,
         pad_token_id = tokenizer.pad_token_id,
         eos_token_id = tokenizer.eos_token_id
     )
@@ -264,41 +189,50 @@ def surprisal_inference(configs : Configs):
             model=model,
             tokenizer=tokenizer,
             conversation_df=conversation_df,
-            N=configs.inference.n_probs,
-            context_buffer_size=configs.inference.context_buffer_size,
+            N=n_probs,
+            context_buffer_size=context_buffer_size,
             conv_no=i)
         # Load the data as a single dataframe and save (important if the
         # program crashes).
-        pd.DataFrame(results,columns=df_columns).to_csv(
-            os.path.join(configs.results.save_dir,
-                "{}_conditional_probs.csv".format(results[0][0])))
+        save_path = os.path.join(save_dir,
+                "{}_conditional_probs.csv".format(results[0][0]))
+        pd.DataFrame(results,columns=df_columns).to_csv(save_path)
+        logger.info(f"Saving results: {save_path}")
         data.extend(results)
     # Save the results as a dataframe
     results_df = pd.DataFrame(data, columns=df_columns)
     logger.info("Saving results")
     results_df.to_csv(
-        os.path.join(configs.results.save_dir,"conditional_probs_combined.csv"))
+        os.path.join(save_dir,"conditional_probs_combined.csv"))
     logger.info("Complete!")
 
 
-if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--config",type=str,required=True, help="Configuration file path")
-    args = parser.parse_args()
-    # Load the configuration file and parse it
-    configs = config_env(args.config)
-    # -- Create loggers for this script
-    formatter = logging.Formatter(
-        "%(asctime)s | %(name)s | %(levelname)s | %(message)s")
-    fh = logging.FileHandler(os.path.join(configs.results.save_dir,"inference.log"))
-    fh.setLevel(logging.DEBUG)
-    fh.setFormatter(formatter)
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.DEBUG)
-    ch.setFormatter(formatter)
-    logger.addHandler(fh)
-    logger.addHandler(ch)
-    # Starting finetuning.
-    surprisal_inference(configs)
+@hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_PATH, config_name=HYDRA_CONFIG_NAME)
+def main(cfg : DictConfig):
+    """
+    Runs script as a hydra app.
+    NOTE: This requires a +env and +dataset argument with the run command.
+    Ex: python inference_transformers.py +env=local +dataset=inference/icc
+    """
+    # Parse the configs and run.
+    surprisal_inference(
+        model_checkpoint=cfg.inference.model.model_checkpoint,
+        tokenizer_checkpoint=cfg.inference.model.tokenizer_checkpoint,
+        tokenizer_additional_special_tokens=list(cfg.inference.model.tokenizer_additional_special_tokens),
+        tokenizer_pad_token=cfg.inference.model.tokenizer_pad_token,
+        tokenizer_eos_token=cfg.inference.model.tokenizer_eos_token,
+        dataset_path=os.path.join(cfg.env.paths.root,cfg.dataset.test_path),
+        save_dir=os.getcwd(),
+        start_conversation_no=cfg.inference.start_conversation_no,
+        end_conversation_no=cfg.inference.end_conversation_no,
+        n_probs=cfg.inference.n_probs,
+        context_buffer_size=cfg.inference.context_buffer_size
+    )
+
+if __name__ == "__main__":
+    main()
+
+
+
+
