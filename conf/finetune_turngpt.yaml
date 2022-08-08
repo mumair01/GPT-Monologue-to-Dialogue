@@ -1,0 +1,31 @@
+# Configure the finetune experiment
+hydra:
+  run:
+    dir: ${env.paths.root}/data/results/finetune_turngpt/${finetune.experiment_name}_${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}/
+  job:
+    chdir: True
+
+
+finetune:
+  experiment_name : gpt2
+  model:
+    pretrained_model_name_or_path : gpt2
+    load_pretrained_configs : True
+    trp_projection_steps : -1
+    trp_projection_type : linear
+    omit_speaker_ids : False
+    no_train_first_n : 5,
+    learning_rate : 0.0001
+    tokenizer_additional_special_tokens :
+      - <START> # Conversation start token
+      - <END> # Conversation end token
+
+  dm:
+    batch_size : 16
+    max_length : 1024
+    num_workers : 8
+    pin_memory : False
+
+  training:
+    min_epochs : 30
+

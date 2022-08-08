@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 10:29:28
+# @Last Modified time: 2022-08-08 14:42:22
 
 
 ############################
@@ -24,7 +24,7 @@ from argparse import ArgumentParser
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import wandb
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, List
 
 from transformers import GPT2LMHeadModel, GPT2Config
 from transformers.models.gpt2.modeling_gpt2 import GPT2DoubleHeadsModelOutput
@@ -112,6 +112,7 @@ class TurnGPT(pl.LightningModule):
             omit_speaker_ids : bool = False,
             no_train_first_n : int = 5,
             learning_rate=1e-4,
+            tokenizer_additional_special_tokens : List[str] = [],
             **kwargs):
         """
         Args:
@@ -166,7 +167,9 @@ class TurnGPT(pl.LightningModule):
             self._transformer = GPT2LMHeadModel(config=config)
 
         # Initialize the tokenizer and resize model embeddings
-        self._initialize_tokenizer()
+        self._initialize_tokenizer(
+            tokenizer_additional_special_tokens=tokenizer_additional_special_tokens
+        )
         # Initialize the <ts> embedding.
         self._initialize_special_embeddings()
         # Initialize the TRP Projection head
@@ -369,9 +372,12 @@ class TurnGPT(pl.LightningModule):
 
     ######################### PRIVATE METHODS ################################
 
-    def _initialize_tokenizer(self):
+    def _initialize_tokenizer(self, tokenizer_additional_special_tokens : List[str] = []):
         """Create the tokenizer and resize the model embeddings"""
-        self._tokenizer = SpokenDialogueTokenizer(self.pretrained_model_name_or_path)
+        self._tokenizer = SpokenDialogueTokenizer(
+            self.pretrained_model_name_or_path,
+            tokenizer_additional_special_tokens=list(tokenizer_additional_special_tokens)
+            )
         self._transformer.resize_token_embeddings(new_num_tokens=len(self._tokenizer))
 
     def _initialize_special_embeddings(self, tokens=["!", "?", "."]):

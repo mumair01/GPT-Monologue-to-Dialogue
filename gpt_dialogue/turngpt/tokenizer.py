@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 11:55:24
+# @Last Modified time: 2022-08-08 14:41:46
 
 ############################
 # This module is a re-implementation of the TurnGPT tokenizer as a comparison to the
@@ -127,6 +127,7 @@ class SpokenTokenizer:
         self.speaker_tokens_map = {
             i + 1 : self.base_speaker_token.format(i + 1) for i in range(num_speakers)
         }
+
         num_tokens_added = self._tokenizer.add_special_tokens({
             "eos_token" : tokenizer_eos_token,
             "pad_token" : tokenizer_pad_token,
