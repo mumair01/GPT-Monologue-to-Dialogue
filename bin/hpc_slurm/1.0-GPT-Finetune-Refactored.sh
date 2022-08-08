@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 7_8_22_1_15_gpt_finetune_textDataset #job name
+#SBATCH -J gpt_finetune #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
