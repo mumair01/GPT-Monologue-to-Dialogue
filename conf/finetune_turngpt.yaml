@@ -14,7 +14,7 @@ finetune:
     trp_projection_steps : -1
     trp_projection_type : linear
     omit_speaker_ids : False
-    no_train_first_n : 5,
+    no_train_first_n : 5
     learning_rate : 0.0001
     tokenizer_additional_special_tokens :
       - <START> # Conversation start token

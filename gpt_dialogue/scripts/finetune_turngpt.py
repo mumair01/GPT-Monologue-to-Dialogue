@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-08 11:58:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 15:03:45
+# @Last Modified time: 2022-08-08 16:42:46
 
 
 #############################################################
@@ -50,7 +50,6 @@ def clean_speaker_labels(data):
 def turngpt_finetune(cfg : DictConfig):
 
     logger.info(f"Loading TurnGPT from pretrained: {cfg.finetune.model.pretrained_model_name_or_path}")
-    print(type(cfg.finetune.model.tokenizer_additional_special_tokens))
     model = TurnGPT(**cfg.finetune.model)
     # Load the data module.
     logger.info(f"Loading finetuning data module...")
@@ -67,6 +66,7 @@ def turngpt_finetune(cfg : DictConfig):
     logger.info("Initializing trainer...")
     trainer = pl.Trainer(
         default_root_dir=os.getcwd(),
+        accelerator="gpu" if torch.cuda.is_available() else "cpu"
         **cfg.finetune.training
     )
     logging.info("Starting training...")

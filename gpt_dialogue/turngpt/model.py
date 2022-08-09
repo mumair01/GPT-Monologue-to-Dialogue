@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 14:42:22
+# @Last Modified time: 2022-08-08 16:31:01
 
 
 ############################
@@ -455,3 +455,11 @@ class TurnGPT(pl.LightningModule):
             proj_labels[:, : self.no_train_first_n] = value
         return proj_labels
 
+# class TurnGPTModel:
+#     pass
+
+# class TurnGPTWithDoubleHeadModel:
+#     pass
+
+# class TurnGPTWithLMHeadModel:
+#     pass
