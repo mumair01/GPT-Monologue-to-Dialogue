@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-08 11:58:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 16:42:46
+# @Last Modified time: 2022-08-09 10:44:59
 
 
 #############################################################
@@ -35,6 +35,9 @@ import logging
 # Setup logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+# NOTE: For GPU Support, this script disables tokenizer parallelism by default.
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 ############################# MAIN METHODS ##############################

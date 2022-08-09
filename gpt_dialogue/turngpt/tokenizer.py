@@ -131,8 +131,11 @@ class SpokenTokenizer:
         num_tokens_added = self._tokenizer.add_special_tokens({
             "eos_token" : tokenizer_eos_token,
             "pad_token" : tokenizer_pad_token,
-            "additional_special_tokens" : self.tokenizer_additional_special_tokens + \
-                list(self.speaker_tokens_map.values())
+            "additional_special_tokens" : self.tokenizer_additional_special_tokens
+                # TODO: Prolly don't need to add this explicitly since the data in this case
+                # never actually contains speaker labels itself i.e., the tokenizer
+                # itself is responsible for this management as separate speaker_ids.
+                # list(self.speaker_tokens_map.values())
         })
         msg = f"Special tokens added to tokenizer: {num_tokens_added}\n"
         msg = "Additional special tokens map:\n"
