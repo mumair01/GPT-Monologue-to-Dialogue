@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-08 11:58:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-10 13:09:50
+# @Last Modified time: 2022-08-10 13:42:54
 
 
 #############################################################
@@ -24,6 +24,7 @@ from torch.utils.data import Dataset, DataLoader
 
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import CSVLogger
+from datasets import concatenate_datasets
 
 from gpt_dialogue.turngpt.model import TurnGPT
 from gpt_dialogue.turngpt.dm import TurnGPTFinetuneDM
@@ -45,6 +46,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 
+
+
 # Load the configurations and start finetuning.
 @hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
 def turngpt_finetune(cfg : DictConfig):
@@ -58,11 +61,8 @@ def turngpt_finetune(cfg : DictConfig):
         train_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.train_path),
         val_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.validation_path),
         save_dir=os.getcwd(),
-        # cleanup_fn=clean_speaker_labels,
         **cfg.finetune.dm
     )
-    logger.info("Preparing data...")
-    dm.prepare_data()
     logger.info("Initializing trainer...")
 
     # Create the loggers
@@ -78,12 +78,10 @@ def turngpt_finetune(cfg : DictConfig):
     logging.info("Starting training...")
 
 
-
     trainer.fit(
         model,
         datamodule=dm
     )
-    print(trainer.callback_metrics)
 
 if __name__ == "__main__":
     turngpt_finetune()
