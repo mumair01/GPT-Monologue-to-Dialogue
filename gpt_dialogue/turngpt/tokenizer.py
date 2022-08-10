@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 14:41:46
+# @Last Modified time: 2022-08-09 16:03:30
 
 ############################
 # This module is a re-implementation of the TurnGPT tokenizer as a comparison to the
@@ -131,11 +131,8 @@ class SpokenTokenizer:
         num_tokens_added = self._tokenizer.add_special_tokens({
             "eos_token" : tokenizer_eos_token,
             "pad_token" : tokenizer_pad_token,
-            "additional_special_tokens" : self.tokenizer_additional_special_tokens
-                # TODO: Prolly don't need to add this explicitly since the data in this case
-                # never actually contains speaker labels itself i.e., the tokenizer
-                # itself is responsible for this management as separate speaker_ids.
-                # list(self.speaker_tokens_map.values())
+            "additional_special_tokens" : self.tokenizer_additional_special_tokens + \
+                list(self.speaker_tokens_map.values())
         })
         msg = f"Special tokens added to tokenizer: {num_tokens_added}\n"
         msg = "Additional special tokens map:\n"
@@ -229,15 +226,18 @@ class SpokenTokenizer:
                     return_token_type_ids=return_token_type_ids
                 )
                 for k,v in output.items():
-                    ret[k].append(torch.tensor(v))
+                    # ret[k].append(torch.tensor(v))
+                    ret[k].append(list(v))
             # NOTE: Moving padding from model.tokenize_strings to here
             ret = dict(ret)
             if isinstance(ret['input_ids'], list):
                 temp_inp = []
                 temp_sp = []
                 for inp, sp in zip(ret['input_ids'], ret['speaker_ids']):
-                    temp_inp.append(torch.tensor(inp))
-                    temp_sp.append(torch.tensor(sp))
+                    # temp_inp.append(torch.tensor(inp))
+                    # temp_sp.append(torch.tensor(sp))
+                    temp_inp.append(list(inp))
+                    temp_sp.append(list(sp))
                 temp = self._tokenizer.pad({"input_ids" : temp_inp})
                 ret['input_ids'] = temp['input_ids']
                 ret['attention_mask'] = temp['attention_mask']

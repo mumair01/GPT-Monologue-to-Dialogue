@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-09 14:17:15
+# @Last Modified time: 2022-08-09 16:19:35
 
 import pytest
 import sys
@@ -164,7 +164,7 @@ def test_dm():
     model = TurnGPT(
         # NOTE: All special tokens passed should be lowercase because the normalize
         # lowercases them anyways.
-        tokenizer_additional_special_tokens=['<start>','<end>']
+        tokenizer_additional_special_tokens=['<START>','<END>']
     )
 
     dm = TurnGPTFinetuneDM(
@@ -172,13 +172,17 @@ def test_dm():
         train_csv_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/train_5_conversations.csv",
         val_csv_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/validation_37_conversations.csv",
         save_dir="./dm_save_test",
-        cleanup_fn=clean_speaker_labels
+        # cleanup_fn=clean_speaker_labels
     )
     dm.prepare_data()
     dm.setup(stage="fit")
 
     batch = next(iter(dm.train_dataloader()))
-    print(batch['input_ids'].shape)
+    count = 0
+    for batch in iter(dm.train_dataloader()):
+        count +=1
+        for i in range(batch['input_ids'].shape[0]):
+            print(model._tokenizer.decode(batch['input_ids'][i]))
     # print(tokenizer.decode(batch['input_ids'][0]))
     # print(tokenizer.decode(batch['input_ids'][1]))
 

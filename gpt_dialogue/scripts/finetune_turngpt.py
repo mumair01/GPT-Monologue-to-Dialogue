@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-08 11:58:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-09 10:44:59
+# @Last Modified time: 2022-08-10 13:09:50
 
 
 #############################################################
@@ -23,6 +23,7 @@ from torch.utils.data import Dataset, DataLoader
 
 
 import pytorch_lightning as pl
+from pytorch_lightning.loggers import CSVLogger
 
 from gpt_dialogue.turngpt.model import TurnGPT
 from gpt_dialogue.turngpt.dm import TurnGPTFinetuneDM
@@ -42,11 +43,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 ############################# MAIN METHODS ##############################
 
-def clean_speaker_labels(data):
-    """Remove speaker labels from the start and end of an utterance"""
-    if len(data['Utterance'].split()) > 1:
-        data['Utterance'] = " ".join(data['Utterance'].split()[1:-1])
-    return data
+
 
 # Load the configurations and start finetuning.
 @hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
@@ -61,19 +58,32 @@ def turngpt_finetune(cfg : DictConfig):
         train_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.train_path),
         val_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.validation_path),
         save_dir=os.getcwd(),
-        cleanup_fn=clean_speaker_labels,
+        # cleanup_fn=clean_speaker_labels,
         **cfg.finetune.dm
     )
     logger.info("Preparing data...")
     dm.prepare_data()
     logger.info("Initializing trainer...")
+
+    # Create the loggers
+    training_logger = CSVLogger(save_dir=os.getcwd(),name="test")
     trainer = pl.Trainer(
         default_root_dir=os.getcwd(),
-        accelerator="gpu" if torch.cuda.is_available() else "cpu"
+        accelerator="gpu" if torch.cuda.is_available() else "cpu",
+        max_epochs=10,
+        log_every_n_steps=1,
+        logger=training_logger,
         **cfg.finetune.training
     )
     logging.info("Starting training...")
-    trainer.fit(model, datamodule=dm)
+
+
+
+    trainer.fit(
+        model,
+        datamodule=dm
+    )
+    print(trainer.callback_metrics)
 
 if __name__ == "__main__":
     turngpt_finetune()
