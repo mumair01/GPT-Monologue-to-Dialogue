@@ -21,7 +21,7 @@ SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/finetune_turngpt.py
 
 # Requires the finetuning dataset and env to be specified.
 HYDRA_ENV="hpc"
-DATASET="finetune/icc_5_train_37_test"
+DATASET="finetune/icc_5_train_37_test_turngpt"
 HYDRA_OVERWRITES=""
 HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 

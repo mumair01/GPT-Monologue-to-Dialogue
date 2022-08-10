@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-08 11:58:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-10 13:42:54
+# @Last Modified time: 2022-08-10 16:28:49
 
 
 #############################################################
@@ -26,7 +26,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.loggers import CSVLogger
 from datasets import concatenate_datasets
 
-from gpt_dialogue.turngpt.model import TurnGPT
+from gpt_dialogue.turngpt.model import TurnGPTDoubleHeadsModel, TurnGPTLMHeadModel, TurnGPTModel
 from gpt_dialogue.turngpt.dm import TurnGPTFinetuneDM
 
 
@@ -45,21 +45,22 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 ############################# MAIN METHODS ##############################
 
 
-
-
-
 # Load the configurations and start finetuning.
 @hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
 def turngpt_finetune(cfg : DictConfig):
 
     logger.info(f"Loading TurnGPT from pretrained: {cfg.finetune.model.pretrained_model_name_or_path}")
-    model = TurnGPT(**cfg.finetune.model)
+    # model = TurnGPTDoubleHeadsModel(**cfg.finetune.model)
+    model = TurnGPTLMHeadModel()
     # Load the data module.
     logger.info(f"Loading finetuning data module...")
     dm = TurnGPTFinetuneDM(
         tokenizer=model._tokenizer,
         train_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.train_path),
         val_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.validation_path),
+        conversation_id_key="convID",
+        utterance_key="Utterance",
+        use_cache=True,
         save_dir=os.getcwd(),
         **cfg.finetune.dm
     )

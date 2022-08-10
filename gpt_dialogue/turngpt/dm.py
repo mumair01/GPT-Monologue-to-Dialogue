@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-10 13:52:14
+# @Last Modified time: 2022-08-10 16:29:48
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT.
@@ -16,16 +16,6 @@ from torch.utils.data import DataLoader
 
 from datasets import concatenate_datasets, load_from_disk, load_dataset
 import pytorch_lightning as pl
-
-
-# TODO: These cleanup methods are data specific (for the ICC data)
-# and should not be here - dm should be data agnostic.
-
-# def clean_speaker_labels(data):
-#     """Remove speaker labels from the start and end of an utterance"""
-#     if len(data['Utterance'].split()) > 1:
-#         data['Utterance'] = " ".join(data['Utterance'].split()[1:-1])
-#     return data
 
 
 class TurnGPTFinetuneDM(pl.LightningDataModule):
@@ -70,7 +60,7 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
                 "train" : self.train_csv_path,
                 "validation" : self.val_csv_path
             },
-            download_mode="force_redownload" if self.use_cache else "reuse_cache_if_exists"
+            download_mode="force_redownload" if not self.use_cache else "reuse_dataset_if_exists"
         )
 
         # Group the data based on conversations

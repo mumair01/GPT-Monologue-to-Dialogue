@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 16:31:01
+# @Last Modified time: 2022-08-10 16:36:20
 
 
 ############################
@@ -28,6 +28,7 @@ from typing import Dict, Any, Optional, Tuple, List
 
 from transformers import GPT2LMHeadModel, GPT2Config
 from transformers.models.gpt2.modeling_gpt2 import GPT2DoubleHeadsModelOutput
+from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 
 import pytorch_lightning as pl
 import torch
@@ -82,7 +83,8 @@ class ProjectionLabeler(nn.Module):
         proj_label = proj_label[..., self.offset :].squeeze(1)
         return proj_label
 
-class TurnGPT(pl.LightningModule):
+
+class TurnGPTModel(pl.LightningModule):
     """
     Lightning Data Module acting as a wrapper used to extend a huggingface
     Transformer.
@@ -105,14 +107,12 @@ class TurnGPT(pl.LightningModule):
     ]
 
     def __init__(self,
-            pretrained_model_name_or_path : str = "gpt2",
-            load_pretrained_configs : bool = True,
-            trp_projection_steps : int =-1,
-            trp_projection_type : str = "linear",
-            omit_speaker_ids : bool = False,
-            no_train_first_n : int = 5,
-            learning_rate=1e-4,
-            tokenizer_additional_special_tokens : List[str] = [],
+            pretrained_model_name_or_path : str,
+            load_pretrained_configs : bool,
+            omit_speaker_ids : bool,
+            no_train_first_n : int,
+            learning_rate : int,
+            tokenizer_additional_special_tokens : List[str],
             **kwargs):
         """
         Args:
@@ -138,8 +138,6 @@ class TurnGPT(pl.LightningModule):
         # Save the params
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
         self.load_pretrained_configs = load_pretrained_configs
-        self.trp_projection_steps = trp_projection_steps
-        self.trp_projection_type = trp_projection_type
         self.omit_speaker_ids = omit_speaker_ids
         self.no_train_first_n = no_train_first_n
         self.learning_rate = learning_rate
@@ -172,6 +170,125 @@ class TurnGPT(pl.LightningModule):
         )
         # Initialize the <ts> embedding.
         self._initialize_special_embeddings()
+
+
+    ###################### LIGHTNING MODULE METHODS ##########################
+
+    def configure_optimizers(self):
+        """Initialize a single optimizer for both the transformer and projection"""
+        return torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
+
+    def on_save_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+        """
+        Method is called when saving a checkpoint. We save the unique tokenizer
+        since it is part of the model.
+        NOTE: It is unusual to call this method generally - but we make an
+        exception since lightning will not save the tokenizer.
+        """
+        checkpoint['tokenizer'] = self._tokenizer
+
+    def on_load_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+        """Restore any additional pickleable object saved during a checkpoint"""
+        if "tokenizer" in checkpoint:
+            self._tokenizer = checkpoint['tokenizer']
+            self._transformer.resize_token_embeddings(
+                new_num_tokens=len(self.tokenizer))
+
+
+    ##################### ADDITIONAL PUBLIC METHODS ##########################
+
+    # --- Tokenizer Utility methods
+    # These methods are built on top of the tokenizer
+
+    def tokenize(self, text ,*args, **kwargs):
+        """
+        Tokenize the given text 'after' applying padding.
+        Moves the tokens to the available device.
+
+        Args:
+            text (str or list of strings or lists of lists)
+        """
+        tokens = self._tokenizer(text, *args, **kwargs)
+        # NOTE: Device is a property of the lightning module.
+        for k,v in tokens.items():
+             tokens[k] = v.to(self.device)
+        return tokens
+
+    def decode(self, input_ids):
+        return self._tokenizer.decode(input_ids)
+
+    ######################### PRIVATE METHODS ################################
+
+    def _initialize_tokenizer(self, tokenizer_additional_special_tokens : List[str] = []):
+        """Create the tokenizer and resize the model embeddings"""
+        self._tokenizer = SpokenDialogueTokenizer(
+            self.pretrained_model_name_or_path,
+            tokenizer_additional_special_tokens=list(tokenizer_additional_special_tokens)
+            )
+        self._transformer.resize_token_embeddings(new_num_tokens=len(self._tokenizer))
+
+    def _initialize_special_embeddings(self, tokens=["!", "?", "."]):
+        """
+        Sets the mean of the eos token as the average of the passed tokens.
+        Ex. if tokens are closer to punctuation, then the word embedding for
+        the special token is closer to that.
+        Link: https://github.com/huggingface/transformers/blob/v4.21.0/src/transformers/models/gpt2/modeling_gpt2.py#L679
+        Link: https://pytorch.org/docs/stable/generated/torch.nn.Embedding.html?highlight=nn%20embedding#torch.nn.Embedding
+        """
+        with torch.no_grad():
+            # NOTE: self.transformer is the GPT2Model in the head that we are using.
+            # Calculate the average work token embedding of the given tokens.
+            ids = torch.tensor(self._tokenizer.convert_tokens_to_ids(tokens))
+
+            avg_embedding = self._transformer.transformer.wte(ids).mean(0)
+            # Assign the average as the embedding for the eos special token.
+            self._transformer.transformer.wte.weight.data[
+                self._tokenizer.eos_token_id] = avg_embedding
+        print(f"Initialized special wte for {self._tokenizer.eos_token} to average of {tokens}")
+        print(f"This will make the {self._tokenizer.eos_token} semantically closer to {tokens}")
+
+
+    def _extract_labels(self, input_ids, mask, value=-100):
+        """
+        Obtain the labels for the language modeling task.
+        NOTE: All labels set to -100 are ignored (masked) when computing the loss.
+        """
+        labels = input_ids.clone()
+        labels[torch.logical_not(mask)] = value
+        if self.no_train_first_n > 0:
+            labels[:, : self.no_train_first_n] = value
+        return labels
+
+
+class TurnGPTDoubleHeadsModel(TurnGPTModel):
+    """
+    TurnGPT Model with a language modeling head and a TRP Projection head.
+    The two heads are two linear layers.
+    """
+
+    def __init__(
+            self,
+            pretrained_model_name_or_path : str = "gpt2",
+            load_pretrained_configs : bool = True,
+            trp_projection_steps : int =-1,
+            trp_projection_type : str = "linear",
+            omit_speaker_ids : bool = False,
+            no_train_first_n : int = 5,
+            learning_rate=1e-4,
+            tokenizer_additional_special_tokens : List[str] = [],
+            **kwargs):
+        super().__init__(
+            pretrained_model_name_or_path=pretrained_model_name_or_path,
+            load_pretrained_configs=load_pretrained_configs,
+            omit_speaker_ids=omit_speaker_ids,
+            no_train_first_n=no_train_first_n,
+            learning_rate=learning_rate,
+            tokenizer_additional_special_tokens=tokenizer_additional_special_tokens,
+            **kwargs
+        )
+        self.trp_projection_steps = trp_projection_steps
+        self.trp_projection_type = trp_projection_type
+
         # Initialize the TRP Projection head
         # NOTE: This is a unique contribution of TurnGPT
         self._initialize_trp_projection_head()
@@ -248,7 +365,7 @@ class TurnGPT(pl.LightningModule):
         mc_loss = None
         if mc_logits is not None and mc_labels is not None:
             # TODO: Implement the loss method here.
-            mc_loss = self.bce_loss(mc_logits, mc_labels)
+            mc_loss = self._bce_loss(mc_logits, mc_labels)
 
         # ---------
 
@@ -261,26 +378,6 @@ class TurnGPT(pl.LightningModule):
             hidden_states=transformer_outputs.hidden_states,
             attentions=transformer_outputs.attentions,
         )
-
-    def configure_optimizers(self):
-        """Initialize a single optimizer for both the transformer and projection"""
-        return torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
-
-    def on_save_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
-        """
-        Method is called when saving a checkpoint. We save the unique tokenizer
-        since it is part of the model.
-        NOTE: It is unusual to call this method generally - but we make an
-        exception since lightning will not save the tokenizer.
-        """
-        checkpoint['tokenizer'] = self._tokenizer
-
-    def on_load_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
-        """Restore any additional pickleable object saved during a checkpoint"""
-        if "tokenizer" in checkpoint:
-            self._tokenizer = checkpoint['tokenizer']
-            self._transformer.resize_token_embeddings(
-                new_num_tokens=len(self.tokenizer))
 
     def training_step(self, batch, batch_idx):
         """
@@ -348,57 +445,7 @@ class TurnGPT(pl.LightningModule):
             total_loss = out["loss"]
         self.log("val_loss", total_loss)
 
-    ##################### ADDITIONAL PUBLIC METHODS ##########################
-
-    # --- Tokenizer Utility methods
-    # These methods are built on top of the tokenizer
-
-    def tokenize(self, text ,*args, **kwargs):
-        """
-        Tokenize the given text 'after' applying padding.
-        Moves the tokens to the available device.
-
-        Args:
-            text (str or list of strings or lists of lists)
-        """
-        tokens = self._tokenizer(text, *args, **kwargs)
-        # NOTE: Device is a property of the lightning module.
-        for k,v in tokens.items():
-             tokens[k] = v.to(self.device)
-        return tokens
-
-    def decode(self, input_ids):
-        return self._tokenizer.decode(input_ids)
-
     ######################### PRIVATE METHODS ################################
-
-    def _initialize_tokenizer(self, tokenizer_additional_special_tokens : List[str] = []):
-        """Create the tokenizer and resize the model embeddings"""
-        self._tokenizer = SpokenDialogueTokenizer(
-            self.pretrained_model_name_or_path,
-            tokenizer_additional_special_tokens=list(tokenizer_additional_special_tokens)
-            )
-        self._transformer.resize_token_embeddings(new_num_tokens=len(self._tokenizer))
-
-    def _initialize_special_embeddings(self, tokens=["!", "?", "."]):
-        """
-        Sets the mean of the eos token as the average of the passed tokens.
-        Ex. if tokens are closer to punctuation, then the word embedding for
-        the special token is closer to that.
-        Link: https://github.com/huggingface/transformers/blob/v4.21.0/src/transformers/models/gpt2/modeling_gpt2.py#L679
-        Link: https://pytorch.org/docs/stable/generated/torch.nn.Embedding.html?highlight=nn%20embedding#torch.nn.Embedding
-        """
-        with torch.no_grad():
-            # NOTE: self.transformer is the GPT2Model in the head that we are using.
-            # Calculate the average work token embedding of the given tokens.
-            ids = torch.tensor(self._tokenizer.convert_tokens_to_ids(tokens))
-
-            avg_embedding = self._transformer.transformer.wte(ids).mean(0)
-            # Assign the average as the embedding for the eos special token.
-            self._transformer.transformer.wte.weight.data[
-                self._tokenizer.eos_token_id] = avg_embedding
-        print(f"Initialized special wte for {self._tokenizer.eos_token} to average of {tokens}")
-        print(f"This will make the {self._tokenizer.eos_token} semantically closer to {tokens}")
 
     def _initialize_trp_projection_head(self):
         """
@@ -430,17 +477,6 @@ class TurnGPT(pl.LightningModule):
         )
         return loss
 
-    def _extract_labels(self, input_ids, mask, value=-100):
-        """
-        Obtain the labels for the language modeling task.
-        NOTE: All labels set to -100 are ignored (masked) when computing the loss.
-        """
-        labels = input_ids.clone()
-        labels[torch.logical_not(mask)] = value
-        if self.no_train_first_n > 0:
-            labels[:, : self.no_train_first_n] = value
-        return labels
-
     def _extract_mc_labels(self, input_ids, mask, value=-100):
         # NOTE: This requires the projection labeler - which is a separate model
         # that can generate the TRP projection labels on the fly.
@@ -455,11 +491,141 @@ class TurnGPT(pl.LightningModule):
             proj_labels[:, : self.no_train_first_n] = value
         return proj_labels
 
-# class TurnGPTModel:
-#     pass
 
-# class TurnGPTWithDoubleHeadModel:
-#     pass
+class TurnGPTLMHeadModel(TurnGPTModel):
+    """
+    TurnGPT Model with a language modeling head, which is a single linear
+    layer on top of the base GPT2 model.
+    """
 
-# class TurnGPTWithLMHeadModel:
-#     pass
+    def __init__(
+            self,
+            pretrained_model_name_or_path : str = "gpt2",
+            load_pretrained_configs : bool = True,
+            omit_speaker_ids : bool = False,
+            no_train_first_n : int = 5,
+            learning_rate=1e-4,
+            tokenizer_additional_special_tokens : List[str] = [],
+            **kwargs):
+        super().__init__(
+            pretrained_model_name_or_path=pretrained_model_name_or_path,
+            load_pretrained_configs=load_pretrained_configs,
+            omit_speaker_ids=omit_speaker_ids,
+            no_train_first_n=no_train_first_n,
+            learning_rate=learning_rate,
+            tokenizer_additional_special_tokens=tokenizer_additional_special_tokens,
+            **kwargs
+        )
+        # save all the hyper-params passed to the model - accessible using model.hparams.
+        self.save_hyperparameters()
+
+
+    def forward(
+        self,
+        input_ids=None,
+        speaker_ids=None,
+        labels=None,
+        use_cache=None,
+        past_key_values=None,
+        attention_mask=None,
+        position_ids=None,
+        head_mask=None,
+        inputs_embeds=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        return_dict=None,
+        **kwargs,
+    ) -> Any:
+        """
+        Defines the unique computation for the model for every step - based
+        on: https://pytorch.org/docs/stable/generated/torch.nn.Module.html
+        In this case, this method is a re-write / wrapper for:
+            https://github.com/huggingface/transformers/blob/v4.21.0/src/transformers/models/gpt2/modeling_gpt2.py#L1033
+        , which is the forward method for GPT2DoubleHeadsModel.
+        The unique component here is that speaker_ids are passed as the token_type_ids
+        """
+        return_dict = return_dict if return_dict is not None else self._transformer.config.use_return_dict
+
+        transformer_outputs = self._transformer.transformer(
+            input_ids,
+            past_key_values=past_key_values,
+            attention_mask=attention_mask,
+            # NOTE: The speaker ids are passed as the token_type_ids here.
+            #Link: https://huggingface.co/docs/transformers/v4.21.0/en/model_doc/gpt2#transformers.GPT2Model.forward.token_type_ids
+            token_type_ids=speaker_ids,
+            position_ids=position_ids,
+            head_mask=head_mask,
+            inputs_embeds=inputs_embeds,
+            use_cache=use_cache,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=return_dict,
+        )
+        hidden_states = transformer_outputs[0]
+
+        # Set device for model parallelism
+        if self._transformer.model_parallel:
+            torch.cuda.set_device(self._transformer.first_device)
+            hidden_states = hidden_states.to(self._transformer.lm_head.weight.device)
+
+        # LMHead only uses lm logits
+        lm_logits = self._transformer.lm_head(hidden_states)
+
+        # Calculate the lm task loss
+        loss = None
+        if labels is not None:
+            shift_logits = lm_logits[..., :-1, :].contiguous()
+            shift_labels = labels[..., 1:].contiguous()
+            loss_fct = CrossEntropyLoss()
+            loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
+
+        if not return_dict:
+            output = (lm_logits,) + transformer_outputs[1:]
+            return ((loss,) + output) if loss is not None else output
+
+        return CausalLMOutputWithCrossAttentions(
+            loss=loss,
+            logits=lm_logits,
+            past_key_values=transformer_outputs.past_key_values,
+            hidden_states=transformer_outputs.hidden_states,
+            attentions=transformer_outputs.attentions,
+            cross_attentions=transformer_outputs.cross_attentions,
+        )
+
+    def training_step(self, batch, batch_idx):
+        """
+        Compute and return the training loss for one training step.
+        This method does not support multi-GPU optimization.
+        Here, we first get the labels for our task, do a forward pass to
+        generate the combined loss, and return the values.
+        """
+        out = self._step(batch, batch_idx)
+        self.log("loss", out["loss"])
+        return {"loss" : out["loss"]}
+
+
+    def validation_step(self, batch, batch_idx):
+        """
+        This step is for calculating and logging interesting metrics for
+        validation"""
+        out = self._step(batch, batch_idx)
+        self.log("val_loss", out["loss"])
+
+
+    ######################### PRIVATE METHODS ################################
+
+
+    def _step(self, batch, batch_idx):
+         # Extract the task labels
+        lm_labels = self._extract_labels(
+            input_ids=batch['input_ids'],mask=batch['attention_mask'])
+
+        if self.omit_speaker_ids:
+            batch['speaker_ids'] = None
+
+        # Do one forward pass to obtain the task losses
+        return self.forward(
+            input_ids=batch['input_ids'],
+            speaker_ids=batch['speaker_ids'],
+            labels=lm_labels,
+        )
