@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-10 16:36:20
+# @Last Modified time: 2022-08-10 16:51:21
 
 
 ############################
@@ -19,12 +19,8 @@
 # NOTE: This script is requires torch 1.12.
 
 import os
-import sys
-from argparse import ArgumentParser
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import wandb
-from typing import Dict, Any, Optional, Tuple, List
+from typing import Dict, Any,  List
 
 from transformers import GPT2LMHeadModel, GPT2Config
 from transformers.models.gpt2.modeling_gpt2 import GPT2DoubleHeadsModelOutput
@@ -37,23 +33,6 @@ from torch.nn import CrossEntropyLoss, BCEWithLogitsLoss
 
 from gpt_dialogue.turngpt.tokenizer import SpokenDialogueTokenizer
 
-
-"""
-Below are some general notes based on my understanding of the original TurnGPT:
-
-    1. It uses a DoubleLMHead since the model is multi-task i.e., it is optimizing
-        on the sum of two different loss functions and can perform multiple tasks
-        during inference.
-    2. The speaker tokens are included in the language modelling task and the
-        TRP probability predictions are defined as the maximum assigned
-        output probability over the speaker tokens --> This is why we use
-        multi-task loss and a double head.
-    3. In the original implementation, they are predicting the TRP token
-        in the next N steps (or after the next N tokens). Do I really need to
-        do that? My use case is simply to get the P(token | context) on a model
-        that is sensitive to the speaker --> So this task is different from
-        TurnGPT.
-"""
 
 
 # TODO: Investigate how this labeler is working.
@@ -88,6 +67,7 @@ class TurnGPTModel(pl.LightningModule):
     """
     Lightning Data Module acting as a wrapper used to extend a huggingface
     Transformer.
+    NOTE: Should not be directly instantiated.
     """
 
     # Base GPT-2 models supported by TurnGPT.
@@ -171,6 +151,10 @@ class TurnGPTModel(pl.LightningModule):
         # Initialize the <ts> embedding.
         self._initialize_special_embeddings()
 
+    @property
+    def tokenizer(self):
+        """Exposes the tokenizer as public"""
+        return self._tokenizer
 
     ###################### LIGHTNING MODULE METHODS ##########################
 
@@ -193,7 +177,6 @@ class TurnGPTModel(pl.LightningModule):
             self._tokenizer = checkpoint['tokenizer']
             self._transformer.resize_token_embeddings(
                 new_num_tokens=len(self.tokenizer))
-
 
     ##################### ADDITIONAL PUBLIC METHODS ##########################
 
@@ -614,8 +597,8 @@ class TurnGPTLMHeadModel(TurnGPTModel):
 
     ######################### PRIVATE METHODS ################################
 
-
     def _step(self, batch, batch_idx):
+        """Common step method for both the tain and validation step. """
          # Extract the task labels
         lm_labels = self._extract_labels(
             input_ids=batch['input_ids'],mask=batch['attention_mask'])

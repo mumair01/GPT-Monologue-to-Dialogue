@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-10 16:29:48
+# @Last Modified time: 2022-08-10 16:49:39
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT.
@@ -34,11 +34,27 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
         save_dir : str,
         batch_size : int = 16,
         max_length : int = 1024,
+        chunk_size : int = 512,
         num_workers : int = 1,
         pin_memory : bool = True,
         num_proc = None,
         use_cache=False
     ):
+        """
+        Args:
+            tokenizer
+            train_csv_path (str) : Path to the training conversation file.
+            val_csv_path (str): Path to the validation conversation file.
+            conversation_id_key (str): Column key containing unique ids per conversation
+            utterance_key (str): Key for the actual utterance / text.
+            save_dir (str): Directory where module is saved.
+            batch_size (int): Batch size for output data loaders.
+            max_length (int): Maximum length after which data in input_ids is truncated.
+                Usually a property of the model.
+            chunk_size (int): Size to which the output of the tokenizer is chunked
+            num_workers (int): Number of workers to use for processing.
+            use_cache (bool): If True, attempt to use cached data.
+        """
         super().__init__()
         self.tokenizer = tokenizer
         self.train_csv_path = train_csv_path
@@ -48,6 +64,7 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
         self.save_dir = save_dir
         self.batch_size = batch_size
         self.max_length = max_length
+        self.chunk_size = chunk_size
         self.num_workers = num_workers
         self.pin_memory = pin_memory
         self.num_proc = num_proc
@@ -56,6 +73,9 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
     ######################## OVERRIDDEN METHODS ##############################
 
     def prepare_data(self):
+        """
+        Load, group by conversation, tokenizer, chunk, and save the dataset.
+        """
         dataset = load_dataset("csv", data_files={
                 "train" : self.train_csv_path,
                 "validation" : self.val_csv_path
@@ -83,6 +103,7 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
         dataset.save_to_disk(self.save_dir)
 
     def setup(self, stage):
+        """Re-load save dataset and prepare for dataloaders"""
         if stage in (None, "fit"):
             dataset = load_from_disk(self.save_dir)
             self.train_dataset = dataset['train']
@@ -117,6 +138,12 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
         return toks
 
     def _collate_fn(self, batch):
+        """
+        Responsible for preparing a batch for iteration.
+        Here, we pad both the input and speaker ids and ensure the batch
+        size does not increase self.max_length
+        Additionally, moves the tensors to the appropriate device.
+        """
         ret = self.tokenizer.pad(
             {"input_ids": [b["input_ids"][: self.max_length] for b in batch]}
         )
@@ -127,19 +154,24 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
             ret[k] = torch.tensor(v)
         return ret
 
-    def _chunk_tokenized_samples(self, tokenized_samples, chunk_size=128):
+    def _chunk_tokenized_samples(self, tokenized_samples):
+        """Chunk the given tokenized samples based on the size. """
+        if self.chunk_size > self.max:
+            print(f"WARNING: Chunk size {self.chunk_size} greater than max length "
+               f"{self.max_length} may lead to data loss")
         # Concatenate all the utterances
         keys =  ('input_ids','attention_mask','speaker_ids')
         concatenated_examples = {k : sum(tokenized_samples[k],[]) for k in keys}
         total_length = len(concatenated_examples[keys[0]])
-        total_length = (total_length // chunk_size) * chunk_size
+        total_length = (total_length // self.chunk_size) * self.chunk_size
         chunks = {
-            k : [concatenated_examples[k][i:i+ chunk_size] \
-                for i in range(0, total_length,chunk_size)]  for k in keys
+            k : [concatenated_examples[k][i:i+ self.chunk_size] \
+                for i in range(0, total_length,self.chunk_size)]  for k in keys
         }
         return chunks
 
     def _join(self, batch):
+        """Simply return the Utterance values of the joined batch."""
         return { self.utterance_key: [batch[self.utterance_key]]}
 
     def _group_by(self,d, col, join):
