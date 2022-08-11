@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-08 14:49:25
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-11 11:12:31
+# @Last Modified time: 2022-08-11 12:09:55
 
 #############################################################
 '''
@@ -18,8 +18,12 @@ from omegaconf import DictConfig, OmegaConf
 import hydra
 import pandas as pd
 
+import pytorch_lightning as pl
 
-from gpt_dialogue.turngpt.model import TurnGPT
+from gpt_dialogue.turngpt.model import (
+    TurnGPTDoubleHeadsModel,
+    TurnGPTLMHeadModel
+)
 from gpt_dialogue.scripts.inference.utils import (
     load_inference_dataset,
     generate_conditional_probs
@@ -33,7 +37,7 @@ logger.setLevel(logging.DEBUG)
 
 # --------------------------- GLOBALS --------------------------------------
 
-HYDRA_CONFIG_RELATIVE_DIR = "../../conf"
+HYDRA_CONFIG_RELATIVE_DIR = "../../../conf"
 HYDRA_CONFIG_NAME = "inference_turngpt"
 
 # ------------------------ INFERENCE MAIN  --------------------------------
@@ -42,7 +46,23 @@ HYDRA_CONFIG_NAME = "inference_turngpt"
 @hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
 def turngpt_inference(cfg : DictConfig):
     logger.info(f"Loading TurnGPT for inference {cfg.inference.model.pretrained_model_name_or_path}")
-    model = TurnGPT(**cfg.inference.model)
+
+     # Load the appropriate model
+    if cfg.inference.model.model_head == "DoubleHeads":
+        if os.path.isfile(cfg.inference.model.pretrained_model_name_or_path):
+            model = TurnGPTDoubleHeadsModel.load_from_checkpoint(cfg.inference.model.pretrained_model_name_or_path)
+        else:
+            model = TurnGPTDoubleHeadsModel(**cfg.inference.model)
+    elif cfg.inference.model.model_head == "LMHead":
+        if os.path.isfile(cfg.inference.model.pretrained_model_name_or_path):
+            model = TurnGPTLMHeadModel.load_from_checkpoint(cfg.inference.model.pretrained_model_name_or_path)
+        else:
+            model = TurnGPTLMHeadModel(**cfg.inference.model)
+    else:
+        raise NotImplementedError(
+            f"TurnGPT with head {cfg.model.model_head} has not been implemented"
+        )
+
     logging.info(f"Loading inference dataset: {cfg.dataset.test_path}")
     conversation_dfs = load_inference_dataset(
         csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.test_path),

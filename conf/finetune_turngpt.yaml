@@ -5,14 +5,12 @@ hydra:
   job:
     chdir: True
 
-defaults :
-  - model : turngpt_doublehead
-
 finetune:
   experiment_name : gpt2
   dm:
     batch_size : 16
     max_length : 1024
+    chunk_size : 128
     num_workers : 8
     pin_memory : False
     conversation_id_key : convID
@@ -20,5 +18,5 @@ finetune:
     use_cache : False
 
   trainer:
-    max_epochs : 30
+    max_epochs : 1
 

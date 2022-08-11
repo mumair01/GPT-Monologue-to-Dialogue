@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-06 15:31:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-11 11:11:33
+# @Last Modified time: 2022-08-11 11:35:30
 
 
 import sys
@@ -45,7 +45,7 @@ logger.setLevel(logging.DEBUG)
 
 # --  Set environment global vars.
 
-HYDRA_CONFIG_RELATIVE_PATH = "../../conf"
+HYDRA_CONFIG_RELATIVE_PATH = "../../../conf"
 HYDRA_CONFIG_NAME = "inference"
 CUDA_ENV = torch.cuda.is_available()
 TORCH_DEVICE = torch.device('cuda') if CUDA_ENV else torch.device('cpu')

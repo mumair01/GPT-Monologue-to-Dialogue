@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 11:07:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-11 11:11:03
+# @Last Modified time: 2022-08-11 12:15:06
 
 import sys
 import os
@@ -39,7 +39,7 @@ def load_inference_dataset(csv_path, start_conv_no, end_conv_no):
 # ------------------------ INFERENCE HELPERS  -----------------------------
 
 
-def get_last_word_prob(model, tokenizer, text, device):
+def get_last_word_prob(model, tokenizer, text):
     sentence_so_far = text
     context = ' '.join(text.split()[:-1])
     # Encode
@@ -49,7 +49,8 @@ def get_last_word_prob(model, tokenizer, text, device):
         sentence_so_far, return_tensors="pt")
     cw_encoding = whole_text_encoding[:, context_encoding.shape[1]:]
     # move to the appropriate device before inference
-    whole_text_encoding = whole_text_encoding.to(TORCH_DEVICE)
+    # TODO: This was giving an issue wit TurnGPT.
+    # whole_text_encoding = whole_text_encoding.to(TORCH_DEVICE)
     output = model(whole_text_encoding)
     # Obtain the logits for the last hidden state and the logits
     # that provide values for the tokens in the critical word.

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-11 10:41:48
+# @Last Modified time: 2022-08-11 11:35:31
 
 #############################
 # This is a finetuning script that takes some variant of the transformers GPT2
@@ -46,7 +46,7 @@ logger.setLevel(logging.DEBUG)
 
 ########################## GLOBAL VARS. ####################################
 
-HYDRA_CONFIG_RELATIVE_DIR = "../../conf"
+HYDRA_CONFIG_RELATIVE_DIR = "../../../conf"
 HYDRA_CONFIG_NAME = "finetune"
 CUDA_ENV = torch.cuda.is_available()
 TORCH_DEVICE = torch.device('cuda') if CUDA_ENV else torch.device('cpu')

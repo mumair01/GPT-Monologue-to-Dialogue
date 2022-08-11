@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-11 10:21:49
+# @Last Modified time: 2022-08-11 11:51:20
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT.
@@ -34,7 +34,7 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
         save_dir : str,
         batch_size : int = 16,
         max_length : int = 1024,
-        chunk_size : int = 512,
+        chunk_size : int = 128,
         num_workers : int = 1,
         pin_memory : bool = True,
         num_proc = None,
@@ -157,7 +157,8 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
 
     def _chunk_tokenized_samples(self, tokenized_samples):
         """Chunk the given tokenized samples based on the size. """
-        if self.chunk_size > self.max:
+        print(self.max_length)
+        if self.chunk_size > self.max_length:
             print(f"WARNING: Chunk size {self.chunk_size} greater than max length "
                f"{self.max_length} may lead to data loss")
         # Concatenate all the utterances

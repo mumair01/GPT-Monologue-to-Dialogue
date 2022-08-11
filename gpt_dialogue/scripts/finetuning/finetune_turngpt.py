@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-08 11:58:20
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-11 11:21:44
+# @Last Modified time: 2022-08-11 11:47:58
 
 
 #############################################################
@@ -34,7 +34,7 @@ logger.setLevel(logging.DEBUG)
 
 ############################# GLOBAL VARS. ##############################
 
-HYDRA_CONFIG_RELATIVE_DIR = "../../conf"
+HYDRA_CONFIG_RELATIVE_DIR = "../../../conf"
 HYDRA_CONFIG_NAME = "finetune_turngpt"
 
 # NOTE: For GPU Support, this script disables tokenizer parallelism by default.
@@ -46,21 +46,18 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 # Load the configurations and start finetuning.
 @hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
 def turngpt_finetune(cfg : DictConfig):
-
     # Load the appropriate model
-    model_head = cfg.finetune.model.model_head
-    cfg.finetune.model.model_head.pop('model_head', None)
-    if model_head == "DoubleHeads":
-        model = TurnGPTDoubleHeadsModel(**cfg.finetune.model)
-    elif model_head == "LMHead":
-        model = TurnGPTLMHeadModel(**cfg.finetune.model)
+    if cfg.model.model_head == "DoubleHeads":
+        model = TurnGPTDoubleHeadsModel(**cfg.model)
+    elif cfg.model.model_head == "LMHead":
+        model = TurnGPTLMHeadModel(**cfg.model)
     else:
         raise NotImplementedError(
-            f"TurnGPT with head {cfg.finetune.model_head} has not been implemented"
+            f"TurnGPT with head {cfg.model.model_head} has not been implemented"
         )
     logger.info(
-        f"Loaded TurnGPT from pretrained: {cfg.finetune.model.pretrained_model_name_or_path} "
-        f"with head {cfg.finetune.model_head}"
+        f"Loaded TurnGPT from pretrained: {cfg.model.pretrained_model_name_or_path} "
+        f"with head {cfg.model.model_head}"
     )
 
     # Load the data module
@@ -76,13 +73,13 @@ def turngpt_finetune(cfg : DictConfig):
     logger.info("Initializing trainer...")
     # Create the loggers
     training_logger = CSVLogger(save_dir=os.getcwd(),
-        name=f"TurnGPT_{cfg.finetune.model.pretrained_model_name_or_path}_{cfg.finetune.model_head}")
+        name=f"TurnGPT_{cfg.model.pretrained_model_name_or_path}_{cfg.model.model_head}")
     trainer = pl.Trainer(
         default_root_dir=os.getcwd(),
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
         logger=training_logger,
         log_every_n_steps=1,
-        **cfg.finetune.training
+        **cfg.finetune.trainer
     )
 
     logger.info("Starting training...")

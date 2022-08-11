@@ -22,7 +22,7 @@ SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/inference/inference_turngpt.py
 
 # Requires the finetuning dataset and env to be specified.
 HYDRA_ENV="hpc"
-DATASET="inference/speaker_identity_stims"
+DATASET="inference/speaker_identity_stims_turngpt"
 HYDRA_OVERWRITES=""
 HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 
