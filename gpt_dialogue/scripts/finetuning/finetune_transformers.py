@@ -2,17 +2,23 @@
 # @Author: Muhammad Umair
 # @Date:   2022-06-20 09:02:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 12:01:11
+# @Last Modified time: 2022-08-11 10:41:48
+
+#############################
+# This is a finetuning script that takes some variant of the transformers GPT2
+# models and finetunes them on data, which is expected to be in the format
+# of strings in csv files.
+# Additionally, it implements custom chunking / data processing functionality
+# and may be run as a Hydra app.
+#############################
 
 import os
 from typing import Union, List
-from datetime import datetime
 from functools import partial
 
 
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 import hydra
-import pprint
 import gc
 import shutil
 # Scikit-Learn ≥0.20 is required
@@ -22,32 +28,23 @@ assert sklearn.__version__ >= "0.20"
 
 # Pytorch imports
 import torch
-import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
 
 # Others
 import glob
 
 # Transformers
-import transformers
 from transformers import TextDataset,DataCollatorForLanguageModeling
 from transformers import Trainer, TrainingArguments,AutoModelWithLMHead
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
-import datasets
 from datasets import load_dataset
-
-
 
 import logging
 # Setup logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-
-# -------------------- ENV. VARS. ------------------------
-
-# --  Set environment global vars.
+########################## GLOBAL VARS. ####################################
 
 HYDRA_CONFIG_RELATIVE_DIR = "../../conf"
 HYDRA_CONFIG_NAME = "finetune"
@@ -55,12 +52,21 @@ CUDA_ENV = torch.cuda.is_available()
 TORCH_DEVICE = torch.device('cuda') if CUDA_ENV else torch.device('cpu')
 
 
-# --- Custom Dataset methods
+########################### MAIN METHODS ####################################
 
-def tokenize_fn(tokenizer):
-    return lambda data: tokenizer(data["Utterance"], truncation=True)
+def tokenize_fn(tokenizer, utterance_key : str):
+    """
+    Returns a method that takes in some data and tokenizes the utterance_key
+    attribute of the data.
+    """
+    return lambda data: tokenizer(data[utterance_key], truncation=True)
 
-def chunk_tokenized_samples(tokenized_samples,chunk_size):
+def chunk_tokenized_samples(tokenized_samples,chunk_size : int):
+    """
+    Given tokenized samples, each of some length L_i, chunks the samples into
+    samples of size chunk_size.
+    This makes sure that the data can fit in the model.
+    """
     # Concatenate all the utterances
     keys =  ('input_ids','attention_mask')
     concatenated_examples = {k : sum(tokenized_samples[k],[]) for k in keys}
@@ -72,21 +78,22 @@ def chunk_tokenized_samples(tokenized_samples,chunk_size):
     }
     return chunks
 
-
 def transformers_finetune(
         model_checkpoint : str,
         tokenizer_checkpoint : str,
         tokenizer_additional_special_tokens : List[str],
-        tokenizer_pad_token,
-        tokenizer_eos_token,
+        tokenizer_pad_token : str,
+        tokenizer_eos_token : str,
         save_dir : str,
         train_path : str,
         val_path : str,
-        data_block_size,
-        num_train_epochs,
-        per_device_train_batch_size,
-        per_device_eval_batch_size,
-        warmup_steps):
+        data_block_size : int,
+        num_train_epochs : int,
+        per_device_train_batch_size : int,
+        per_device_eval_batch_size : int,
+        warmup_steps : int,
+        utterance_key : str="Utterance"
+    ):
     logger.info("Using device {}".format(TORCH_DEVICE))
     # Load the tokenizer with special tokens defined.
     logger.info("Loading tokenizer: {}".format(tokenizer_checkpoint))
@@ -98,19 +105,25 @@ def transformers_finetune(
      # Save the tokenizer after adding new tokens in a separate dir.
     tokenizer_save_dir = os.path.join(save_dir,"tokenizer")
     tokenizer.save_pretrained(tokenizer_save_dir)
+
     logger.info("Loading data as custom dataset...")
     logger.warning("Custom dataset expects .csv files.")
     dataset = load_dataset("csv", data_files={
         'train' : train_path,
         'validation' : val_path})
+
     # Once loaded, the dataset needs to be processed
     tokenized_datasets = dataset.map(
-        tokenize_fn(tokenizer), batched=True,
-        remove_columns=["Unnamed: 0","convName","convID","Utterance"])
+        tokenize_fn(tokenizer, utterance_key),
+        batched=True,
+        remove_columns=dataset['train'].column_names)
+
+    # Chunking the tokenized data
     lm_datasets = tokenized_datasets.map(
         partial(chunk_tokenized_samples,
             chunk_size=data_block_size),batched=True)
     logger.info("Tokenizer length after loading datasets: {}".format(len(tokenizer)))
+
     # Create the data collator, which is responsible for creating batches from the
     # datasets during training.
     logger.info("Creating data collator.")
@@ -118,6 +131,7 @@ def transformers_finetune(
         tokenizer=tokenizer,
         mlm=False,
         return_tensors="pt")
+
     # Load the model
     logger.info("Loading model: {}".format(model_checkpoint))
     model = AutoModelForCausalLM.from_pretrained(
@@ -127,7 +141,7 @@ def transformers_finetune(
     )
     logger.info("Resizing model embeddings to {}".format(len(tokenizer)))
     model.resize_token_embeddings(len(tokenizer))
-    # Create training args and train
+
     # Defining training arguments
     logger.info("Preparing training arguments.")
     training_args = TrainingArguments(
@@ -153,6 +167,7 @@ def transformers_finetune(
         data_collator=data_collator,
         train_dataset=lm_datasets['train'],
         eval_dataset=lm_datasets['validation'])
+
     logger.info("Clearing CUDA cache")
     torch.cuda.empty_cache()
     gc.collect()

@@ -17,7 +17,7 @@
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/finetune_transformers.py
+SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/finetuning/finetune_transformers.py
 
 # Requires the finetuning dataset and env to be specified.
 HYDRA_ENV="hpc"

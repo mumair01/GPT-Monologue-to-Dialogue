@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-10 16:49:39
+# @Last Modified time: 2022-08-11 10:21:49
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT.
@@ -144,6 +144,7 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
         size does not increase self.max_length
         Additionally, moves the tensors to the appropriate device.
         """
+        # Pad all the input ids per batch.
         ret = self.tokenizer.pad(
             {"input_ids": [b["input_ids"][: self.max_length] for b in batch]}
         )

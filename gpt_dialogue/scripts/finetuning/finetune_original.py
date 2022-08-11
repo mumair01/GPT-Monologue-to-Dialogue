@@ -2,9 +2,16 @@
 # @Author: Muhammad Umair
 # @Date:   2022-03-05 20:02:44
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-06-28 14:39:50
+# @Last Modified time: 2022-08-11 10:27:23
 #!/usr/bin/env python
 # coding: utf-8
+
+
+# -----------------------
+# This is the original script that was used by Julia to generate the
+# output for her dissertation. My scripts tried to replicate this
+# functionality.
+# -----------------------
 
 # In[ ]:
 from transformers import Trainer, TrainingArguments, AutoModelWithLMHead

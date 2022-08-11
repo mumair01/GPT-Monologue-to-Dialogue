@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-08 14:49:25
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-10 13:09:04
+# @Last Modified time: 2022-08-11 11:12:31
 
 #############################################################
 '''
@@ -12,28 +12,31 @@ specifically for TurnGPT.
 '''
 #############################################################
 
-from omegaconf import DictConfig, OmegaConf
-import hydra
-from typing import Callable
 import os
 import sys
+from omegaconf import DictConfig, OmegaConf
+import hydra
 import pandas as pd
 
 
 from gpt_dialogue.turngpt.model import TurnGPT
-from gpt_dialogue.scripts.inference_transformers import (
+from gpt_dialogue.scripts.inference.utils import (
     load_inference_dataset,
     generate_conditional_probs
 )
-
-HYDRA_CONFIG_RELATIVE_DIR = "../../conf"
-HYDRA_CONFIG_NAME = "inference_turngpt"
 
 
 import logging
 # Setup logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+# --------------------------- GLOBALS --------------------------------------
+
+HYDRA_CONFIG_RELATIVE_DIR = "../../conf"
+HYDRA_CONFIG_NAME = "inference_turngpt"
+
+# ------------------------ INFERENCE MAIN  --------------------------------
 
 
 @hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)

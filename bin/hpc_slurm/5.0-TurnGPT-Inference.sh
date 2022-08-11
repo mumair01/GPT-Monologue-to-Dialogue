@@ -18,7 +18,7 @@
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj_turn
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/inference_turngpt.py
+SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/inference/inference_turngpt.py
 
 # Requires the finetuning dataset and env to be specified.
 HYDRA_ENV="hpc"

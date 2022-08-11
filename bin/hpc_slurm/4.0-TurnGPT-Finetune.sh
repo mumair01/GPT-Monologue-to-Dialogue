@@ -17,13 +17,14 @@
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj_turn
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/finetune_turngpt.py
+SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/finetuning/finetune_turngpt.py
 
 # Requires the finetuning dataset and env to be specified.
 HYDRA_ENV="hpc"
 DATASET="finetune/icc_5_train_37_test_turngpt"
+MODEL="model/turngpt_lmhead"
 HYDRA_OVERWRITES=""
-HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
+HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET} +model=${MODEL} ${HYDRA_OVERWRITES}"
 
 #load anaconda module
 module load anaconda/2021.11
