@@ -8,7 +8,7 @@ inference:
   experiment_name : gpt2
   model:
     model_head : LMHead
-    pretrained_model_name_or_path : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/results/finetune/turngpt_gpt2_icc_5_train_37_test_turngpt/2022-08-11_11-53-38/TurnGPT_gpt2_LMHead/version_0/checkpoints/epoch=0-step=18.ckpt
+    pretrained_model_name_or_path : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/data/results/finetune/turngpt_gpt2_LMHead_icc_5_train_37_test_turngpt/2022-08-11_12-22-34/TurnGPT_gpt2_LMHead/version_0/checkpoints/epoch=49-step=900.ckpt
     load_pretrained_configs : True
     trp_projection_steps : -1
     trp_projection_type : linear

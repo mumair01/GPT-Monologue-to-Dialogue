@@ -1,7 +1,7 @@
 # Configure the finetune experiment
 hydra:
   run:
-    dir: ${env.paths.root}/data/results/finetune/turngpt_${finetune.experiment_name}_${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}/
+    dir: ${env.paths.root}/data/results/finetune/turngpt_${finetune.experiment_name}_${model.model_head}_${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}/
   job:
     chdir: True
 
@@ -18,5 +18,5 @@ finetune:
     use_cache : False
 
   trainer:
-    max_epochs : 1
+    max_epochs : 50
 
