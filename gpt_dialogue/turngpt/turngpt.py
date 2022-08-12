@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-12 13:46:21
+# @Last Modified time: 2022-08-12 16:28:49
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -57,7 +57,7 @@ class TurnGPT:
                 pretrained_model_name_or_path)
         else:
             self.model = self._MODEL_MAP[model_head](
-                    pretrained_model_name_or_path=pretrained_model_name_or_path
+                    pretrained_model_name_or_path=pretrained_model_name_or_path,
                     **kwargs
                 )
 
