@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-11 16:31:14
+# @Last Modified time: 2022-08-12 13:46:21
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -33,6 +33,10 @@ class TurnGPT:
     def __init__(self):
         self.model = None
 
+    @property
+    def tokenizer(self):
+        return self.model._tokenizer
+
     def load(
         self,
         pretrained_model_name_or_path : str = "gpt2",
@@ -60,8 +64,8 @@ class TurnGPT:
     def finetune(
         self,
         # Data Module Args
-        train_csv_path,
-        val_csv_path,
+        train_csv_path : str,
+        val_csv_path : str,
         save_dir : str ,
         conversation_id_key : str = "convID",
         utterance_key : str = "Utterance",
@@ -106,5 +110,5 @@ class TurnGPT:
         )
         trainer.fit(self.model,datamodule=dm)
 
-    def predict(self, data):
+    def __call__(self, data):
         return self.model(data)

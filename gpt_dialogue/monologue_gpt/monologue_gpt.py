@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-12 12:05:47
+# @Last Modified time: 2022-08-12 13:51:09
 
 import os
 from typing import Union, List
@@ -42,6 +42,7 @@ class MonologueGPT:
     def __init__(self):
         self.model= None
         self.tokenizer = None
+
 
     def load(
         self,
@@ -83,6 +84,8 @@ class MonologueGPT:
         per_device_eval_batch_size : int = 8,
         warmup_steps : int = 300,
     ):
+
+        print(save_dir, train_csv_path, val_csv_path)
         # Load the data modules / apply the data transforms
         dm = MonologueGPTFinetuneDM(
             tokenizer=self.tokenizer,
@@ -122,6 +125,5 @@ class MonologueGPT:
         trainer.train()
         trainer.save_model()
 
-
-    def predict(self, data):
+    def __call__(self, data):
         return self.model(data)

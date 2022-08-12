@@ -1,3 +1,3 @@
 name : icc_5_train_37_test
-train_path : data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/train_5_conversations.csv
-validation_path : data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/validation_37_conversations.csv
+train_csv_path : data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/train_5_conversations.csv
+validation_csv_path : data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/validation_37_conversations.csv
