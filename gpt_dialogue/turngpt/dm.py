@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-11 11:51:20
+# @Last Modified time: 2022-08-15 16:52:18
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT.
@@ -191,5 +191,5 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
             for key, dataset_group in groups.items()
         }
         # Return concatenation of all the joined groups
-        return concatenate_datasets(groups.values())
+        return concatenate_datasets(list(groups.values()))
 

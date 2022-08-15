@@ -6,8 +6,6 @@ load:
   model_head : LMHead
 
 finetune:
-  save_dir :
-  data_block_size : 128
   conversation_id_key : convID
   utterance_key : Utterance
   batch_size : 16

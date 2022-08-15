@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 09:01:27
+# @Last Modified time: 2022-08-15 16:46:12
 
 import os
 from typing import Union, List
@@ -42,7 +42,11 @@ class MonologueGPT(LanguageModel):
 
     def __init__(self):
         self.model= None
-        self.tokenizer = None
+        self._tokenizer = None
+
+    @property
+    def tokenizer(self):
+        return self._tokenizer
 
 
     def load(
@@ -58,7 +62,7 @@ class MonologueGPT(LanguageModel):
         self.tokenizer_checkpoint = tokenizer_checkpoint
 
         # Load tokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(
+        self._tokenizer = AutoTokenizer.from_pretrained(
             tokenizer_checkpoint,
             pad_token=tokenizer_pad_token,
             eos_token=tokenizer_eos_token,
@@ -68,10 +72,10 @@ class MonologueGPT(LanguageModel):
 
         self.model = AutoModelForCausalLM.from_pretrained(
             model_checkpoint,
-            pad_token_id = self.tokenizer.pad_token_id,
-            eos_token_id = self.tokenizer.eos_token_id
+            pad_token_id = self._tokenizer.pad_token_id,
+            eos_token_id = self._tokenizer.eos_token_id
         )
-        self.model.resize_token_embeddings(len(self.tokenizer))
+        self.model.resize_token_embeddings(len(self._tokenizer))
 
     def finetune(
         self,
@@ -89,7 +93,7 @@ class MonologueGPT(LanguageModel):
         print(save_dir, train_csv_path, val_csv_path)
         # Load the data modules / apply the data transforms
         dm = MonologueGPTFinetuneDM(
-            tokenizer=self.tokenizer,
+            tokenizer=self._tokenizer,
             train_csv_path=train_csv_path,
             val_csv_path=val_csv_path,
             utterance_key=utterance_key,

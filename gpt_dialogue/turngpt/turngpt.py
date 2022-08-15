@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 09:01:55
+# @Last Modified time: 2022-08-15 16:54:07
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -82,6 +82,8 @@ class TurnGPT(LanguageModel):
         log_every_n_steps : int = 1,
         **kwargs
     ):
+        # Disable tokenizers parallelism
+        os.environ["TOKENIZERS_PARALLELISM"] = "false"
         # Load the data module
         dm = TurnGPTFinetuneDM(
             tokenizer=self.model._tokenizer,
