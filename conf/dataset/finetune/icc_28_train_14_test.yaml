@@ -1,3 +1,0 @@
-name : icc_28_train_14_test
-train_csv_path : data/datasets/processed/ICC/julia_finetune_experiments/28_train_14_test_set/train_28_conversations.csv
-validation_csv_path : data/datasets/processed/ICC/julia_finetune_experiments/28_train_14_test_set/validation_14_conversations.txt
