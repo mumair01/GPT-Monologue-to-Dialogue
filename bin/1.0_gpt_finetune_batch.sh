@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J turn_gpt_conditional_inference
+#SBATCH -J gpt_finetune #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -8,24 +8,24 @@
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
 #SBATCH --mem=120g #requesting 60GB of RAM total
-#SBATCH --output=./inference_reports/%x.%j.%N.out #saving standard output to file
-#SBATCH --error=./inference_reports/%x.%j.%N.err # saving standard error to file
+#SBATCH --output=./%x.%j.%N.out #saving standard output to file
+#SBATCH --error=./%x.%j.%N.err # saving standard error to file
 #SBATCH --mail-type=ALL # email optitions
 #SBATCH --mail-user=muhammad.umair@tufts.edu
 
-
 # Define paths
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
-PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj_turn
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/inference/inference_turngpt.py
+SCRIPT_PATH=${PROJECT_PATH}scripts/finetune.py
+
+PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 
 # Requires the finetuning dataset and env to be specified.
-HYDRA_ENV="hpc"
-DATASET="inference/speaker_identity_stims_turngpt"
+ENV="hpc"
+DATASET="finetune/icc_5_train_37_test_monologue_gpt"
+EXPERIMENT=""
 HYDRA_OVERWRITES=""
-HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
-
+HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 
 #load anaconda module
 module load anaconda/2021.11
@@ -40,9 +40,6 @@ nvidia-smi
 
 #activate conda environment
 source activate $PYTHON_ENV_PATH
-
-# Add the project directory to the pythonpath before running script
-export PYTHONPATH=$PROJECT_PATH
 
 python $SCRIPT_PATH ${HYDRA_ARGS}
 
