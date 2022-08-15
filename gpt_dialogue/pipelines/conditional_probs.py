@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 08:38:06
+# @Last Modified time: 2022-08-15 08:57:11
 
 import sys
 import os
@@ -23,6 +23,10 @@ class Param:
 
 
 class ConditionalProbabilityPipeline:
+    """
+    Pipeline that loads a causal language Model with a __call__ method and
+    tokenizer and uses it to generate conditional probabilities.
+    """
 
     _PREPROCESS_PARAMS = {
     }
@@ -37,9 +41,22 @@ class ConditionalProbabilityPipeline:
 
 
     def __init__(self, **kwargs):
+        """
+        Args:
+            model : (required)
+            N (int) : The number of last words in every turn whose probability
+                has to be generated. Set to - 1 to generate the probabilities
+                of all the words in a turn.
+                Ex: If N = 1, generates probability of the last word only.
+            context_buffer_size (int): The total number of words that should
+                be kept as context when predicting the probability of a word.
+                Note that this should be less than the total number of tokens
+                that can be processed by the model.
+        """
         self._sanitize_parameters(**kwargs)
 
     def _sanitize_parameters(self, **kwargs):
+        """Clean up the input kwargs and assign to the appropriate map."""
         for param_dict in (self._PREPROCESS_PARAMS,
                 self._FORWARD_PARAMS,self._POSTPROCESS_PARAMS):
             for k,v in param_dict.items():
@@ -57,9 +74,11 @@ class ConditionalProbabilityPipeline:
         return self.postprocess(self._forward(self.preprocess(utterances)))
 
     def preprocess(self, utterances : List[str]):
+        """Prepare inputs given to __call__ for _forward"""
         return {"utterances" : utterances}
 
     def _forward(self, preprocess_output : Dict) :
+        """Main execution logic"""
 
         utterances = preprocess_output["utterances"]
 
@@ -95,6 +114,7 @@ class ConditionalProbabilityPipeline:
         return results_list
 
     def postprocess(self, forward_outputs):
+        """Prepare _forward outputs to be returned. """
         return forward_outputs
 
     def _get_final_n_words_probs(
@@ -105,6 +125,11 @@ class ConditionalProbabilityPipeline:
         N : int,
         context_buffer_size : int
     ):
+        """
+        Get the conditional probability of the N final words in the given text.
+        This builds the text from the bottom-up i.e., from word len(text) - N
+        to word at len(text).
+        """
         words = text.strip().split()
         if N == -1:
             N = len(words)
@@ -130,6 +155,7 @@ class ConditionalProbabilityPipeline:
         return results
 
     def _get_last_word_prob(self, model, tokenizer, text : str):
+        """Get the probability of the last word only in the given text."""
         sentence_so_far = text
         context = ' '.join(text.split()[:-1])
         # Encode

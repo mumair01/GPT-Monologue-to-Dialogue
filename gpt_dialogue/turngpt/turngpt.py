@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-12 16:28:49
+# @Last Modified time: 2022-08-15 09:01:55
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -21,9 +21,11 @@ from gpt_dialogue.turngpt.model import (
     TurnGPTDoubleHeadsModel,
     TurnGPTLMHeadModel
 )
+
+from gpt_dialogue.model import LanguageModel
 from gpt_dialogue.turngpt.dm import TurnGPTFinetuneDM
 
-class TurnGPT:
+class TurnGPT(LanguageModel):
 
     _MODEL_MAP = {
         "LMHead" : TurnGPTLMHeadModel,

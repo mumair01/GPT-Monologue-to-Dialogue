@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-12 13:51:09
+# @Last Modified time: 2022-08-15 09:01:27
 
 import os
 from typing import Union, List
@@ -21,9 +21,10 @@ from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
 from datasets import load_dataset
 
+from gpt_dialogue.model import LanguageModel
 from gpt_dialogue.monologue_gpt.dm import MonologueGPTFinetuneDM
 
-class MonologueGPT:
+class MonologueGPT(LanguageModel):
 
     _SUPPORTED_MODELS = (
         "gpt2",
