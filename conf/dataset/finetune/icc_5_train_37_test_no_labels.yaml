@@ -1,0 +1,3 @@
+name : icc_5_train_37_test_turngpt
+train_csv_path : data/processed/ICC/5_train_37_test/train_no_labels.csv
+validation_csv_path : data/processed/ICC/5_train_37_test/test_no_labels.csv

@@ -1,3 +1,0 @@
-name : icc_28_train_14_test
-train_csv_path : data/processed/ICC/28_train_14_test/train_monologue_gpt.csv
-validation_csv_path : data/processed/ICC/28_train_14_test/test_monologue_gpt.csv
