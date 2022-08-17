@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 10:46:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 13:01:18
+# @Last Modified time: 2022-08-17 13:53:10
 
 import sys
 import os
@@ -27,81 +27,103 @@ from data_lib import (
 )
 
 
-def preprocess_icc_julia_dissertation(cha_path : str, variant : str) -> List:
-    assert os.path.isfile(cha_path), \
-        f"ERROR: {cha_path} does not exist"
-    conv_name = get_filename(cha_path)
-    conv = read_text(cha_path)
+class ICCDataset:
 
-    # Build params based on data variant
-    if variant == "monologue_gpt":
-        remove_words = []
-        replace_words = {
-            "sp1" : "<SP1>",
-            "sp2" : "<SP2>",
-            "start" : "<START>",
-            "end" : "<END>"
-        }
-    elif variant == "turngpt":
-        replace_words = {}
-        remove_words = ["sp1", "sp2", "start", "end"]
-    else:
-        raise NotImplementedError(
-            f"ERROR: ICC data variant {variant} undefined"
-        )
-    # Create normalizer sequence
-    normalizer_seq = create_normalizer_sequence(
-        lowercase=True,
-        unicode_normalizer="nfd",
-        strip_accents=True,
-        remove_punctuation=True,
-        remove_extra_whitespaces=True,
-        add_whitespace_punc=True,
-        replace_words=replace_words,
-        remove_words=remove_words,
-        custom_regex = "(\*)"
-    )
+    _VARIANTS = ("no_labels", "special_labels")
+    _EXT = "cha"
 
-    data = []
-    for j in range(len(conv)):
-        target_str = conv[j].strip()
+    def __init__(self, dir_path : str):
+        assert os.path.isdir(dir_path), \
+            f"ERROR: Specified directory {dir_path} does not exist"
+        self.dir_path = dir_path
 
-        # Split on punctuation
-        split_toks = re.split(r"\. |\?|\t+", target_str)
-        # Apply normalizer
-        split_toks = [normalizer_seq(toks) for toks in split_toks]
+    def __call__(self, variant : str, save_dir : str, outfile : str):
+        assert variant in self._VARIANTS, \
+            f"ERROR: Specified variant not defined: {variant}"
 
-        split_toks = [tok for tok in split_toks if len(tok) > 0]
-        if len(split_toks) > 0:
-            split_toks = " ".join(split_toks)
-            data.append([conv_name,split_toks])
-    return data
-
-
-def process_icc(path : str, variant : str, ext : str, outfile : str, out_dir : str):
-    if os.path.isfile(path) and get_extension(path) == ext:
-        res = preprocess_icc_julia_dissertation([path])
-    else:
         res = process_files_in_dir(
-            dir_path=path,
-            file_ext=ext,
-            process_fn=partial(preprocess_icc_julia_dissertation,variant=variant),
+            dir_path=self.dir_path,
+            file_ext=self._EXT,
+            process_fn=partial(self._process_file,variant=variant),
             recursive=False
         )
-    # Add conversation number to each conv.
-    combined = []
-    for conv_no, conv_data in enumerate(res):
-        for item in conv_data:
-            item.insert(1,conv_no)
-            combined.append(item)
-    # Save the data as a dataframe
-    dataset_df = pd.DataFrame(combined, columns=["convName","convID", "Utterance"])
-    # Generate the save path and save
-    create_dir(out_dir)
-    partial_save_path = os.path.join(out_dir,outfile)
-    csv_path = f"{partial_save_path}.csv"
-    remove_file(csv_path)
-    dataset_df.to_csv(csv_path)
+
+        # Add conversation number to each conv.
+        combined = []
+        for conv_no, conv_data in enumerate(res):
+            for item in conv_data:
+                item.insert(1,conv_no)
+                combined.append(item)
+
+        # Save the data as a dataframe
+        dataset_df = pd.DataFrame(combined, columns=["convName","convID", "Utterance"])
+        # Generate the save path and save
+        create_dir(save_dir)
+        print(self.dir_path, os.path.basename(self.dir_path))
+        partial_save_path = os.path.join(
+            save_dir,f"{outfile}_{variant}")
+        csv_path = f"{partial_save_path}.csv"
+        remove_file(csv_path)
+        dataset_df.to_csv(csv_path)
+
+    def _process_file(self, cha_path : str, variant : str):
+        assert os.path.isfile(cha_path), f"ERROR: {cha_path} does not exist"
+
+        conv_name = get_filename(cha_path)
+        conv = read_text(cha_path)
+
+         # Create and apply normalizer sequence
+        normalizer_seq = create_normalizer_sequence(
+            **self._get_variant_normalizer_params(variant))
+
+        data = []
+        for j in range(len(conv)):
+            target_str = conv[j].strip()
+
+            # Split on punctuation
+            split_toks = re.split(r"\. |\?|\t+", target_str)
+            # Apply normalizer
+            split_toks = [normalizer_seq(toks) for toks in split_toks]
+
+            split_toks = [tok for tok in split_toks if len(tok) > 0]
+            if len(split_toks) > 0:
+                split_toks = " ".join(split_toks)
+                data.append([conv_name,split_toks])
+        return data
+
+    def _get_variant_normalizer_params(self, variant : str):
+        if variant == "no_labels":
+            return {
+                "lowercase" : True,
+                "unicode_normalizer" : "nfd",
+                "strip_accents" : True,
+                "remove_punctuation" : True,
+                "remove_extra_whitespaces" : True,
+                "add_whitespace_punc" : True,
+                "replace_words" : {},
+                "remove_words" :  ["sp1", "sp2", "start", "end"],
+                "custom_regex" : "(\*)"
+            }
+        elif variant == "special_labels":
+            return {
+                "lowercase" : True,
+                "unicode_normalizer" : "nfd",
+                "strip_accents" : True,
+                "remove_punctuation" : True,
+                "remove_extra_whitespaces" : True,
+                "add_whitespace_punc" : True,
+                "replace_words" : {
+                    "sp1" : "<SP1>",
+                    "sp2" : "<SP2>",
+                    "start" : "<START>",
+                    "end" : "<END>"
+                },
+                "remove_words" :  [],
+                "custom_regex" : "(\*)"
+            }
+        else:
+            raise NotImplementedError()
+
 
 if __name__ == "__main__":
 
@@ -112,17 +134,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--variant", type=str, help="Variant of the ICC to generate")
     parser.add_argument(
-        "--outfile", type=str, required=True,
-        help="name of the output file")
-    parser.add_argument(
         "--outdir", type=str, default="./", help="Output directory")
+    parser.add_argument(
+        "--outfile", type=str,  help="Name of the output file")
 
     args = parser.parse_args()
 
-    process_icc(
-        path=args.path,
-        variant=args.variant,
-        outfile=args.outfile,
-        out_dir=args.outdir,
-        ext="cha"
-    )
+
+    dataset = ICCDataset(args.path)
+    dataset(args.variant, args.outdir, args.outfile)

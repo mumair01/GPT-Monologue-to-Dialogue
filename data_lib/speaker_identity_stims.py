@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 12:50:18
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 15:35:41
+# @Last Modified time: 2022-08-17 12:55:27
 
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
@@ -33,94 +33,113 @@ from data_lib import (
 )
 
 
-def preprocess_speaker_identity_stims(cha_path : str, variant : str) -> List:
-    assert os.path.isfile(cha_path), \
-        f"ERROR: {cha_path} does not exist"
-    conv_name = get_filename(cha_path)
-    conv = read_text(cha_path)
+class SpeakerIdentityStimuliDataset:
 
-    # Ignore / Remove all lines that start with comment marker.
-    conv = [line for line in conv if line[0] != "@"]
+    _VARIANTS = ("no_labels", "special_labels")
+    _EXT = "cha"
 
-    # Build params based on data variant
-    if variant == "monologue_gpt":
-        remove_words = []
-        replace_words = {}
-    elif variant == "turngpt":
-        replace_words = {}
-        remove_words = ["sp1", "sp2", "start", "end"]
-    else:
-        raise NotImplementedError(
-            f"ERROR: ICC data variant {variant} undefined"
-        )
-    # Create normalizer sequence
-    normalizer_seq = create_normalizer_sequence(
-        lowercase=True,
-        unicode_normalizer="nfd",
-        strip_accents=True,
-        remove_punctuation=True,
-        remove_extra_whitespaces=True,
-        add_whitespace_punc=True,
-        replace_words=replace_words,
-        remove_words=remove_words,
-        custom_regex = "(\*)"
-    )
+    def __init__(self, dir_path : str):
+        assert os.path.isdir(dir_path), \
+            f"ERROR: Specified directory {dir_path} does not exist"
+        self.dir_path = dir_path
 
-    data = []
+    def __call__(self, variant : str, save_dir : str):
+        assert variant in self._VARIANTS, \
+            f"ERROR: Specified variant not defined: {variant}"
 
-    for j in range(len(conv)):
-        target_str = conv[j].strip()
-
-        # Split on punctuation
-        split_toks = re.split(r"\. |\?|\t+|:", target_str)
-        # Apply normalizer
-        split_toks = [normalizer_seq(toks) for toks in split_toks]
-
-        # Add speaker token to end for monologue gpt
-        if variant == "monologue_gpt":
-            # Removing existing speaker tokens to add the ones needed by the model.
-            # NOTE: Assuming that speaker ids start from 1.
-            for speaker_id in range(1,3):
-                SPEAKER_TOK = "<SP{}>"
-                split_toks = [SPEAKER_TOK.format(speaker_id) \
-                    if re.match("sp{}".format(speaker_id),tok) else tok for tok in split_toks]
-            split_toks.append(split_toks[0])
-
-        split_toks = [tok for tok in split_toks if len(tok) > 0]
-
-        if len(split_toks) > 0:
-            split_toks = " ".join(split_toks)
-            data.append([conv_name,split_toks])
-    if variant == "monologue_gpt":
-        data.insert(0,[conv_name,"<START>"])
-        data.append([conv_name, "<END>"])
-    return data
-
-
-def process_speaker_identity_stims(path : str, variant : str, ext : str, outfile : str, out_dir : str):
-    if os.path.isfile(path) and get_extension(path) == ext:
-        res = preprocess_speaker_identity_stims(path,variant)
-    else:
         res = process_files_in_dir(
-            dir_path=path,
-            file_ext=ext,
-            process_fn=partial(preprocess_speaker_identity_stims,variant=variant),
+            dir_path=self.dir_path,
+            file_ext=self._EXT,
+            process_fn=partial(self._process_file,variant=variant),
             recursive=False
         )
-    # Add conversation number to each conv.
-    combined = []
-    for conv_no, conv_data in enumerate(res):
-        for item in conv_data:
-            item.insert(1,conv_no)
-            combined.append(item)
-    # Save the data as a dataframe
-    dataset_df = pd.DataFrame(combined, columns=["convName","convID", "Utterance"])
-    # Generate the save path and save
-    create_dir(out_dir)
-    partial_save_path = os.path.join(out_dir,outfile)
-    csv_path = f"{partial_save_path}.csv"
-    remove_file(csv_path)
-    dataset_df.to_csv(csv_path)
+
+         # Add conversation number to each conv.
+        combined = []
+        for conv_no, conv_data in enumerate(res):
+            for item in conv_data:
+                item.insert(0,conv_no)
+                combined.append(item)
+
+
+        # Save the data as a dataframe after sorting.
+        dataset_df = pd.DataFrame(combined, columns=["convID","convName","turnNo", "Utterance"])
+        dataset_df.sort_values(by=["convID","turnNo"],ignore_index=True, inplace=True)
+        dataset_df = dataset_df.drop(columns=["turnNo"])
+
+        # Generate the save path and save
+        create_dir(save_dir)
+        partial_save_path = os.path.join(save_dir,f"speaker_identity_stimuli_{variant}")
+        csv_path = f"{partial_save_path}.csv"
+        remove_file(csv_path)
+        dataset_df.to_csv(csv_path)
+
+
+    def _process_file(self, cha_path : str, variant : str):
+        assert os.path.isfile(cha_path),  f"ERROR: {cha_path} does not exist"
+
+        conv_name = get_filename(cha_path)
+        conv = read_text(cha_path)
+
+        # Ignore / Remove all lines that start with comment marker.
+        conv = [line for line in conv if line[0] != "@"]
+
+        # Create and apply normalizer sequence
+        normalizer_seq = create_normalizer_sequence(
+            **self._get_variant_normalizer_params(variant))
+        conv = [normalizer_seq(toks) for line in conv \
+            for toks in re.split(r"\. |\?|\t+|:", line) ]
+        conv = [line for line in conv if len(line) > 0]
+
+        # Assumption: There are only two turns in the conversation.
+        if variant == "no_labels":
+            if conv[0] == conv[2]:
+                conv = [f"{conv[1].strip()} {conv[3].strip()}"]
+            else:
+                conv = [f"{conv[1].strip()}",  f"{conv[3].strip()}"]
+        elif variant == "special_labels":
+            speakers = [line for line in conv if re.match(r"(sp)[0-9]",line)]
+            lines = [line for line in conv if not re.match(r"(sp)[0-9]",line)]
+            conv = []
+            for sp, line in zip(speakers, lines):
+                sp = f"<SP{sp[-1]}>"
+                conv.append(f"{sp} {line.strip()} {sp}")
+            assert len(conv) == 2
+            conv.insert(0,"<START>")
+            conv.append("<END>")
+
+        # Add the conversation name to each item in list
+        conv = [[conv_name, turn_no, item] for turn_no,item in enumerate(conv)]
+        return conv
+
+    def _get_variant_normalizer_params(self, variant : str):
+        if variant == "no_labels":
+            return {
+                "lowercase" : True,
+                "unicode_normalizer" : "nfd",
+                "strip_accents" : True,
+                "remove_punctuation" : True,
+                "remove_extra_whitespaces" : True,
+                "add_whitespace_punc" : True,
+                "replace_words" : {},
+                "remove_words" :  ["start", "end"],
+                "custom_regex" : "(\*)"
+            }
+        elif variant == "special_labels":
+            return {
+                "lowercase" : True,
+                "unicode_normalizer" : "nfd",
+                "strip_accents" : True,
+                "remove_punctuation" : True,
+                "remove_extra_whitespaces" : True,
+                "add_whitespace_punc" : True,
+                "replace_words" : {},
+                "remove_words" :  [],
+                "custom_regex" : "(\*)"
+            }
+        else:
+            raise NotImplementedError()
+
 
 if __name__ == "__main__":
 
@@ -131,17 +150,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--variant", type=str, help="Variant of the ICC to generate")
     parser.add_argument(
-        "--outfile", type=str, required=True,
-        help="name of the output file")
-    parser.add_argument(
         "--outdir", type=str, default="./", help="Output directory")
 
     args = parser.parse_args()
 
-    process_speaker_identity_stims(
-        path=args.path,
-        variant=args.variant,
-        outfile=args.outfile,
-        out_dir=args.outdir,
-        ext="cha"
-    )
+    dataset = SpeakerIdentityStimuliDataset(args.path)
+    dataset(args.variant, args.outdir)
