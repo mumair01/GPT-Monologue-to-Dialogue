@@ -4,10 +4,10 @@
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
 #SBATCH -n 32   #30 number of cores (number of threads)
-#SBATCH --gres=gpu:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
+#SBATCH --gres=gpu:t4:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
-#SBATCH --mem=120g #requesting 60GB of RAM total
+#SBATCH --mem=60g #requesting 60GB of RAM total
 #SBATCH --output=./%x.%j.%N.out #saving standard output to file
 #SBATCH --error=./%x.%j.%N.err # saving standard error to file
 #SBATCH --mail-type=ALL # email optitions
@@ -19,7 +19,7 @@ USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
 SCRIPT_PATH=${PROJECT_PATH}scripts/inference.py
 
-PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj_turn
+PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 
 # Requires the finetuning dataset and env to be specified.
 ENV="hpc"
