@@ -4,26 +4,28 @@
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
 #SBATCH -n 32   #30 number of cores (number of threads)
-#SBATCH --gres=gpu:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
+#SBATCH --gres=gpu:t4:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
-#SBATCH --mem=120g #requesting 60GB of RAM total
-#SBATCH --output=./finetuning_reports/%x.%j.%N.out #saving standard output to file
-#SBATCH --error=./finetuning_reports/%x.%j.%N.err # saving standard error to file
+#SBATCH --mem=60g #requesting 60GB of RAM total
+#SBATCH --output=./%x.%j.%N.out #saving standard output to file
+#SBATCH --error=./%x.%j.%N.err # saving standard error to file
 #SBATCH --mail-type=ALL # email optitions
 #SBATCH --mail-user=muhammad.umair@tufts.edu
 
 # Define paths
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
-PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_proj
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}gpt_dialogue/scripts/finetune_transformers.py
+SCRIPT_PATH=${PROJECT_PATH}scripts/finetune.py
+
+PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 
 # Requires the finetuning dataset and env to be specified.
-HYDRA_ENV="hpc"
-DATASET="finetune/icc_5_train_37_test"
+ENV="hpc"
+DATASET="finetune/icc_5_train_37_test_monologue_gpt"
+EXPERIMENT="finetune_monologue_gpt"
 HYDRA_OVERWRITES=""
-HYDRA_ARGS="+env=${HYDRA_ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
+HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 
 #load anaconda module
 module load anaconda/2021.11

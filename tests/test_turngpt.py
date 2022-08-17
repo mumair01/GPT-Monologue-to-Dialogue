@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-08 11:53:14
+# @Last Modified time: 2022-08-09 16:19:35
 
 import pytest
 import sys
@@ -14,9 +14,8 @@ import numpy as np
 
 from gpt_dialogue.turngpt.tokenizer import SpokenNormalizer, SpokenDialogueTokenizer
 from gpt_dialogue.turngpt.model import TurnGPT
-from gpt_dialogue.turngpt.dm import TurnGPTDM
+from gpt_dialogue.turngpt.dm import TurnGPTFinetuneDM
 
-from gpt_dialogue.turngpt.inference import surprisal_inference
 
 def test_spoken_normalizer():
     normalizer = SpokenNormalizer()
@@ -155,34 +154,54 @@ def test_original():
     print(model.tokenizer.decode(toks['input_ids'][0]))
     out = model(**toks)
 
-def test_dm():
-    tokenizer = SpokenDialogueTokenizer("gpt2")
+def clean_speaker_labels(data):
+        """Remove speaker labels from the start and end of an utterance"""
+        if len(data['Utterance'].split()) > 1:
+            data['Utterance'] = " ".join(data['Utterance'].split()[1:-1])
+        return data
 
-    dm = TurnGPTDM(
-        tokenizer=tokenizer,
-        dataset="icc",
+def test_dm():
+    model = TurnGPT(
+        # NOTE: All special tokens passed should be lowercase because the normalize
+        # lowercases them anyways.
+        tokenizer_additional_special_tokens=['<START>','<END>']
+    )
+
+    dm = TurnGPTFinetuneDM(
+        tokenizer=model._tokenizer,
+        train_csv_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/train_5_conversations.csv",
+        val_csv_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/validation_37_conversations.csv",
+        save_dir="./dm_save_test",
+        # cleanup_fn=clean_speaker_labels
     )
     dm.prepare_data()
-    dm.setup()
+    dm.setup(stage="fit")
 
     batch = next(iter(dm.train_dataloader()))
-    print(batch['input_ids'].shape)
-
-def test_finetuning():
-    model = TurnGPT(
-        pretrained_model_name_or_path="gpt2",
-        load_pretrained_configs=True,
-        learning_rate= 1e-4
-    )
-    dm = TurnGPTDM(
-        tokenizer=model._tokenizer,
-        dataset="icc",
-    )
-    dm.prepare_data()
-    trainer = pl.Trainer()
-    print("Starting training...")
-    trainer.fit(model, datamodule=dm)
+    count = 0
+    for batch in iter(dm.train_dataloader()):
+        count +=1
+        for i in range(batch['input_ids'].shape[0]):
+            print(model._tokenizer.decode(batch['input_ids'][i]))
+    # print(tokenizer.decode(batch['input_ids'][0]))
+    # print(tokenizer.decode(batch['input_ids'][1]))
 
 
-def test_inference():
-    surprisal_inference()
+# def test_finetuning():
+#     model = TurnGPT(
+#         pretrained_model_name_or_path="gpt2",
+#         load_pretrained_configs=True,
+#         learning_rate= 1e-4
+#     )
+#     dm = TurnGPTDM(
+#         tokenizer=model._tokenizer,
+#         dataset="icc",
+#     )
+#     dm.prepare_data()
+#     trainer = pl.Trainer()
+#     print("Starting training...")
+#     trainer.fit(model, datamodule=dm)
+
+
+# def test_inference():
+#     surprisal_inference()

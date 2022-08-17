@@ -1,0 +1,16 @@
+name : finetune_monologue_gpt
+model_name : gpt2
+
+load:
+  model_checkpoint : gpt2
+  tokenizer_checkpoint : gpt2
+
+finetune:
+  data_block_size : 128
+  utterance_key : "Utterance"
+  num_train_epochs : 30
+  per_device_train_batch_size : 8
+  per_device_eval_batch_size : 8
+  warmup_steps : 300
+
+

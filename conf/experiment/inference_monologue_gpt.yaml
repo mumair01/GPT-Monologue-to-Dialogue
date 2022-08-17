@@ -1,0 +1,15 @@
+name : inference_monologue_gpt
+model_name : gpt2
+
+load:
+  model_checkpoint : gpt2
+  tokenizer_checkpoint : gpt2
+
+dataset:
+  start_conv_no : 0
+  end_conv_no : -1
+
+inference:
+  N : -1
+  context_buffer_size : 512
+
