@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 16:54:07
+# @Last Modified time: 2022-08-17 17:34:16
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -16,6 +16,7 @@ import torch
 
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import CSVLogger
+from pytorch_lightning.callbacks import ModelCheckpoint
 
 from gpt_dialogue.turngpt.model import (
     TurnGPTDoubleHeadsModel,
@@ -104,12 +105,21 @@ class TurnGPT(LanguageModel):
         training_logger = CSVLogger(
             save_dir=os.getcwd(),
             name=model_name)
+        # Create callbacks
+        checkpoint_callback = ModelCheckpoint(
+            # NOTE: We want to save the models at every epoch.
+            every_n_train_steps=1
+        )
+
         trainer = pl.Trainer(
             default_root_dir=save_dir,
             accelerator="gpu" if torch.cuda.is_available() else "cpu",
             logger=training_logger,
             max_epochs=max_epochs,
             log_every_n_steps=log_every_n_steps,
+            callbacks=[
+                checkpoint_callback
+            ],
             **kwargs
         )
         trainer.fit(self.model,datamodule=dm)
