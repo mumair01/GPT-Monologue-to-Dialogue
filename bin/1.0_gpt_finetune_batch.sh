@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J gpt_finetune #job name
+#SBATCH -J gpt_finetune_monologue_5_train_37_test #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -7,7 +7,7 @@
 #SBATCH --gres=gpu:t4:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
-#SBATCH --mem=30g #requesting 60GB of RAM total
+#SBATCH --mem=20g #requesting 60GB of RAM total
 #SBATCH --output=./%x.%j.%N.out #saving standard output to file
 #SBATCH --error=./%x.%j.%N.err # saving standard error to file
 #SBATCH --mail-type=ALL # email optitions
@@ -22,8 +22,8 @@ PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 
 # Requires the finetuning dataset and env to be specified.
 ENV="hpc"
-DATASET="finetune/icc_5_train_37_test_no_labels"
-EXPERIMENT="finetune_turngpt"
+DATASET="finetune/icc_5_train_37_test_special_labels"
+EXPERIMENT="finetune_monologue_gpt"
 HYDRA_OVERWRITES=""
 HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 

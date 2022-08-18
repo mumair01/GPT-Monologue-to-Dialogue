@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-10 16:51:21
+# @Last Modified time: 2022-08-18 14:31:38
 
 
 ############################
@@ -22,6 +22,8 @@ import os
 import wandb
 from typing import Dict, Any,  List
 
+from enum import Enum,unique
+
 from transformers import GPT2LMHeadModel, GPT2Config
 from transformers.models.gpt2.modeling_gpt2 import GPT2DoubleHeadsModelOutput
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
@@ -34,6 +36,10 @@ from torch.nn import CrossEntropyLoss, BCEWithLogitsLoss
 from gpt_dialogue.turngpt.tokenizer import SpokenDialogueTokenizer
 
 
+@unique
+class LOG_GROUP(Enum):
+    TRAIN : str = "train"
+    VALIDATION : str = "eval"
 
 # TODO: Investigate how this labeler is working.
 class ProjectionLabeler(nn.Module):
@@ -242,6 +248,10 @@ class TurnGPTModel(pl.LightningModule):
             labels[:, : self.no_train_first_n] = value
         return labels
 
+    def _log_to_group(self, group : LOG_GROUP, k : str, v : float):
+        self.log(f"{group.value}/{k}",v)
+
+
 
 class TurnGPTDoubleHeadsModel(TurnGPTModel):
     """
@@ -369,6 +379,8 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
         Here, we first get the labels for our task, do a forward pass to
         generate the combined loss, and return the values.
         """
+        # Initialize logs for this step
+        logs = {}
         # Extract the task labels
         lm_labels = self._extract_labels(
             input_ids=batch['input_ids'],mask=batch['attention_mask'])
@@ -390,11 +402,14 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
         )
         # Calculate and return the total loss
         if self.trp_projection_steps > 0:
-            self.log("loss_lm", out["loss"])
-            self.log("loss_projection", out["mc_loss"])
+            self._log_to_group(LOG_GROUP.TRAIN,"loss_lm",out["loss"])
+            self._log_to_group(LOG_GROUP.TRAIN,"loss_projection", out["mc_loss"])
+            # self.log("loss_lm", out["loss"])
+            # self.log("loss_projection", out["mc_loss"])
             total_loss = out["loss"] + out["mc_loss"]
         else:
-            self.log("loss", out["loss"])
+            self._log_to_group(LOG_GROUP.TRAIN,"loss", out["loss"])
+            # self.log("loss", out["loss"])
             total_loss = out["loss"]
         return {"loss": total_loss}
 
@@ -421,12 +436,15 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
         )
         # Calculate and log te validation loss.
         if self.trp_projection_steps > 0:
-            self.log("val_loss_lm", out["loss"])
-            self.log("val_loss_projection", out["mc_loss"])
+            self._log_to_group(LOG_GROUP.VALIDATION,"loss_lm", out["loss"])
+            self._log_to_group(LOG_GROUP.VALIDATION,"loss_projection", out["mc_loss"])
+            # self.log("val_loss_lm", out["loss"])
+            # self.log("val_loss_projection", out["mc_loss"])
             total_loss = out["loss"] + out["mc_loss"]
         else:
             total_loss = out["loss"]
-        self.log("val_loss", total_loss)
+        self._log_to_group(LOG_GROUP.VALIDATION,"loss", total_loss)
+        # self.log("val_loss", total_loss)
 
     ######################### PRIVATE METHODS ################################
 
@@ -583,7 +601,8 @@ class TurnGPTLMHeadModel(TurnGPTModel):
         generate the combined loss, and return the values.
         """
         out = self._step(batch, batch_idx)
-        self.log("loss", out["loss"])
+        self._log_to_group(LOG_GROUP.TRAIN,"loss",out["loss"])
+        # self.log("loss", out["loss"])
         return {"loss" : out["loss"]}
 
 
@@ -592,7 +611,8 @@ class TurnGPTLMHeadModel(TurnGPTModel):
         This step is for calculating and logging interesting metrics for
         validation"""
         out = self._step(batch, batch_idx)
-        self.log("val_loss", out["loss"])
+        self._log_to_group(LOG_GROUP.VALIDATION,"loss",out["loss"])
+        # self.log("val_loss", out["loss"])
 
 
     ######################### PRIVATE METHODS ################################

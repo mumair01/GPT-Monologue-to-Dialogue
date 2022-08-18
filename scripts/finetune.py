@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-18 12:20:58
+# @Last Modified time: 2022-08-18 14:46:51
 
 import sys
 import os
@@ -23,8 +23,6 @@ from gpt_dialogue.turngpt import TurnGPT
 HYDRA_CONFIG_RELATIVE_DIR = "../conf"
 HYDRA_CONFIG_NAME = "config"
 
-# Initialize wandb for logging
-# NOTE: Assumption is that LanguageModel supports wandb logging.
 
 ########################### MAIN METHODS ####################################
 
