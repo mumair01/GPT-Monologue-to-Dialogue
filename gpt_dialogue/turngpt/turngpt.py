@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-18 09:27:00
+# @Last Modified time: 2022-08-18 11:28:22
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -15,7 +15,7 @@ from typing import List
 import torch
 
 import pytorch_lightning as pl
-from pytorch_lightning.loggers import CSVLogger
+from pytorch_lightning.loggers import CSVLogger, WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 from gpt_dialogue.turngpt.model import (
@@ -102,9 +102,15 @@ class TurnGPT(LanguageModel):
         )
         # Create CSV logger
         model_name = f"TurnGPT_{self.model_head}"
-        training_logger = CSVLogger(
+        # training_logger = CSVLogger(
+        #     save_dir=os.getcwd(),
+        #     name=model_name)
+        training_logger = WandbLogger(
+            name=model_name,
             save_dir=os.getcwd(),
-            name=model_name)
+            log_model=True
+        )
+
         # Create callbacks
         checkpoint_callback = ModelCheckpoint(
             # NOTE: We want to save the models at every epoch.

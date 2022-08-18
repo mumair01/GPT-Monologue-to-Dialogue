@@ -2,10 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-18 11:18:53
+# @Last Modified time: 2022-08-18 12:20:58
 
 import sys
 import os
+from typing import Callable
 
 from omegaconf import DictConfig, OmegaConf
 import hydra
@@ -24,21 +25,36 @@ HYDRA_CONFIG_NAME = "config"
 
 # Initialize wandb for logging
 # NOTE: Assumption is that LanguageModel supports wandb logging.
-wandb.init(project="GPT-Monologue-Dialogue", entity="gpt-monologue-dialogue")
 
 ########################### MAIN METHODS ####################################
 
 
-@hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
-def main(cfg : DictConfig):
+def log_wandb(func : Callable):
+    """Decorator for setting up and logging experiment using wandb"""
+    def inner(cfg : DictConfig):
+        # Log the config params using wandb
+        wandb.config = OmegaConf.to_container(
+            cfg, resolve=True, throw_on_missing=True
+        )
 
-    print(OmegaConf.to_yaml(cfg))
+        run = wandb.init(
+            project="GPT-Monologue-Dialogue",
+            entity="gpt-monologue-dialogue",
+            config=OmegaConf.to_container(
+            cfg, resolve=True, throw_on_missing=True
+        ))
+        # Change the run name
+        wandb.run.name = f"{cfg.experiment.name}_{cfg.dataset.name}_{wandb.run.id}"
 
-    # Log the config params using wandb
-    wandb.config = OmegaConf.to_container(
-        cfg, resolve=True, throw_on_missing=True
-    )
+        # Run experiment
+        func(cfg)
 
+        # Finish logging the run
+        run.finish()
+    return inner
+
+@log_wandb
+def run_finetuning(cfg : DictConfig):
     # Load the appropriate model
     if cfg.experiment.name == "finetune_monologue_gpt":
         model = MonologueGPT()
@@ -59,6 +75,13 @@ def main(cfg : DictConfig):
         save_dir = os.getcwd(),
         **cfg.experiment.finetune
     )
+
+
+@hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
+def main(cfg : DictConfig):
+
+    print(OmegaConf.to_yaml(cfg))
+    run_finetuning(cfg)
 
 if __name__ == "__main__":
     main()

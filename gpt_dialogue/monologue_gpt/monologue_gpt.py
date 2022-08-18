@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-18 09:54:01
+# @Last Modified time: 2022-08-18 11:48:51
 
 import os
 from typing import Union, List
@@ -112,6 +112,7 @@ class MonologueGPT(LanguageModel):
             save_strategy="epoch",
             evaluation_strategy="epoch",
             logging_strategy="epoch",
+            logging_steps=1,
             logging_dir=os.path.join(save_dir,"trainer_logs"),
             report_to=report_to
         )
