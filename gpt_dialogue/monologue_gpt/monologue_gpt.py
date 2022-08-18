@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 16:46:12
+# @Last Modified time: 2022-08-18 09:54:01
 
 import os
 from typing import Union, List
@@ -88,9 +88,8 @@ class MonologueGPT(LanguageModel):
         per_device_train_batch_size : int = 8,
         per_device_eval_batch_size : int = 8,
         warmup_steps : int = 300,
+        report_to="wandb"
     ):
-
-        print(save_dir, train_csv_path, val_csv_path)
         # Load the data modules / apply the data transforms
         dm = MonologueGPTFinetuneDM(
             tokenizer=self._tokenizer,
@@ -114,7 +113,7 @@ class MonologueGPT(LanguageModel):
             evaluation_strategy="epoch",
             logging_strategy="epoch",
             logging_dir=os.path.join(save_dir,"trainer_logs"),
-            report_to="none"
+            report_to=report_to
         )
 
         # Create the trainer and start training
