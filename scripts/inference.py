@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 08:45:28
+# @Last Modified time: 2022-08-21 18:01:30
 
 
 import sys
@@ -14,12 +14,15 @@ import pandas as pd
 
 from omegaconf import DictConfig, OmegaConf
 import hydra
+import logging
 
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
 from gpt_dialogue.monologue_gpt import MonologueGPT
 from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
+
+logger = logging.getLogger(__name__)
 
 ########################## GLOBAL VARS. ####################################
 
@@ -95,6 +98,7 @@ def generate_probabilities(
 
 @hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
 def main(cfg : DictConfig):
+    logger.info("Running inference with configurations:")
     print(OmegaConf.to_yaml(cfg))
     # Load the appropriate model
     if cfg.experiment.name == "inference_monologue_gpt":
@@ -107,6 +111,7 @@ def main(cfg : DictConfig):
         )
 
     # Load the model
+    logger.info(f"Loading model of type: {model}")
     model.load(**cfg.experiment.load)
 
     # Load the pipeline, the dataset, and execute the task
@@ -114,17 +119,20 @@ def main(cfg : DictConfig):
         model=model,
         **cfg.experiment.inference
     )
+    logger.info(f"Starting inference using pipe: {pipe}")
 
     conversation_dfs = load_inference_dataset(
         csv_path = os.path.join(cfg.env.paths.root, cfg.dataset.dataset_path),
         **cfg.experiment.dataset
     )
+    logger.info(f"Loaded {len(conversation_dfs)} datasets to generate probabilities")
 
     generate_probabilities(
         conversation_dfs=conversation_dfs,
         pipe=pipe,
         save_dir=os.getcwd()
     )
+    logger.info("Completed inference!")
 
 
 if __name__ == "__main__":

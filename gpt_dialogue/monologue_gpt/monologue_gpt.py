@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-18 11:48:51
+# @Last Modified time: 2022-08-21 18:28:47
 
 import os
 from typing import Union, List
@@ -23,6 +23,9 @@ from datasets import load_dataset
 
 from gpt_dialogue.model import LanguageModel
 from gpt_dialogue.monologue_gpt.dm import MonologueGPTFinetuneDM
+
+import logging
+logger = logging.getLogger(__name__)
 
 class MonologueGPT(LanguageModel):
 
@@ -129,6 +132,9 @@ class MonologueGPT(LanguageModel):
         gc.collect()
         trainer.train()
         trainer.save_model()
+
+    def to(self, device):
+        self.model.to(device)
 
     def __call__(self, data):
         return self.model(data)

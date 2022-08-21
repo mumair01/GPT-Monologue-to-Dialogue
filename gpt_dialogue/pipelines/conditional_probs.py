@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 09:04:51
+# @Last Modified time: 2022-08-21 18:29:44
 
 import sys
 import os
@@ -15,6 +15,11 @@ from tqdm import tqdm
 
 from copy import deepcopy
 from dataclasses import dataclass
+
+from gpt_dialogue.model import LanguageModel
+
+import logging
+logger = logging.getLogger(__name__)
 
 @dataclass
 class Param:
@@ -55,6 +60,15 @@ class ConditionalProbabilityPipeline:
         """
         self._sanitize_parameters(**kwargs)
 
+        # Initialize torch device
+        self.device = torch.device('cuda') \
+            if torch.cuda.is_available() else torch.device('cpu')
+        logger.info(f"Pipe {self} initialized with device: {self.device.type}")
+        if self.device.type == "cpu":
+            logger.warning(f"WARNING: Using device {self.device.type} in pipe "
+            "is slow - switch to gpu if possible")
+
+
     def _sanitize_parameters(self, **kwargs):
         """Clean up the input kwargs and assign to the appropriate map."""
         for param_dict in (self._PREPROCESS_PARAMS,
@@ -84,8 +98,11 @@ class ConditionalProbabilityPipeline:
 
         # Get the required param values
         N = self._FORWARD_PARAMS["N"].value
-        model = self._FORWARD_PARAMS["model"].value
+        model : LanguageModel= self._FORWARD_PARAMS["model"].value
         context_buffer_size = self._FORWARD_PARAMS["context_buffer_size"].value
+
+        # Move the model to GPU before running.
+        model.to(self.device)
 
         pbar = tqdm(total=len(utterances))
         text = ""
@@ -166,7 +183,7 @@ class ConditionalProbabilityPipeline:
         cw_encoding = whole_text_encoding[:, context_encoding.shape[1]:]
         # move to the appropriate device before inference
         # TODO: This was giving an issue wit TurnGPT.
-        # whole_text_encoding = whole_text_encoding.to(TORCH_DEVICE)
+        whole_text_encoding = whole_text_encoding.to(self.device)
         output = model(whole_text_encoding)
         # Obtain the logits for the last hidden state and the logits
         # that provide values for the tokens in the critical word.

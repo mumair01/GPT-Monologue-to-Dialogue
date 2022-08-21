@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J gpt_finetune_monologue_5_train_37_test #job name
+#SBATCH -J gpt_finetune_turngpt_doubleheads_5_train_37_test #job name
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -22,8 +22,8 @@ PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 
 # Requires the finetuning dataset and env to be specified.
 ENV="hpc"
-DATASET="finetune/icc_5_train_37_test_special_labels"
-EXPERIMENT="finetune_monologue_gpt"
+DATASET="finetune/icc_5_train_37_test_no_labels"
+EXPERIMENT="finetune_turngpt"
 HYDRA_OVERWRITES=""
 HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 
