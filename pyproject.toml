@@ -2,17 +2,13 @@
 name = "gpt_dialogue"
 version = "0.0.1a"
 authors = [
-  { name="Muhammad Umair", email="muhammad.umair@tufts.edu" },
+  { name="Muhammad Umair", email="muhammad.umair@tufts.edu"},
 ]
 description = "Source code for the GPT: Monologue to Dialogue project"
 readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.8"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
+
 
 [project.urls]
 "Homepage" = "https://github.com/mumair01/GPT-Monologue-to-Dialogue"
@@ -22,8 +18,9 @@ classifiers = [
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["gpt_dialogue"]
+
+[tool.setuptools.packages]
+find = {}  # Scanning implicit namespaces is active by default
 
 # pyproject.toml
 [tool.pytest.ini_options]

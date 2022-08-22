@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 10:46:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-17 13:53:10
+# @Last Modified time: 2022-08-22 13:18:55
 
 import sys
 import os
@@ -59,7 +59,6 @@ class ICCDataset:
         dataset_df = pd.DataFrame(combined, columns=["convName","convID", "Utterance"])
         # Generate the save path and save
         create_dir(save_dir)
-        print(self.dir_path, os.path.basename(self.dir_path))
         partial_save_path = os.path.join(
             save_dir,f"{outfile}_{variant}")
         csv_path = f"{partial_save_path}.csv"
