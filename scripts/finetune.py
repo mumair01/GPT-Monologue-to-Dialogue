@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-21 18:37:18
+# @Last Modified time: 2022-08-22 09:26:10
 
 import sys
 import os
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 HYDRA_CONFIG_RELATIVE_DIR = "../conf"
 HYDRA_CONFIG_NAME = "config"
 
-WANDB_PROJECT = "GPT-Monologue-Dialogue"
+WANDB_PROJECT = "GPT-Monologue-Dialogue-Finetune"
 WANDB_ENTITY = "gpt-monologue-dialogue"
 
 
@@ -51,7 +51,10 @@ def log_wandb(func : Callable):
         ))
         # Change the run name
         run_id = wandb.run.id
-        wandb.run.name = f"{cfg.experiment.name}_{cfg.dataset.name}_{run_id}"
+        try:
+            wandb.run.name = f"{cfg.experiment.name}_{cfg.experiment.load.model_head}_{cfg.dataset.name}_{run_id}"
+        except:
+            wandb.run.name = f"{cfg.experiment.name}_{cfg.dataset.name}_{run_id}"
 
         logger.info(
             f"WANDB: Running experiment for project {WANDB_PROJECT} entity "

@@ -1,9 +1,9 @@
 name : finetune_turngpt
-model_name : TurnGPT_DoublesHead
+model_name : TurnGPT_LMHead
 
 load:
   pretrained_model_name_or_path : gpt2
-  model_head : DoubleHeads
+  model_head : LMHead
 
 finetune:
   conversation_id_key : convID

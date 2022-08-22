@@ -2,15 +2,16 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-21 18:01:30
+# @Last Modified time: 2022-08-22 09:42:29
 
 
 import sys
 import os
-from typing import List
+from typing import List, Callable
 
 import numpy as np
 import pandas as pd
+import wandb
 
 from omegaconf import DictConfig, OmegaConf
 import hydra
@@ -30,7 +31,48 @@ HYDRA_CONFIG_RELATIVE_DIR = "../conf"
 HYDRA_CONFIG_NAME = "config"
 
 
+WANDB_PROJECT = "GPT-Monologue-Dialogue-Inference"
+WANDB_ENTITY = "gpt-monologue-dialogue"
+
+
+
 ########################### HELPER METHODS ####################################
+
+def log_wandb(func : Callable):
+    """Decorator for setting up and logging experiment using wandb"""
+
+    logger.info("WANDB: Logging inference using Weights and Biases (WANDB)")
+
+    def inner(cfg : DictConfig):
+        # Log the config params using wandb
+        wandb.config = OmegaConf.to_container(
+            cfg, resolve=True, throw_on_missing=True
+        )
+
+        run = wandb.init(
+            project=WANDB_PROJECT,
+            entity=WANDB_ENTITY,
+            config=OmegaConf.to_container(
+            cfg, resolve=True, throw_on_missing=True
+        ))
+        # Change the run name
+        run_id = wandb.run.id
+        wandb.run.name = f"{cfg.experiment.name}_{cfg.experiment.model_name}_{cfg.dataset.name}_{run_id}"
+
+        logger.info(
+            f"WANDB: Running experiment for project {WANDB_PROJECT} entity "
+            f"{WANDB_ENTITY} with id {wandb.run.id}"
+        )
+
+        # Run experiment
+        func(cfg)
+
+        # Finish logging the run
+        logger.info(f"WANDB: Ending logging for experiment: {run_id}")
+        run.finish()
+
+    return inner
+
 
 # NOTE: Assuming that the dataset is in the correct format.
 def load_inference_dataset(
@@ -89,6 +131,13 @@ def generate_probabilities(
             'context','word','last_word_prob' ]]
         df.to_csv(save_path)
         data.append(df.copy())
+
+        wandb_table = wandb.Table(data=df.copy())
+        wandb.run.log({
+            conversation_df["convName"].iloc[0] : wandb_table
+        })
+
+
     results_df = pd.concat(data)
     results_df.to_csv(
         os.path.join(save_dir,"conditional_probs_combined.csv"))
@@ -96,8 +145,9 @@ def generate_probabilities(
 
 ########################### MAIN METHODS ####################################
 
-@hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
-def main(cfg : DictConfig):
+
+@log_wandb
+def run_inference(cfg : DictConfig):
     logger.info("Running inference with configurations:")
     print(OmegaConf.to_yaml(cfg))
     # Load the appropriate model
@@ -133,6 +183,10 @@ def main(cfg : DictConfig):
         save_dir=os.getcwd()
     )
     logger.info("Completed inference!")
+
+@hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
+def main(cfg : DictConfig):
+    run_inference(cfg)
 
 
 if __name__ == "__main__":
