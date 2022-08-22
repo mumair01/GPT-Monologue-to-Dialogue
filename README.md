@@ -133,3 +133,8 @@ with the following team members:
 - [Lena Warnke](https://lenawarnke.com/About) - Third author.
 - [Jan P. de Ruiter](https://engineering.tufts.edu/cs/people/faculty/jp-de-ruiter) - Principal Investigator.
 
+Code sources:
+
+- [TurnGPT](https://github.com/ErikEkstedt/TurnGPT)
+- [Transformers](https://huggingface.co/docs/transformers/index)
+
