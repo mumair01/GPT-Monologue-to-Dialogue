@@ -142,3 +142,5 @@ bin/
 lightning_logs/
 
 wandb/
+
+conf/

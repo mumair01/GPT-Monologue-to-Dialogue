@@ -1,9 +1,9 @@
 name : inference_turngpt
-model_name : TurnGPT_DoublesHead_icc_5_train_37_test_no_labels
+model_name : TurnGPT_LMHead_icc_28_train_14_test_no_labels
 
 load:
-  pretrained_model_name_or_path : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_turngpt/TurnGPT_DoublesHead_icc_5_train_37_no_labels/2022-08-21_18-06-17/finetune_turngpt_icc_5_train_37_no_labels_qxbqa898/qxbqa898/checkpoints/epoch=5-step=114.ckpt
-  model_head : DoubleHeads
+  pretrained_model_name_or_path : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_turngpt/TurnGPT_LMHead_icc_28_train_14_test_no_labels/2022-08-21_18-52-36/finetune_turngpt_icc_28_train_14_test_no_labels_97l1ewxk/97l1ewxk/checkpoints/epoch=7-step=1128.ckpt
+  model_head : LMHead
 
 dataset:
   start_conv_no : 0

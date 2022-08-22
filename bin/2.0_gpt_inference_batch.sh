@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J monologue_gpt_conditional_inference_28_train_14_test_speaker_identity_stims_special_labels
+#SBATCH -J turn_gpt_conditional_inference_28_train_14_test_speaker_identity_stims_no_labels
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
@@ -23,8 +23,8 @@ PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 
 # Requires the finetuning dataset and env to be specified.
 ENV="hpc"
-DATASET="inference/speaker_identity_stims_special_labels"
-EXPERIMENT="inference_monologue_gpt"
+DATASET="inference/speaker_identity_stims_no_labels"
+EXPERIMENT="inference_turngpt"
 HYDRA_OVERWRITES=""
 HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 

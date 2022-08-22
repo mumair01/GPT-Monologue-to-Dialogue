@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-22 09:42:29
+# @Last Modified time: 2022-08-22 10:05:46
 
 
 import sys
@@ -132,15 +132,19 @@ def generate_probabilities(
         df.to_csv(save_path)
         data.append(df.copy())
 
-        wandb_table = wandb.Table(data=df.copy())
         wandb.run.log({
-            conversation_df["convName"].iloc[0] : wandb_table
+            f"overview/steps" : i,
+            f"overview/turns_at_step" : len(df)
         })
-
 
     results_df = pd.concat(data)
     results_df.to_csv(
         os.path.join(save_dir,"conditional_probs_combined.csv"))
+
+    wandb_table = wandb.Table(data=results_df)
+    wandb.run.log({
+        f"tables/combined_results" :  wandb_table,
+    })
 
 
 ########################### MAIN METHODS ####################################

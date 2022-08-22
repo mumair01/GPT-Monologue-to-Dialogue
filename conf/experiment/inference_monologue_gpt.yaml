@@ -1,8 +1,8 @@
 name : inference_monologue_gpt
-model_name : gpt2_icc_28_train_14_test_special_labels
+model_name : gpt2_icc_5_train_37_test_special_labels
 
 load:
-  model_checkpoint : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_monologue_gpt/gpt2_icc_28_train_14_test_special_labels/2022-08-18_15-20-17/checkpoint-6990
+  model_checkpoint : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_monologue_gpt/gpt2_icc_5_train_37_special_labels/2022-08-18_14-52-22/checkpoint-1230
   tokenizer_checkpoint : gpt2
 
 dataset:
