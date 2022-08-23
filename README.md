@@ -7,6 +7,7 @@
 - [Getting Started](#getting-started)
 - [Models](#models)
 - [Acknowledgements](#acknowledgements)
+- [Research Notice](#research-notice)
 
 ## About
 
@@ -138,3 +139,8 @@ Code sources:
 - [TurnGPT](https://github.com/ErikEkstedt/TurnGPT)
 - [Transformers](https://huggingface.co/docs/transformers/index)
 
+## Research Notice
+
+The ideas presented in this repository are novel and part of academic research
+with a research paper forthcoming. Please do not use the novel ideas presented
+in a research setting without permission from the authors.
