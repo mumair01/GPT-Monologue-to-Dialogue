@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-31 11:26:04
+# @Last Modified time: 2022-08-31 13:05:22
 
 import os
 from typing import Union, List
@@ -135,6 +135,9 @@ class MonologueGPT(LanguageModel):
 
     def to(self, device):
         self.model.to(device)
+
+    def eval(self):
+        self.model.eval()
 
     def __call__(self, data):
         return self.model(data)

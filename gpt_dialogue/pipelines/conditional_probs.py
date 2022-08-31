@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-31 11:52:42
+# @Last Modified time: 2022-08-31 13:06:22
 
 import sys
 import os
@@ -106,6 +106,8 @@ class ConditionalProbabilityPipeline:
 
         # Move the model to GPU before running.
         model.to(self.device)
+        # Put the model in eval mode
+        model.eval()
 
         pbar = tqdm(total=len(utterances))
         text = ""
