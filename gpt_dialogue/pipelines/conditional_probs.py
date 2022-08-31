@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-31 11:35:13
+# @Last Modified time: 2022-08-31 11:52:42
 
 import sys
 import os
@@ -154,22 +154,17 @@ class ConditionalProbabilityPipeline:
         if N == -1:
             N = len(words)
         assert not (N > len(words) or N<= 0)
-        # print(words[:len(words) - N])
         sentence_so_far = " ".join(words[:len(words) - N])
         results = []
         for word in words[len(words) - N:]:
-            print("*" * 30)
             sentence_so_far += " " + word.strip()
             # Reset the buffer if required
             num_words_so_far = len(sentence_so_far.split(' '))
             if num_words_so_far > context_buffer_size:
                 sentence_so_far = " ".join(
                     sentence_so_far.split(' ')[num_words_so_far - context_buffer_size - 1:])
-
-            print("Before calling last word prob function ", sentence_so_far)
             last_word_prob = self._get_last_word_prob(
                 model, tokenizer, sentence_so_far)
-            # sys.exit(-1)
             context = " ".join(sentence_so_far.split(' ')[:-1])
             results.append(deepcopy({
                 "context" : context,
@@ -180,93 +175,38 @@ class ConditionalProbabilityPipeline:
 
     def _get_last_word_prob(self, model, tokenizer, text : str):
         """Get the probability of the last word only in the given text."""
+        # NOTE: This strip is important because GPT-2 Tokenizer tokenises
+        # differently if there are whitespaces.
+        # LINK: https://huggingface.co/docs/transformers/tokenizer_summary#introduction
         sentence_so_far = text.strip()
-        print("so far ", sentence_so_far)
-        context = ' '.join(text.split()[:-1]).strip()
-        print(context.split(' '))
+        context = ' '.join(text.split()[:-1])
         # Encode
-        print("Context and sentence: ",context, sentence_so_far)
         context_encoding = tokenizer.encode(
             context, return_tensors="pt")
-
         whole_text_encoding = tokenizer.encode(
             sentence_so_far, return_tensors="pt")
         cw_encoding = whole_text_encoding[:, context_encoding.shape[1]:]
-
-
-
-        print("Encodings:" , context_encoding, whole_text_encoding)
-        print("Critical word shape: ",cw_encoding.shape)
-
-        print("Critical word decoding: ", tokenizer.decode(cw_encoding[0,:]))
-
-        print("cw encoding ", cw_encoding)
-
         # move to the appropriate device before inference
         # TODO: This was giving an issue wit TurnGPT.
         whole_text_encoding = whole_text_encoding.to(self.device)
-
-
-        print("Whole text decoding: ", tokenizer.decode(whole_text_encoding[0,:]))
-
-        print("whole text encoding shape ", whole_text_encoding.shape)
-
-        print("Context decoding: ", tokenizer.decode(context_encoding[0,:]) )
-        print("Context shape", context_encoding.shape)
-
-        with torch.no_grad():
-            output = model(whole_text_encoding)
-        print("output logits shape ",output.logits.shape)
-        print("cw logits extracting dims ", context_encoding.shape[1]-1)
-
-
-        # def softmax(x):
-        #     exps = [np.exp(i) for i in x]
-        #     tot = sum(exps)
-        #     return [i/tot for i in exps]
-
-        # logprobs = []
-        # predictions = output.logits[0]
-        # print("predictions shape ",predictions.shape)
-        # start = -1-len(cw_encoding)
-        # for j in range(start, -1, 1):
-        #     raw_output = []
-        #     for i in predictions[-1][j]:
-        #         raw_output.append(i.item())
-        #     logprobs.append(np.log(softmax(raw_output)))
-        # print(logprobs)
-
-
-
+        output = model(whole_text_encoding)
         # Obtain the logits for the last hidden state and the logits
         # that provide values for the tokens in the critical word.
         # i.e., if cw token starts at position i in the sentence, then the logits
         # are from i-1 to len(tokens) - 1.
         cw_extracted_logits = output.logits[-1, context_encoding.shape[1]-1:-1, :]
-
-        print("Critical word extracted logits shape ", cw_extracted_logits.shape)
-
-        print("cw extracted logits ", cw_extracted_logits)
-
         # Obtain the probabilities from the logits
         softmax = torch.nn.Softmax(dim=-1)
         cw_extracted_probs_from_logits = softmax(cw_extracted_logits)
-        print(np.asarray(cw_extracted_probs_from_logits.detach()))
-
         # NOTE: Converting to log scale and taking exponential sum of the log
         # probabilities at the end will ensure that there is not floating point
         # overflow issue for very small probability values.
         cw_extracted_log_probs_from_logits = torch.log(
             cw_extracted_probs_from_logits)
-        # print(cw_extracted_log_probs_from_logits)
         # Extract the probabilities of the specific tokens
         cw_tokens_probs = []
         for cw_subtoken, probs in zip(cw_encoding[0], cw_extracted_log_probs_from_logits):
-            print(cw_subtoken, probs[cw_subtoken])
             cw_tokens_probs.append(probs[cw_subtoken])
-        print(cw_tokens_probs)
-        print(torch.sum(torch.Tensor(cw_tokens_probs)))
-        print("CW final prob ",float(torch.exp(torch.sum(torch.Tensor(cw_tokens_probs)))))
         return float(torch.exp(torch.sum(torch.Tensor(cw_tokens_probs))))
 
 

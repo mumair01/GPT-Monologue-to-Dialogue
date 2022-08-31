@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-30 13:07:33
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-31 11:33:00
+# @Last Modified time: 2022-08-31 11:51:47
 
 import sys
 import os
@@ -21,51 +21,51 @@ from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
 
 if __name__ == "__main__":
 
-    print("Monologue GPT")
-    mono_model = MonologueGPT()
-    mono_model.load()
-    mono_tokenizer = mono_model.tokenizer
-    toks = mono_tokenizer(
-        "sage told"
+    # print("Monologue GPT")
+    # mono_model = MonologueGPT()
+    # mono_model.load()
+    # mono_tokenizer = mono_model.tokenizer
+    # toks = mono_tokenizer(
+    #     "sage told"
+    # )
+    # # print(toks)
+    # # print(mono_tokenizer("sage"))
+    # # print(mono_tokenizer("told"))
+    # # print(mono_tokenizer.decode(44040))
+    # # print(mono_tokenizer.decode(1297))
+
+    # # print(mono_tokenizer.decode(toks["input_ids"]))
+
+    # mono_model.model.eval()
+    # pipe = ConditionalProbabilityPipeline(
+    #     model=mono_model,
+    #     N=-1,
+    #     context_buffer_size=512
+    # )
+    # probs = pipe(["sage told me you're going skiing over break go on"])
+    # for prob in probs:
+    #     print(prob)
+
+    print("TurnGPT")
+    turngpt = TurnGPT()
+    turngpt.load(
+        pretrained_model_name_or_path="gpt2",
+        model_head="DoubleHeads"
     )
-    # print(toks)
-    # print(mono_tokenizer("sage"))
-    # print(mono_tokenizer("told"))
-    # print(mono_tokenizer.decode(44040))
-    # print(mono_tokenizer.decode(1297))
+    turngpt_tokenizer = turngpt.tokenizer
 
-    # print(mono_tokenizer.decode(toks["input_ids"]))
+    toks = turngpt_tokenizer(
+        "sage told me you're going skiing over break go on"
+    )
+    print(toks)
+    print(turngpt_tokenizer.decode(toks["input_ids"]))
 
-    mono_model.model.eval()
     pipe = ConditionalProbabilityPipeline(
-        model=mono_model,
+        model=turngpt,
         N=-1,
         context_buffer_size=512
     )
     probs = pipe(["sage told me you're going skiing over break go on"])
     for prob in probs:
         print(prob)
-
-    # print("TurnGPT")
-    # turngpt = TurnGPT()
-    # turngpt.load(
-    #     pretrained_model_name_or_path="gpt2",
-    #     model_head="DoubleHeads"
-    # )
-    # turngpt_tokenizer = turngpt.tokenizer
-
-    # toks = turngpt_tokenizer(
-    #     "sage told me you're going skiing over break go on"
-    # )
-    # print(toks)
-    # print(turngpt_tokenizer.decode(toks["input_ids"]))
-
-    # pipe = ConditionalProbabilityPipeline(
-    #     model=turngpt,
-    #     N=1,
-    #     context_buffer_size=512
-    # )
-    # probs = pipe(["sage told me you're going skiing over break go on"])
-    # for prob in probs:
-    #     print(prob)
 
