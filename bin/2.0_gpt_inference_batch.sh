@@ -13,7 +13,6 @@
 #SBATCH --mail-type=ALL # email optitions
 #SBATCH --mail-user=muhammad.umair@tufts.edu
 
-
 # Define paths
 USER_PATH=/cluster/tufts/deruiterlab/mumair01/
 PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
