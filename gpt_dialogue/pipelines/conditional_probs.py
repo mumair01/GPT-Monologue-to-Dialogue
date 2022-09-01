@@ -2,11 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-21 18:29:44
+# @Last Modified time: 2022-08-31 13:06:22
 
 import sys
 import os
 from typing import List, Any, Dict
+
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -101,8 +103,11 @@ class ConditionalProbabilityPipeline:
         model : LanguageModel= self._FORWARD_PARAMS["model"].value
         context_buffer_size = self._FORWARD_PARAMS["context_buffer_size"].value
 
+
         # Move the model to GPU before running.
         model.to(self.device)
+        # Put the model in eval mode
+        model.eval()
 
         pbar = tqdm(total=len(utterances))
         text = ""
@@ -151,7 +156,6 @@ class ConditionalProbabilityPipeline:
         if N == -1:
             N = len(words)
         assert not (N > len(words) or N<= 0)
-        words[:len(words) - N]
         sentence_so_far = " ".join(words[:len(words) - N])
         results = []
         for word in words[len(words) - N:]:
@@ -173,7 +177,10 @@ class ConditionalProbabilityPipeline:
 
     def _get_last_word_prob(self, model, tokenizer, text : str):
         """Get the probability of the last word only in the given text."""
-        sentence_so_far = text
+        # NOTE: This strip is important because GPT-2 Tokenizer tokenises
+        # differently if there are whitespaces.
+        # LINK: https://huggingface.co/docs/transformers/tokenizer_summary#introduction
+        sentence_so_far = text.strip()
         context = ' '.join(text.split()[:-1])
         # Encode
         context_encoding = tokenizer.encode(
@@ -203,8 +210,6 @@ class ConditionalProbabilityPipeline:
         for cw_subtoken, probs in zip(cw_encoding[0], cw_extracted_log_probs_from_logits):
             cw_tokens_probs.append(probs[cw_subtoken])
         return float(torch.exp(torch.sum(torch.Tensor(cw_tokens_probs))))
-
-
 
 
 # # ----------- NOTE: Below if the original code - keeping here for reference.

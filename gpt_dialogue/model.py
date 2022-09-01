@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 08:58:15
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-21 18:28:28
+# @Last Modified time: 2022-08-31 13:05:12
 
 import torch
 
@@ -23,4 +23,7 @@ class LanguageModel:
         raise NotImplementedError()
 
     def to(self, device : torch.device):
+        raise NotImplementedError()
+
+    def eval(self):
         raise NotImplementedError()

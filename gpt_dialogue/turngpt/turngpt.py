@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-21 18:29:07
+# @Last Modified time: 2022-08-31 13:05:59
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -132,6 +132,9 @@ class TurnGPT(LanguageModel):
 
     def to(self, device):
         self.model.to(device)
+
+    def eval(self):
+        self.model.eval()
 
     def __call__(self, data):
         return self.model(data)
