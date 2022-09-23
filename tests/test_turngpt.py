@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-09 16:19:35
+# @Last Modified time: 2022-09-23 15:47:12
 
 import pytest
 import sys
@@ -13,7 +13,7 @@ import pytorch_lightning as pl
 import numpy as np
 
 from gpt_dialogue.turngpt.tokenizer import SpokenNormalizer, SpokenDialogueTokenizer
-from gpt_dialogue.turngpt.model import TurnGPT
+from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.turngpt.dm import TurnGPTFinetuneDM
 
 
@@ -83,42 +83,6 @@ def test_spoken_dialogue_tokenizer():
     print(tokenizer.sp2_token_id)
 
 
-def test_model():
-    # Loading model with all default configs
-    model = TurnGPT(
-        pretrained_model_name_or_path="gpt2",
-        load_pretrained_configs=True,
-        learning_rate= 1e-4)
-    tokenizer = SpokenDialogueTokenizer("gpt2")
-
-    # print(model.tokenize([
-    #     [
-    #         "Hello, how are you doing?",
-    #         "I'm doing great! How about you?",
-    #         "Good - just chillin"
-    #     ],
-    #     [
-    #         "Hello, how are you doing?",
-    #         "Good - just chillin"
-    #     ],
-
-    # ]))
-    # print(model.tokenize([
-    #     "Hello, how are you doing?",
-    #     "I'm doing great! How about you?",
-    #     "Good - just chillin"
-    # ]))
-    # print(tokenizer.pad_token_id, tokenizer.pad_token)
-    # print(model.tokenize("Hello"))
-
-    # Tokenize and run through model.
-    tokens = tokenizer(["Hello, how are you doing?"],return_tensors="pt",)
-    print(tokens['input_ids'].shape)
-    print(tokens)
-    print(model._transformer.config)
-    print(model(**tokens))
-
-
 def test_huggingface_tokenizer():
     print("Huggingface GPT")
     tokenizer = AutoTokenizer.from_pretrained("gpt2")
@@ -130,78 +94,3 @@ def test_huggingface_tokenizer():
     model = GPT2LMHeadModel.from_pretrained("gpt2")
     transformer_outputs = model.__call__(**toks)
     print("Model results shape "  ,transformer_outputs[0].shape)
-
-    print("TurnGPT")
-    turngpt = TurnGPT(
-        pretrained_model_name_or_path="gpt2",
-        load_pretrained_configs=True,
-        learning_rate= 1e-4)
-    toks = turngpt.tokenize(["Hello, how are you doing?"],return_tensors="pt")
-    print(toks['input_ids'].shape)
-    print(toks['input_ids'])
-    print(turngpt.decode(toks['input_ids'][0]))
-    out =  turngpt(**toks)
-    print(out['logits'].shape)
-
-
-def test_original():
-    model = TurnGPT()
-    model.init_tokenizer()
-    model.initialize_special_embeddings()
-    toks = model.tokenize_strings(["Hello, how are you doing?"])
-    print(toks)
-    print(toks['input_ids'].shape)
-    print(model.tokenizer.decode(toks['input_ids'][0]))
-    out = model(**toks)
-
-def clean_speaker_labels(data):
-        """Remove speaker labels from the start and end of an utterance"""
-        if len(data['Utterance'].split()) > 1:
-            data['Utterance'] = " ".join(data['Utterance'].split()[1:-1])
-        return data
-
-def test_dm():
-    model = TurnGPT(
-        # NOTE: All special tokens passed should be lowercase because the normalize
-        # lowercases them anyways.
-        tokenizer_additional_special_tokens=['<START>','<END>']
-    )
-
-    dm = TurnGPTFinetuneDM(
-        tokenizer=model._tokenizer,
-        train_csv_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/train_5_conversations.csv",
-        val_csv_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/validation_37_conversations.csv",
-        save_dir="./dm_save_test",
-        # cleanup_fn=clean_speaker_labels
-    )
-    dm.prepare_data()
-    dm.setup(stage="fit")
-
-    batch = next(iter(dm.train_dataloader()))
-    count = 0
-    for batch in iter(dm.train_dataloader()):
-        count +=1
-        for i in range(batch['input_ids'].shape[0]):
-            print(model._tokenizer.decode(batch['input_ids'][i]))
-    # print(tokenizer.decode(batch['input_ids'][0]))
-    # print(tokenizer.decode(batch['input_ids'][1]))
-
-
-# def test_finetuning():
-#     model = TurnGPT(
-#         pretrained_model_name_or_path="gpt2",
-#         load_pretrained_configs=True,
-#         learning_rate= 1e-4
-#     )
-#     dm = TurnGPTDM(
-#         tokenizer=model._tokenizer,
-#         dataset="icc",
-#     )
-#     dm.prepare_data()
-#     trainer = pl.Trainer()
-#     print("Starting training...")
-#     trainer.fit(model, datamodule=dm)
-
-
-# def test_inference():
-#     surprisal_inference()
