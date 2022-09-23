@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-23 15:47:12
+# @Last Modified time: 2022-09-23 15:48:32
 
 import pytest
 import sys
@@ -94,3 +94,7 @@ def test_huggingface_tokenizer():
     model = GPT2LMHeadModel.from_pretrained("gpt2")
     transformer_outputs = model.__call__(**toks)
     print("Model results shape "  ,transformer_outputs[0].shape)
+
+
+def test_finetune_turngpt():
+    pass

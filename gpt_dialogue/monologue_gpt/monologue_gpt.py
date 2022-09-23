@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-31 13:05:22
+# @Last Modified time: 2022-09-23 15:55:31
 
 import os
 from typing import Union, List
@@ -133,11 +133,21 @@ class MonologueGPT(LanguageModel):
         trainer.train()
         trainer.save_model()
 
+    def __call__(self, data):
+        return self.model(data)
+
     def to(self, device):
         self.model.to(device)
 
     def eval(self):
         self.model.eval()
 
-    def __call__(self, data):
-        return self.model(data)
+    def encode(self, text, *args, **kwargs):
+        """Encodes the given text for inference with this model"""
+        if isinstance(text, list):
+            text = " ".join(text)
+            return self.tokenizer.encode(text,*args, **kwargs)
+        elif isinstance(text, str):
+            return self.tokenizer.encode(text, *args, **kwargs)
+        else:
+            raise NotImplementedError()
