@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-24 15:08:31
+# @Last Modified time: 2022-09-24 15:19:12
 
 import pytest
 
@@ -39,15 +39,12 @@ The time had come for Nancy to say goodbye. She had been dreading this moment fo
 "So, what do you think?" he asked nervously. He wanted to know the answer, but at the same time, he didn't. He'd put his heart and soul into the project and he wasn't sure he'd be able to recover if they didn't like what he produced. The silence from the others in the room seemed to last a lifetime even though it had only been a moment since he asked the question. "So, what do you think?" he asked"""]
 
 def test_pipe_monologue_gpt():
-
+    print("Monologue GPT")
     mono_model = MonologueGPT()
-    mono_model.load()
-    mono_tokenizer = mono_model.tokenizer
-
-    toks = mono_tokenizer(
-        "sage told me you're going skiing over break", "go on"
+    mono_model.load(
+        model_checkpoint="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/test_models/checkpoint-6990"
     )
-    print(mono_tokenizer.decode(toks["input_ids"]))
+    mono_tokenizer = mono_model.tokenizer
 
     mono_model.model.eval()
     pipe = ConditionalProbabilityPipeline(
@@ -55,13 +52,18 @@ def test_pipe_monologue_gpt():
         N=-1,
         context_buffer_size=512
     )
-    probs = pipe(["sage told me you're going skiing over break go on"])
+    print("Different speaker")
+    probs = pipe(["<START>","<SP1> sage told me you're going skiing over break <SP1>", "<SP2> go on <SP2>", "<END>"])
+    for prob in probs:
+        print(prob)
+    print("Same speaker")
+    probs = pipe(["<START>","<SP1> sage told me you're going skiing over break go on <SP1>", "<END>"])
     for prob in probs:
         print(prob)
 
 
 def test_pipe_turngpt():
-
+    print("Turn GPT")
     turngpt = TurnGPT()
     turngpt.load(
         # pretrained_model_name_or_path="gpt2",
@@ -90,5 +92,5 @@ def test_pipe_turngpt():
     for prob in probs:
         print(prob)
 
-    print("Large text")
-    probs = pipe(text)
+    # print("Large text")
+    # probs = pipe(text)
