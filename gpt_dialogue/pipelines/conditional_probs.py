@@ -2,9 +2,10 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-24 15:11:55
+# @Last Modified time: 2022-09-28 13:10:35
 
 from distutils import text_file
+from email import message
 import sys
 import os
 from typing import List, Any, Dict
@@ -107,6 +108,8 @@ class ConditionalProbabilityPipeline:
         text_so_far : List[List[str]] = []
         results = []
 
+        pbar = tqdm(desc="Processing turns",total=len(utterances))
+
         for turn_no, turn in enumerate(utterances):
             split_turn = turn.strip().split()
             turn_length = len(split_turn)
@@ -148,6 +151,7 @@ class ConditionalProbabilityPipeline:
                     "word" : current_turn_words[-1],
                     "last_word_prob" : last_word_prob
                 })
+            pbar.update()
 
         return results
 
