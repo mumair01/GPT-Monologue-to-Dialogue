@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 08:58:15
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-31 13:05:12
+# @Last Modified time: 2022-09-23 15:52:18
 
 import torch
 
@@ -26,4 +26,7 @@ class LanguageModel:
         raise NotImplementedError()
 
     def eval(self):
+        raise NotImplementedError()
+
+    def encode(self, *args, **kwargs):
         raise NotImplementedError()

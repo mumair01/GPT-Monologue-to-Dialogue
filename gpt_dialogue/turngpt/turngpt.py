@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-31 13:05:59
+# @Last Modified time: 2022-09-24 14:38:26
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -130,11 +130,20 @@ class TurnGPT(LanguageModel):
         )
         trainer.fit(self.model,datamodule=dm)
 
+    def __call__(self, *args, **kwargs):
+        return self.model(*args, **kwargs)
+
     def to(self, device):
         self.model.to(device)
 
     def eval(self):
         self.model.eval()
 
-    def __call__(self, data):
-        return self.model(data)
+    def encode(self, text, *args, **kwargs):
+        """Encode text as required for inference by this model."""
+        return self.tokenizer(
+            text,
+            add_eos_token=False,
+            *args, **kwargs)
+
+

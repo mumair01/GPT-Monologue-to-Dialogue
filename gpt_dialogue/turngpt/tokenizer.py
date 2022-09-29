@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-09 16:03:30
+# @Last Modified time: 2022-09-24 15:04:47
 
 ############################
 # This module is a re-implementation of the TurnGPT tokenizer as a comparison to the
@@ -258,6 +258,7 @@ class SpokenTokenizer:
             if add_eos_token:
                 dialog_string += self.eos_token
             text = dialog_string
+
         elif isinstance(text, str):
             text = self.normalize(text)
         else:
