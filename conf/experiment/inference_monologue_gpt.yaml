@@ -5,6 +5,13 @@ load:
   # model_checkpoint : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_monologue_gpt/gpt2_icc_5_train_37_special_labels/2022-08-18_14-52-22/checkpoint-1230
   model_checkpoint : gpt2
   tokenizer_checkpoint : gpt2
+  tokenizer_eos_token : "<|endoftext|>"
+  tokenizer_pad_token : "<PAD>"
+  tokenizer_additional_special_tokens :
+    - "<SP1>", # Speaker 1 token
+    - "<SP2>", # Speaker 2 token
+    - "<START>", # Conversation start token
+    - "<END>" # Conversation end token
 
 dataset:
   start_conv_no : 0
