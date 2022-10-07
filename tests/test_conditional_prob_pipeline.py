@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-10-07 11:50:14
+# @Last Modified time: 2022-10-07 15:07:42
 
 import pytest
 
@@ -18,6 +18,15 @@ from transformers import Trainer, TrainingArguments
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
 
+
+_TOKENIZER_EOS_TOKEN = "<|endoftext|>"
+_TOKENIZER_PAD_TOKEN = "<PAD>"
+_TOKENIZER_ADDITIONAL_SPECIAL_TOKENS = [
+    "<SP1>", # Speaker 1 token
+    "<SP2>", # Speaker 2 token
+    "<START>", # Conversation start token
+    "<END>" # Conversation end token
+]
 
 
 text = ["""She wondered if the note had reached him. She scolded herself for not handing it to him in person. She trusted her friend, but so much could happen. She waited impatiently for word.
@@ -43,7 +52,7 @@ She glanced up into the sky to watch the clouds taking shape. First, she saw a d
 The time had come for Nancy to say goodbye. She had been dreading this moment for a good six months, and it had finally arrived despite her best efforts to forestall it. No matter how hard she tried, she couldn't keep the inevitable from happening. So the time had come for a normal person to say goodbye and move on. It was at this moment that Nancy decided not to be a normal person. After all the time and effort she had expended, she couldn't bring herself to do it.
 "So, what do you think?" he asked nervously. He wanted to know the answer, but at the same time, he didn't. He'd put his heart and soul into the project and he wasn't sure he'd be able to recover if they didn't like what he produced. The silence from the others in the room seemed to last a lifetime even though it had only been a moment since he asked the question. "So, what do you think?" he asked"""]
 
-def test_pipe_monologue_gpt():
+def test_pipe_monologue_gpt_base():
     print("Monologue GPT")
     mono_model = MonologueGPT()
     mono_model.load(
@@ -53,19 +62,39 @@ def test_pipe_monologue_gpt():
 
     pipe = ConditionalProbabilityPipeline(
         model=mono_model,
-        N=1,
+        N=-1,
         context_buffer_size=512
     )
     print("Different speaker")
-    # probs = pipe(["<START>","<SP1>  i haven't seen the keys anywhere  <SP1>", "<SP2> have you <SP2>", "<END>"])
-
-    probs = pipe(["i haven't seen the keys anywhere"])
+    probs = pipe(["<START>","<SP1>  i haven't seen the keys anywhere  <SP1>", "<SP2> have you <SP2>", "<END>"])
     for prob in probs:
         print(prob)
-    # print("Same speaker")
-    # probs = pipe(["<START>","<SP1> sage told me you're going skiing over break go on <SP1>", "<END>"])
-    # for prob in probs:
-    #     print(prob)
+    print("Same speaker")
+    probs = pipe(["<START>","<SP1> i haven't seen the keys anywhere have you <SP1>", "<END>"])
+    for prob in probs:
+        print(prob)
+
+def test_pipe_monologue_gpt_labels():
+    model = MonologueGPT()
+    model.load(
+        model_checkpoint="gpt2",
+        tokenizer_pad_token=_TOKENIZER_PAD_TOKEN,
+        tokenizer_eos_token=_TOKENIZER_EOS_TOKEN,
+        tokenizer_additional_special_tokens=_TOKENIZER_ADDITIONAL_SPECIAL_TOKENS
+    )
+    pipe = ConditionalProbabilityPipeline(
+        model=model,
+        N=-1,
+        context_buffer_size=512
+    )
+    print("Different speaker")
+    probs = pipe(["<START>","<SP1>  i haven't seen the keys anywhere  <SP1>", "<SP2> have you <SP2>", "<END>"])
+    for prob in probs:
+        print(prob)
+    print("Same speaker")
+    probs = pipe(["<START>","<SP1> i haven't seen the keys anywhere have you <SP1>", "<END>"])
+    for prob in probs:
+        print(prob)
 
 
 def test_pipe_turngpt():

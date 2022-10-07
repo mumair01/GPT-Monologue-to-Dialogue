@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-10-07 14:59:11
+# @Last Modified time: 2022-10-07 15:00:33
 
 import pytest
 import sys
@@ -104,7 +104,6 @@ def test_turngpt_initialize():
         model_head="LMHead"
     )
     print(turngpt)
-
 
 
 def test_finetune_turngpt():
