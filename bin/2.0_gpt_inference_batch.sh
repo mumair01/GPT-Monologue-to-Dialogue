@@ -22,8 +22,8 @@ PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 
 # Requires the finetuning dataset and env to be specified.
 ENV="hpc"
-DATASET="inference/speaker_identity_stims_no_labels"
-EXPERIMENT="inference_turngpt"
+DATASET="inference/speaker_identity_stims_special_labels"
+EXPERIMENT="inference_monologue_gpt"
 HYDRA_OVERWRITES=""
 HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 

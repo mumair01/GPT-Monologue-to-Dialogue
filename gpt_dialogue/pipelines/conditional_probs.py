@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-28 13:10:35
+# @Last Modified time: 2022-10-07 11:26:21
 
 from distutils import text_file
 from email import message
@@ -180,6 +180,11 @@ class ConditionalProbabilityPipeline:
                 for k,v in whole_text_encoding.items()
         }
 
+        print(model)
+
+        print("Context ", model.tokenizer.decode(*context_encoding["input_ids"]))
+        print("cw ", model.tokenizer.decode(*cw_encoding["input_ids"]))
+
         # NOTE: We assume that each additional work MUST add tokens to the encoding.
         whole_text_encoding_shape = whole_text_encoding["input_ids"].shape[1]
         context_encoding_shape = context_encoding["input_ids"].shape[1]
@@ -187,9 +192,9 @@ class ConditionalProbabilityPipeline:
             (f"Dims mismatch, whole encoding {whole_text_encoding_shape} must" \
             f" be greater than context encoding {context_encoding_shape}")
 
-        # TODO: Potentially move the encodings to GPU here.
         whole_text_encoding = whole_text_encoding.to(self.device)
-        output = model(**whole_text_encoding)
+        with torch.no_grad():
+            output = model(**whole_text_encoding)
 
         # Obtain the logits for the last hidden state and the logits
         # that provide values for the tokens in the critical word.
@@ -199,15 +204,20 @@ class ConditionalProbabilityPipeline:
         # Obtain the probabilities from the logits
         softmax = torch.nn.Softmax(dim=-1)
         cw_extracted_probs_from_logits = softmax(cw_extracted_logits)
+
+        print("cw_extracted_probs_from_logits ", cw_extracted_probs_from_logits)
         # NOTE: Converting to log scale and taking exponential sum of the log
         # probabilities at the end will ensure that there is not floating point
         # overflow issue for very small probability values.
         cw_extracted_log_probs_from_logits = torch.log(
             cw_extracted_probs_from_logits)
+
+        print("cw_extracted_log_probs_from_logits ",cw_extracted_log_probs_from_logits)
         # Extract the probabilities of the specific tokens
         cw_tokens_probs = []
         for cw_subtoken, probs in zip(cw_encoding["input_ids"][0], cw_extracted_log_probs_from_logits):
             cw_tokens_probs.append(probs[cw_subtoken])
+        print("cw_tokens_probs ", cw_tokens_probs)
         return float(torch.exp(torch.sum(torch.Tensor(cw_tokens_probs))))
 
     ################################# HELPER METHODS ###########################

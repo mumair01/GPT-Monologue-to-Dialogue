@@ -2,16 +2,21 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-24 15:19:12
+# @Last Modified time: 2022-10-07 11:50:14
 
 import pytest
 
 import sys
+import torch
 import os
 
 from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.monologue_gpt import MonologueGPT
 from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
+
+from transformers import Trainer, TrainingArguments
+from transformers import AutoModelForCausalLM
+from transformers import AutoTokenizer
 
 
 
@@ -42,24 +47,25 @@ def test_pipe_monologue_gpt():
     print("Monologue GPT")
     mono_model = MonologueGPT()
     mono_model.load(
-        model_checkpoint="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/test_models/checkpoint-6990"
+        model_checkpoint="gpt2"
     )
     mono_tokenizer = mono_model.tokenizer
 
-    mono_model.model.eval()
     pipe = ConditionalProbabilityPipeline(
         model=mono_model,
-        N=-1,
+        N=1,
         context_buffer_size=512
     )
     print("Different speaker")
-    probs = pipe(["<START>","<SP1> sage told me you're going skiing over break <SP1>", "<SP2> go on <SP2>", "<END>"])
+    # probs = pipe(["<START>","<SP1>  i haven't seen the keys anywhere  <SP1>", "<SP2> have you <SP2>", "<END>"])
+
+    probs = pipe(["i haven't seen the keys anywhere"])
     for prob in probs:
         print(prob)
-    print("Same speaker")
-    probs = pipe(["<START>","<SP1> sage told me you're going skiing over break go on <SP1>", "<END>"])
-    for prob in probs:
-        print(prob)
+    # print("Same speaker")
+    # probs = pipe(["<START>","<SP1> sage told me you're going skiing over break go on <SP1>", "<END>"])
+    # for prob in probs:
+    #     print(prob)
 
 
 def test_pipe_turngpt():
@@ -94,3 +100,59 @@ def test_pipe_turngpt():
 
     # print("Large text")
     # probs = pipe(text)
+
+
+def test_gpt():
+    model = AutoModelForCausalLM.from_pretrained("gpt2")
+    model.eval()
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
+
+    print(model)
+    print(tokenizer)
+
+    context = "i haven't seen the keys"
+    turns_so_far = "i haven't seen the keys anywhere"
+
+    context_encoding = tokenizer(
+        context, return_tensors="pt"
+    )
+    whole_text_encoding = tokenizer(
+        turns_so_far, return_tensors="pt"
+    )
+
+
+    cw_encoding = {
+        k : v[:, context_encoding["input_ids"].shape[1]:] \
+            for k,v in whole_text_encoding.items()
+    }
+
+    print("Context ", tokenizer.decode(*context_encoding["input_ids"]))
+    print("cw ", tokenizer.decode(*cw_encoding["input_ids"]))
+
+    whole_text_encoding_shape = whole_text_encoding["input_ids"].shape[1]
+    context_encoding_shape = context_encoding["input_ids"].shape[1]
+
+    with torch.no_grad():
+        output = model(**whole_text_encoding)
+
+    cw_extracted_logits = output.logits[-1, context_encoding["input_ids"].shape[1]-1:-1, :]
+
+    softmax = torch.nn.Softmax(dim=-1)
+    cw_extracted_probs_from_logits = softmax(cw_extracted_logits)
+
+    print("cw_extracted_probs_from_logits ", cw_extracted_probs_from_logits)
+
+    cw_extracted_log_probs_from_logits = torch.log(
+            cw_extracted_probs_from_logits)
+
+    print("cw_extracted_log_probs_from_logits ",cw_extracted_log_probs_from_logits)
+
+
+    cw_tokens_probs = []
+    for cw_subtoken, probs in zip(cw_encoding["input_ids"][0], cw_extracted_log_probs_from_logits):
+        cw_tokens_probs.append(probs[cw_subtoken])
+
+    print("cw_tokens_probs ", cw_tokens_probs)
+    prob = float(torch.exp(torch.sum(torch.Tensor(cw_tokens_probs))))
+
+    print(prob)

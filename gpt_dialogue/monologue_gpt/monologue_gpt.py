@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-24 13:40:18
+# @Last Modified time: 2022-10-07 11:55:22
 
 import os
 from typing import Union, List
@@ -27,6 +27,9 @@ from gpt_dialogue.monologue_gpt.dm import MonologueGPTFinetuneDM
 import logging
 logger = logging.getLogger(__name__)
 
+
+# TODO: Need to add a way of not adding the special and pad tokens directly
+# i.e, to load the base model and tokenizer.
 class MonologueGPT(LanguageModel):
 
     _SUPPORTED_MODELS = (
@@ -67,9 +70,10 @@ class MonologueGPT(LanguageModel):
         # Load tokenizer
         self._tokenizer = AutoTokenizer.from_pretrained(
             tokenizer_checkpoint,
-            pad_token=tokenizer_pad_token,
-            eos_token=tokenizer_eos_token,
-            additional_special_tokens=tokenizer_additional_special_tokens)
+            # pad_token=tokenizer_pad_token,
+            # eos_token=tokenizer_eos_token,
+            # additional_special_tokens=tokenizer_additional_special_tokens
+            )
 
 
 
@@ -135,6 +139,12 @@ class MonologueGPT(LanguageModel):
 
     def __call__(self, *args, **kwargs):
         return self.model(*args, **kwargs)
+
+    def __repr__(self) -> str:
+        return (
+            f"Base model: {self.model}\n"
+            f"Base tokenizer: {self._tokenizer}"
+        )
 
     def to(self, device):
         self.model.to(device)
