@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-24 14:38:26
+# @Last Modified time: 2022-10-07 14:52:09
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -129,6 +129,12 @@ class TurnGPT(LanguageModel):
             **kwargs
         )
         trainer.fit(self.model,datamodule=dm)
+
+    def __repr__(self):
+        return (
+            f"Base model: {self.model}\n"
+            f"Base tokenizer: {self.tokenizer}"
+        )
 
     def __call__(self, *args, **kwargs):
         return self.model(*args, **kwargs)
