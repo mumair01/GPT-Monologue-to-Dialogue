@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-22 10:05:46
+# @Last Modified time: 2022-10-10 11:18:43
 
 
 import sys
@@ -166,7 +166,7 @@ def run_inference(cfg : DictConfig):
 
     # Load the model
     logger.info(f"Loading model of type: {model}")
-    model.load(**cfg.experiment.load)
+    model.load(**OmegaConf.to_object(cfg.experiment.load))
 
     # Load the pipeline, the dataset, and execute the task
     pipe = ConditionalProbabilityPipeline(
