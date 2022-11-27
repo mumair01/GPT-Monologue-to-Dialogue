@@ -1,0 +1,29 @@
+#C Config file groups contain commonly used values but are not exhaustive.
+
+[monologue_gpt.load]
+model_checkpoint = "gpt2"
+tokenizer_eos_token = "<|endoftext|>"
+tokenizer_pad_token = "<PAD>"
+tokenizer_additional_special_tokens = [
+    "<SP1>", # Speaker 1 token
+    "<SP2>", # Speaker 2 token
+    "<START>", # Conversation start token
+    "<END>" # Conversation end token
+]
+
+[turngpt.load]
+pretrained_model_name_or_path = "gpt2"
+model_head  = "LMHead"
+
+
+[spoken_dialogue_tokenizer]
+pretrained_model_name_or_path = "gpt2"
+base_speaker_token = "<SP{}>"
+tokenizer_eos_token = "<ts>"
+tokenizer_pad_token = "<|endoftext|>"
+tokenizer_additional_special_tokens  = []
+
+[conditional_probability_pipe]
+N = -1
+context_buffer_size = 512
+
