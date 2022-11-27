@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-24 13:40:18
+# @Last Modified time: 2022-10-07 14:44:52
 
 import os
 from typing import Union, List
@@ -27,6 +27,9 @@ from gpt_dialogue.monologue_gpt.dm import MonologueGPTFinetuneDM
 import logging
 logger = logging.getLogger(__name__)
 
+
+# TODO: Need to add a way of not adding the special and pad tokens directly
+# i.e, to load the base model and tokenizer.
 class MonologueGPT(LanguageModel):
 
     _SUPPORTED_MODELS = (
@@ -34,14 +37,6 @@ class MonologueGPT(LanguageModel):
         "gpt2-large"
     )
 
-    _TOKENIZER_EOS_TOKEN = "<|endoftext|>"
-    _TOKENIZER_PAD_TOKEN = "<PAD>"
-    _TOKENIZER_ADDITIONAL_SPECIAL_TOKENS = [
-        "<SP1>", # Speaker 1 token
-        "<SP2>", # Speaker 2 token
-        "<START>", # Conversation start token
-        "<END>" # Conversation end token
-    ]
 
     def __init__(self):
         self.model= None
@@ -56,10 +51,9 @@ class MonologueGPT(LanguageModel):
         self,
         model_checkpoint : str = "gpt2",
         tokenizer_checkpoint : str = "gpt2",
-        tokenizer_pad_token :str = _TOKENIZER_PAD_TOKEN,
-        tokenizer_eos_token : str = _TOKENIZER_EOS_TOKEN,
-        tokenizer_additional_special_tokens : List[str] = _TOKENIZER_ADDITIONAL_SPECIAL_TOKENS,
-
+        tokenizer_pad_token :str = None,
+        tokenizer_eos_token : str = None,
+        tokenizer_additional_special_tokens : List[str] = None
     ):
         self.model_checkpoint = model_checkpoint
         self.tokenizer_checkpoint = tokenizer_checkpoint
@@ -69,9 +63,8 @@ class MonologueGPT(LanguageModel):
             tokenizer_checkpoint,
             pad_token=tokenizer_pad_token,
             eos_token=tokenizer_eos_token,
-            additional_special_tokens=tokenizer_additional_special_tokens)
-
-
+            additional_special_tokens=tokenizer_additional_special_tokens
+            )
 
         self.model = AutoModelForCausalLM.from_pretrained(
             model_checkpoint,
@@ -135,6 +128,12 @@ class MonologueGPT(LanguageModel):
 
     def __call__(self, *args, **kwargs):
         return self.model(*args, **kwargs)
+
+    def __repr__(self) -> str:
+        return (
+            f"Base model: {self.model}\n"
+            f"Base tokenizer: {self._tokenizer}"
+        )
 
     def to(self, device):
         self.model.to(device)

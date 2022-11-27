@@ -2,17 +2,31 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-24 15:19:12
+# @Last Modified time: 2022-10-07 15:07:42
 
 import pytest
 
 import sys
+import torch
 import os
 
 from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.monologue_gpt import MonologueGPT
 from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
 
+from transformers import Trainer, TrainingArguments
+from transformers import AutoModelForCausalLM
+from transformers import AutoTokenizer
+
+
+_TOKENIZER_EOS_TOKEN = "<|endoftext|>"
+_TOKENIZER_PAD_TOKEN = "<PAD>"
+_TOKENIZER_ADDITIONAL_SPECIAL_TOKENS = [
+    "<SP1>", # Speaker 1 token
+    "<SP2>", # Speaker 2 token
+    "<START>", # Conversation start token
+    "<END>" # Conversation end token
+]
 
 
 text = ["""She wondered if the note had reached him. She scolded herself for not handing it to him in person. She trusted her friend, but so much could happen. She waited impatiently for word.
@@ -38,26 +52,47 @@ She glanced up into the sky to watch the clouds taking shape. First, she saw a d
 The time had come for Nancy to say goodbye. She had been dreading this moment for a good six months, and it had finally arrived despite her best efforts to forestall it. No matter how hard she tried, she couldn't keep the inevitable from happening. So the time had come for a normal person to say goodbye and move on. It was at this moment that Nancy decided not to be a normal person. After all the time and effort she had expended, she couldn't bring herself to do it.
 "So, what do you think?" he asked nervously. He wanted to know the answer, but at the same time, he didn't. He'd put his heart and soul into the project and he wasn't sure he'd be able to recover if they didn't like what he produced. The silence from the others in the room seemed to last a lifetime even though it had only been a moment since he asked the question. "So, what do you think?" he asked"""]
 
-def test_pipe_monologue_gpt():
+def test_pipe_monologue_gpt_base():
     print("Monologue GPT")
     mono_model = MonologueGPT()
     mono_model.load(
-        model_checkpoint="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/test_models/checkpoint-6990"
+        model_checkpoint="gpt2"
     )
     mono_tokenizer = mono_model.tokenizer
 
-    mono_model.model.eval()
     pipe = ConditionalProbabilityPipeline(
         model=mono_model,
         N=-1,
         context_buffer_size=512
     )
     print("Different speaker")
-    probs = pipe(["<START>","<SP1> sage told me you're going skiing over break <SP1>", "<SP2> go on <SP2>", "<END>"])
+    probs = pipe(["<START>","<SP1>  i haven't seen the keys anywhere  <SP1>", "<SP2> have you <SP2>", "<END>"])
     for prob in probs:
         print(prob)
     print("Same speaker")
-    probs = pipe(["<START>","<SP1> sage told me you're going skiing over break go on <SP1>", "<END>"])
+    probs = pipe(["<START>","<SP1> i haven't seen the keys anywhere have you <SP1>", "<END>"])
+    for prob in probs:
+        print(prob)
+
+def test_pipe_monologue_gpt_labels():
+    model = MonologueGPT()
+    model.load(
+        model_checkpoint="gpt2",
+        tokenizer_pad_token=_TOKENIZER_PAD_TOKEN,
+        tokenizer_eos_token=_TOKENIZER_EOS_TOKEN,
+        tokenizer_additional_special_tokens=_TOKENIZER_ADDITIONAL_SPECIAL_TOKENS
+    )
+    pipe = ConditionalProbabilityPipeline(
+        model=model,
+        N=-1,
+        context_buffer_size=512
+    )
+    print("Different speaker")
+    probs = pipe(["<START>","<SP1>  i haven't seen the keys anywhere  <SP1>", "<SP2> have you <SP2>", "<END>"])
+    for prob in probs:
+        print(prob)
+    print("Same speaker")
+    probs = pipe(["<START>","<SP1> i haven't seen the keys anywhere have you <SP1>", "<END>"])
     for prob in probs:
         print(prob)
 
@@ -94,3 +129,59 @@ def test_pipe_turngpt():
 
     # print("Large text")
     # probs = pipe(text)
+
+
+def test_gpt():
+    model = AutoModelForCausalLM.from_pretrained("gpt2")
+    model.eval()
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
+
+    print(model)
+    print(tokenizer)
+
+    context = "i haven't seen the keys"
+    turns_so_far = "i haven't seen the keys anywhere"
+
+    context_encoding = tokenizer(
+        context, return_tensors="pt"
+    )
+    whole_text_encoding = tokenizer(
+        turns_so_far, return_tensors="pt"
+    )
+
+
+    cw_encoding = {
+        k : v[:, context_encoding["input_ids"].shape[1]:] \
+            for k,v in whole_text_encoding.items()
+    }
+
+    print("Context ", tokenizer.decode(*context_encoding["input_ids"]))
+    print("cw ", tokenizer.decode(*cw_encoding["input_ids"]))
+
+    whole_text_encoding_shape = whole_text_encoding["input_ids"].shape[1]
+    context_encoding_shape = context_encoding["input_ids"].shape[1]
+
+    with torch.no_grad():
+        output = model(**whole_text_encoding)
+
+    cw_extracted_logits = output.logits[-1, context_encoding["input_ids"].shape[1]-1:-1, :]
+
+    softmax = torch.nn.Softmax(dim=-1)
+    cw_extracted_probs_from_logits = softmax(cw_extracted_logits)
+
+    print("cw_extracted_probs_from_logits ", cw_extracted_probs_from_logits)
+
+    cw_extracted_log_probs_from_logits = torch.log(
+            cw_extracted_probs_from_logits)
+
+    print("cw_extracted_log_probs_from_logits ",cw_extracted_log_probs_from_logits)
+
+
+    cw_tokens_probs = []
+    for cw_subtoken, probs in zip(cw_encoding["input_ids"][0], cw_extracted_log_probs_from_logits):
+        cw_tokens_probs.append(probs[cw_subtoken])
+
+    print("cw_tokens_probs ", cw_tokens_probs)
+    prob = float(torch.exp(torch.sum(torch.Tensor(cw_tokens_probs))))
+
+    print(prob)

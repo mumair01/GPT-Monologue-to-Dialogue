@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-09-23 15:48:32
+# @Last Modified time: 2022-10-07 15:00:33
 
 import pytest
 import sys
@@ -94,6 +94,16 @@ def test_huggingface_tokenizer():
     model = GPT2LMHeadModel.from_pretrained("gpt2")
     transformer_outputs = model.__call__(**toks)
     print("Model results shape "  ,transformer_outputs[0].shape)
+
+
+def test_turngpt_initialize():
+    turngpt = TurnGPT()
+    turngpt.load(
+        pretrained_model_name_or_path="gpt2",
+        # pretrained_model_name_or_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/test_models/epoch=7-step=1128.ckpt",
+        model_head="LMHead"
+    )
+    print(turngpt)
 
 
 def test_finetune_turngpt():
