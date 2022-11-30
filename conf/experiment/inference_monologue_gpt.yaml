@@ -2,8 +2,8 @@ name : inference_monologue_gpt
 model_name : gpt2_5_train_37_test_special_labels_model
 
 load:
-  model_checkpoint : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_monologue_gpt/gpt2_icc_5_train_37_special_labels/2022-08-18_14-52-22/checkpoint-328
-  # model_checkpoint : gpt2
+  # model_checkpoint : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_monologue_gpt/gpt2_icc_5_train_37_special_labels/2022-08-18_14-52-22/checkpoint-328
+  model_checkpoint : gpt2
   tokenizer_checkpoint : gpt2
 
   ## NOTE: Uncomment to run trained model. These should be the same in finetuning.

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-10-10 11:18:43
+# @Last Modified time: 2022-11-30 09:39:36
 
 
 import sys
@@ -17,11 +17,13 @@ from omegaconf import DictConfig, OmegaConf
 import hydra
 import logging
 
-
 sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
+
 from gpt_dialogue.monologue_gpt import MonologueGPT
 from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
+
+from scripts.utils.decorators import log_wandb
 
 logger = logging.getLogger(__name__)
 
@@ -35,46 +37,10 @@ WANDB_PROJECT = "GPT-Monologue-Dialogue-Inference"
 WANDB_ENTITY = "gpt-monologue-dialogue"
 
 
-
 ########################### HELPER METHODS ####################################
 
-def log_wandb(func : Callable):
-    """Decorator for setting up and logging experiment using wandb"""
-
-    logger.info("WANDB: Logging inference using Weights and Biases (WANDB)")
-
-    def inner(cfg : DictConfig):
-        # Log the config params using wandb
-        wandb.config = OmegaConf.to_container(
-            cfg, resolve=True, throw_on_missing=True
-        )
-
-        run = wandb.init(
-            project=WANDB_PROJECT,
-            entity=WANDB_ENTITY,
-            config=OmegaConf.to_container(
-            cfg, resolve=True, throw_on_missing=True
-        ))
-        # Change the run name
-        run_id = wandb.run.id
-        wandb.run.name = f"{cfg.experiment.name}_{cfg.experiment.model_name}_{cfg.dataset.name}_{run_id}"
-
-        logger.info(
-            f"WANDB: Running experiment for project {WANDB_PROJECT} entity "
-            f"{WANDB_ENTITY} with id {wandb.run.id}"
-        )
-
-        # Run experiment
-        func(cfg)
-
-        # Finish logging the run
-        logger.info(f"WANDB: Ending logging for experiment: {run_id}")
-        run.finish()
-
-    return inner
-
-
 # NOTE: Assuming that the dataset is in the correct format.
+# TODO: Standardize the loader functions for the datasets.
 def load_inference_dataset(
         csv_path : str,
         start_conv_no : int = 0,
@@ -108,6 +74,7 @@ def generate_probabilities(
         conversation_dfs : List[pd.DataFrame],
         pipe : ConditionalProbabilityPipeline,
         save_dir : str,
+        run : wandb.run
     ) -> None:
     """
     Use the conditional probability pipeline to generate probabilities for all
@@ -132,7 +99,7 @@ def generate_probabilities(
         df.to_csv(save_path)
         data.append(df.copy())
 
-        wandb.run.log({
+        run.log({
             f"overview/steps" : i,
             f"overview/turns_at_step" : len(df)
         })
@@ -142,18 +109,28 @@ def generate_probabilities(
         os.path.join(save_dir,"conditional_probs_combined.csv"))
 
     wandb_table = wandb.Table(data=results_df)
-    wandb.run.log({
+    run.log({
         f"tables/combined_results" :  wandb_table,
     })
 
 
 ########################### MAIN METHODS ####################################
 
+def generate_wandb_run_name(cfg):
+    return f"{cfg.experiment.name}_{cfg.experiment.model_name}_{cfg.dataset.name}"
 
-@log_wandb
-def run_inference(cfg : DictConfig):
+
+@log_wandb(
+    logger=logger,
+    wandb_project=WANDB_PROJECT,
+    wandb_entity=WANDB_ENTITY,
+    wandb_init_mode=None,
+    run_name_func=generate_wandb_run_name
+)
+def run_inference(cfg : DictConfig, run : wandb.run):
     logger.info("Running inference with configurations:")
     print(OmegaConf.to_yaml(cfg))
+
     # Load the appropriate model
     if cfg.experiment.name == "inference_monologue_gpt":
         model = MonologueGPT()
@@ -184,14 +161,17 @@ def run_inference(cfg : DictConfig):
     generate_probabilities(
         conversation_dfs=conversation_dfs,
         pipe=pipe,
-        save_dir=os.getcwd()
+        save_dir=os.getcwd(),
+        run=run
     )
     logger.info("Completed inference!")
+
 
 @hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
 def main(cfg : DictConfig):
     run_inference(cfg)
 
-
 if __name__ == "__main__":
     main()
+
+

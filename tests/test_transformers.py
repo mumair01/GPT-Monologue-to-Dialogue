@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-11-27 15:42:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-11-27 15:58:20
+# @Last Modified time: 2022-11-27 16:50:34
 
 import pytest
 import sys
@@ -10,6 +10,7 @@ import sys
 import transformers
 import pytorch_lightning as pl
 import numpy as np
+import torch
 
 from transformers import AutoTokenizer, GPT2LMHeadModel
 from transformers import Trainer, TrainingArguments
