@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-11-30 09:39:36
+# @Last Modified time: 2022-12-01 03:19:04
 
 
 import sys
@@ -39,7 +39,8 @@ WANDB_ENTITY = "gpt-monologue-dialogue"
 
 ########################### HELPER METHODS ####################################
 
-# NOTE: Assuming that the dataset is in the correct format.
+# NOTE: Assuming that the dataset is in the correct format
+# and contains the columns: ["convName","convID", "Utterance"]
 # TODO: Standardize the loader functions for the datasets.
 def load_inference_dataset(
         csv_path : str,

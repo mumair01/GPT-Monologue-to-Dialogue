@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 12:50:18
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-17 12:55:27
+# @Last Modified time: 2022-12-01 03:19:39
 
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
@@ -22,7 +22,7 @@ from functools import partial
 
 import shutil
 
-from data_lib import (
+from data_lib.core import (
     read_text,
     get_extension,
     get_filename,
@@ -34,6 +34,9 @@ from data_lib import (
 
 
 class SpeakerIdentityStimuliDataset:
+    """
+    Prepares the SpeakerIdentityStimulus dataset and can also act as a loader.
+    """
 
     _VARIANTS = ("no_labels", "special_labels")
     _EXT = "cha"
@@ -54,25 +57,19 @@ class SpeakerIdentityStimuliDataset:
             recursive=False
         )
 
-         # Add conversation number to each conv.
+        # Add conversation number to each conv.
         combined = []
         for conv_no, conv_data in enumerate(res):
             for item in conv_data:
                 item.insert(0,conv_no)
                 combined.append(item)
 
-
-        # Save the data as a dataframe after sorting.
-        dataset_df = pd.DataFrame(combined, columns=["convID","convName","turnNo", "Utterance"])
-        dataset_df.sort_values(by=["convID","turnNo"],ignore_index=True, inplace=True)
-        dataset_df = dataset_df.drop(columns=["turnNo"])
-
         # Generate the save path and save
         create_dir(save_dir)
         partial_save_path = os.path.join(save_dir,f"speaker_identity_stimuli_{variant}")
         csv_path = f"{partial_save_path}.csv"
         remove_file(csv_path)
-        dataset_df.to_csv(csv_path)
+        self._save_dataset_as_csv(csv_path, combined)
 
 
     def _process_file(self, cha_path : str, variant : str):
@@ -140,19 +137,35 @@ class SpeakerIdentityStimuliDataset:
         else:
             raise NotImplementedError()
 
+    def _save_dataset_as_csv(self, csv_path, dataset):
+        # Save the data as a dataframe after sorting.
+        dataset_df = pd.DataFrame(
+            dataset,
+            columns=["convID","convName","turnNo", "Utterance"]
+        )
+        dataset_df.sort_values(
+                by=["convID","turnNo"],ignore_index=True, inplace=True)
+        dataset_df = dataset_df.drop(columns=["turnNo"])
+        dataset_df.to_csv(csv_path)
 
-if __name__ == "__main__":
+    def _load_dataset_from_csv(self, csv_path):
+        df = pd.read_csv(csv_path,names=self._CSV_HEADERS, index_col=0)
+        # conversation_dfs = [df.loc[df[conv_key] == i] for i in range(
+        # np.max(df[conv_key].unique()) + 1)]
+        return df
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--path", type=str, required=True,
-        help="ICC .cha file path or directory containing .cha files")
-    parser.add_argument(
-        "--variant", type=str, help="Variant of the ICC to generate")
-    parser.add_argument(
-        "--outdir", type=str, default="./", help="Output directory")
+# if __name__ == "__main__":
 
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument(
+    #     "--path", type=str, required=True,
+    #     help="ICC .cha file path or directory containing .cha files")
+    # parser.add_argument(
+    #     "--variant", type=str, help="Variant of the ICC to generate")
+    # parser.add_argument(
+    #     "--outdir", type=str, default="./", help="Output directory")
 
-    dataset = SpeakerIdentityStimuliDataset(args.path)
-    dataset(args.variant, args.outdir)
+    # args = parser.parse_args()
+
+    # dataset = SpeakerIdentityStimuliDataset(args.path)
+    # dataset(args.variant, args.outdir)

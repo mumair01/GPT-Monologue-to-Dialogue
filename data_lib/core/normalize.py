@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 09:23:46
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 12:42:50
+# @Last Modified time: 2022-12-01 02:51:01
 
 import sys
 import os
@@ -23,9 +23,15 @@ from tokenizers.normalizers import (
 ############### String utils #############
 
 def add_whitespace_after_punctuation(s : str) -> str:
+    """
+    Add a whitespace after a punctuation in the given string.
+    """
     return re.sub(r"[\,\.\:\;]+(\w+)", r" \1", s)
 
 def remove_words_from_string(s : str, remove_words : List[str]) -> str:
+    """
+    Remove all occurrences of the given words from the string.
+    """
     return " ".join([word for word in s.split() if word not in remove_words])
 
 def replace_word_from_string(s : str, word : str, replacement : str):
@@ -42,6 +48,9 @@ def create_transformer_normalizer_sequence(
     remove_punctuation : bool = True,
     remove_extra_whitespaces : bool = True,
 ):
+    """
+    Create a normalizer sequence that is compatible with huggingface transformers.
+    """
     _UNICODE_NORMALIZERS = {
         "nfd" : NFD()
     }
@@ -104,21 +113,3 @@ def create_normalizer_sequence(
         return s
 
     return call
-
-
-if __name__ == "__main__":
-    s = remove_words_from_string(
-        s = "<SP1> needs to be replaced!!!",
-        remove_words=["<SP1>", "needs"]
-    )
-    print(s)
-    print(replace_word_from_string("<SP1> this is a turn", "<SP1>", "sp1" ))
-
-
-
-    seq = create_normalizer_sequence()
-    print(seq(
-        "This is a very !!, cool test string"
-    ))
-
-

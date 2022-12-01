@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 10:46:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-22 13:18:55
+# @Last Modified time: 2022-12-01 03:19:26
 
 import sys
 import os
@@ -16,7 +16,7 @@ from functools import partial
 
 import shutil
 
-from data_lib import (
+from data_lib.core import (
     read_text,
     get_extension,
     get_filename,
@@ -26,11 +26,16 @@ from data_lib import (
     remove_file
 )
 
-
 class ICCDataset:
+    """
+    Prepares the ICC dataset and can also act as a loader.
+    """
 
     _VARIANTS = ("no_labels", "special_labels")
     _EXT = "cha"
+
+    _CSV_HEADERS = ["convName","convID", "Utterance"]
+
 
     def __init__(self, dir_path : str):
         assert os.path.isdir(dir_path), \
@@ -55,15 +60,31 @@ class ICCDataset:
                 item.insert(1,conv_no)
                 combined.append(item)
 
-        # Save the data as a dataframe
-        dataset_df = pd.DataFrame(combined, columns=["convName","convID", "Utterance"])
         # Generate the save path and save
         create_dir(save_dir)
         partial_save_path = os.path.join(
             save_dir,f"{outfile}_{variant}")
         csv_path = f"{partial_save_path}.csv"
-        remove_file(csv_path)
-        dataset_df.to_csv(csv_path)
+        self._save_dataset_as_csv(csv_path, combined)
+
+
+    def read_dataset_csv(
+        self,
+        csv_path : str,
+        start_conv_no : int = 0,
+        end_conv_no : int = -1,
+    ) -> List[pd.DataFrame]:
+        """
+        Read a csv file prepared by this Dataset and obtain conversations b/w
+        [start_conv_no, end_conv_no].
+        """
+        df = self._load_dataset_from_csv(csv_path)
+        if end_conv_no > len(conversation_dfs) or end_conv_no == -1:
+            end_conv_no = len(conversation_dfs)
+        assert len(conversation_dfs) >= end_conv_no
+        assert start_conv_no < end_conv_no
+        conversation_dfs = conversation_dfs[start_conv_no:end_conv_no]
+        return conversation_dfs
 
     def _process_file(self, cha_path : str, variant : str):
         assert os.path.isfile(cha_path), f"ERROR: {cha_path} does not exist"
@@ -71,7 +92,7 @@ class ICCDataset:
         conv_name = get_filename(cha_path)
         conv = read_text(cha_path)
 
-         # Create and apply normalizer sequence
+        # Create and apply normalizer sequence
         normalizer_seq = create_normalizer_sequence(
             **self._get_variant_normalizer_params(variant))
 
@@ -123,22 +144,33 @@ class ICCDataset:
         else:
             raise NotImplementedError()
 
+    def _save_dataset_as_csv(self, csv_path, dataset):
+        # Save the data as a dataframe
+        dataset_df = pd.DataFrame(dataset, columns=self._CSV_HEADERS)
+        # Generate the save path and save
+        dataset_df.to_csv(csv_path)
 
-if __name__ == "__main__":
+    def _load_dataset_from_csv(self, csv_path):
+        df = pd.read_csv(csv_path,names=self._CSV_HEADERS, index_col=0)
+        # conversation_dfs = [df.loc[df[conv_key] == i] for i in range(
+        # np.max(df[conv_key].unique()) + 1)]
+        return df
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--path", type=str, required=True,
-        help="ICC .cha file path or directory containing .cha files")
-    parser.add_argument(
-        "--variant", type=str, help="Variant of the ICC to generate")
-    parser.add_argument(
-        "--outdir", type=str, default="./", help="Output directory")
-    parser.add_argument(
-        "--outfile", type=str,  help="Name of the output file")
+# if __name__ == "__main__":
 
-    args = parser.parse_args()
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument(
+#         "--path", type=str, required=True,
+#         help="ICC .cha file path or directory containing .cha files")
+#     parser.add_argument(
+#         "--variant", type=str, help="Variant of the ICC to generate")
+#     parser.add_argument(
+#         "--outdir", type=str, default="./", help="Output directory")
+#     parser.add_argument(
+#         "--outfile", type=str,  help="Name of the output file")
+
+#     args = parser.parse_args()
 
 
-    dataset = ICCDataset(args.path)
-    dataset(args.variant, args.outdir, args.outfile)
+#     dataset = ICCDataset(args.path)
+#     dataset(args.variant, args.outdir, args.outfile)

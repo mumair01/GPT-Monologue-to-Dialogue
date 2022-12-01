@@ -28,6 +28,7 @@ minversion = "6.0"
 addopts = "-rA"
 testpaths = [
     "tests",
+    "data_lib/tests"
 ]
 filterwarnings = [
     "ignore::DeprecationWarning"
