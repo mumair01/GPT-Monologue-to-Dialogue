@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-12-01 02:31:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-01 02:51:04
+# @Last Modified time: 2022-12-02 03:33:30
 
 
 import pytest
@@ -28,6 +28,7 @@ def test_remove_words_from_string(s, remove_words, expected):
 
 @pytest.mark.parametrize("s, word, replacement, expected", [
     ("<SP1> this is a turn", "<SP1>", "sp1" , "sp1 this is a turn"),
+    ("<SP1> this<SP1>is a turn", "<SP1>", "sp1" , "sp1 this<SP1>is a turn"),
 ])
 def test_replace_word_from_string(s, word, replacement, expected):
     s2 = replace_word_from_string(

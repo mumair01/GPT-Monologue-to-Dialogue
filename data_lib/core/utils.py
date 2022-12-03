@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 09:12:45
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-01 02:52:24
+# @Last Modified time: 2022-12-02 03:16:32
 
 
 import sys
@@ -11,8 +11,10 @@ from typing import Any, List
 
 import glob
 import shutil
+from tqdm import tqdm
 
 from typing import Callable
+
 
 def read_text(file_path : str):
     with open(file_path,"r") as f:

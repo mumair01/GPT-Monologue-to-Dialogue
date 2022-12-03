@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-11-27 16:43:52
+# @Last Modified time: 2022-12-02 02:58:41
 
 import pytest
 
@@ -69,8 +69,8 @@ def test_initialize_conditional_prob_pipe(model_class):
     # Case 4: TurnGPT same speaker
     (TurnGPT, ["sage told me you're going skiing over break go on"]),
     # NOTE: The tests below may take a long time to run.
-    (MonologueGPT, load_inference_text_from_file()),
-    (TurnGPT, load_inference_text_from_file())
+    # (MonologueGPT, load_inference_text_from_file()),
+    # (TurnGPT, load_inference_text_from_file())
 ])
 def test_conditional_prob_pipe_call(model_class, string_list, configs):
     """

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-10-07 15:04:11
+# @Last Modified time: 2022-12-01 03:28:16
 
 from distutils import text_file
 from email import message
@@ -26,11 +26,11 @@ from gpt_dialogue.model import LanguageModel
 import logging
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class Param:
-    value : Any = None
-    required : bool = True
-
+    value: Any = None
+    required: bool = True
 
 
 class ConditionalProbabilityPipeline:
@@ -42,9 +42,9 @@ class ConditionalProbabilityPipeline:
     """
 
     _PARAMS = {
-        "model" : Param(required=True),
-        "N" : Param(required=True),
-        "context_buffer_size" : Param(required=True)
+        "model": Param(required=True),
+        "N": Param(required=True),
+        "context_buffer_size": Param(required=True)
     }
 
     def __init__(self, **kwargs):
@@ -58,22 +58,21 @@ class ConditionalProbabilityPipeline:
         logger.info(f"Pipe {self} initialized with device: {self.device.type}")
         if self.device.type == "cpu":
             logger.warning(f"WARNING: Using device {self.device.type} in pipe "
-            "is slow - switch to gpu if possible")
+                           "is slow - switch to gpu if possible")
 
-    def __call__(self, utterances : List[str]):
+    def __call__(self, utterances: List[str]):
         """Processes a list of strings containing utterances"""
         return self.postprocess(self._forward(self.preprocess(utterances)))
 
-    def preprocess(self, utterances : List[str]):
+    def preprocess(self, utterances: List[str]):
         """Prepare inputs given to __call__ for _forward"""
-        return {"utterances" : utterances}
+        return {"utterances": utterances}
 
-
-    def _forward(self, preprocess_output : Dict):
+    def _forward(self, preprocess_output: Dict):
 
         # Get the required param values
         N = self._PARAMS["N"].value
-        model : LanguageModel= self._PARAMS["model"].value
+        model: LanguageModel = self._PARAMS["model"].value
         context_buffer_size = self._PARAMS["context_buffer_size"].value
         utterances = preprocess_output["utterances"]
 
@@ -90,7 +89,6 @@ class ConditionalProbabilityPipeline:
             context_buffer_size=context_buffer_size
         )
 
-
     def postprocess(self, forward_outputs):
         """Prepare _forward outputs to be returned. """
         return forward_outputs
@@ -105,10 +103,10 @@ class ConditionalProbabilityPipeline:
         context_buffer_size
     ):
         # We need to maintain a whole text list
-        text_so_far : List[List[str]] = []
+        text_so_far: List[List[str]] = []
         results = []
 
-        pbar = tqdm(desc="Processing turns",total=len(utterances))
+        pbar = tqdm(desc="Processing turns", total=len(utterances))
 
         for turn_no, turn in enumerate(utterances):
             split_turn = turn.strip().split()
@@ -145,11 +143,11 @@ class ConditionalProbabilityPipeline:
 
                 # Adding to results
                 results.append({
-                    "turn_no" : turn_no,
-                    "word_no" : word_no,
-                    "context" : " ".join([" ".join(turn_words) for turn_words in context]),
-                    "word" : current_turn_words[-1],
-                    "last_word_prob" : last_word_prob
+                    "turn_no": turn_no,
+                    "word_no": word_no,
+                    "context": " ".join([" ".join(turn_words) for turn_words in context]),
+                    "word": current_turn_words[-1],
+                    "last_word_prob": last_word_prob
                 })
             pbar.update()
 
@@ -164,7 +162,8 @@ class ConditionalProbabilityPipeline:
 
         # NOTE: We need to make sure there are no empty strings that go to the
         # tokenizer.
-        turns_so_far = [" ".join(turn_words).strip() for turn_words in text_so_far]
+        turns_so_far = [" ".join(turn_words).strip()
+                        for turn_words in text_so_far]
         turns_so_far = [item for item in turns_so_far if len(item) > 0]
         context = [" ".join(turn_words).strip() for turn_words in context]
         context = [item for item in context if len(item) > 0]
@@ -176,15 +175,15 @@ class ConditionalProbabilityPipeline:
             turns_so_far, return_tensors="pt"
         )
         cw_encoding = {
-            k : v[:, context_encoding["input_ids"].shape[1]:] \
-                for k,v in whole_text_encoding.items()
+            k: v[:, context_encoding["input_ids"].shape[1]:]
+            for k, v in whole_text_encoding.items()
         }
         # NOTE: We assume that each additional work MUST add tokens to the encoding.
         whole_text_encoding_shape = whole_text_encoding["input_ids"].shape[1]
         context_encoding_shape = context_encoding["input_ids"].shape[1]
         assert whole_text_encoding_shape > context_encoding_shape, \
-            (f"Dims mismatch, whole encoding {whole_text_encoding_shape} must" \
-            f" be greater than context encoding {context_encoding_shape}")
+            (f"Dims mismatch, whole encoding {whole_text_encoding_shape} must"
+             f" be greater than context encoding {context_encoding_shape}")
 
         whole_text_encoding = whole_text_encoding.to(self.device)
         output = model(**whole_text_encoding)
@@ -192,7 +191,8 @@ class ConditionalProbabilityPipeline:
         # that provide values for the tokens in the critical word.
         # i.e., if cw token starts at position i in the sentence, then the logits
         # are from i-1 to len(tokens) - 1.
-        cw_extracted_logits = output.logits[-1, context_encoding["input_ids"].shape[1]-1:-1, :]
+        cw_extracted_logits = output.logits[-1,
+                                            context_encoding["input_ids"].shape[1]-1:-1, :]
         # Obtain the probabilities from the logits
         softmax = torch.nn.Softmax(dim=-1)
         cw_extracted_probs_from_logits = softmax(cw_extracted_logits)
@@ -214,7 +214,7 @@ class ConditionalProbabilityPipeline:
     def _sanitize_parameters(self, **kwargs):
         """Clean up the input kwargs and assign to the appropriate map."""
         for param_dict in (self._PARAMS,):
-            for k,v in param_dict.items():
+            for k, v in param_dict.items():
                 # Required args must be present.
                 if v.required and not k in kwargs:
                     raise Exception(
@@ -224,10 +224,10 @@ class ConditionalProbabilityPipeline:
                     v.value = kwargs[k]
 
     def _trim_to_context_buffer_size(
-            self,
-            text_so_far : List[List[str]],
-            context_buffer_size
-        ):
+        self,
+        text_so_far: List[List[str]],
+        context_buffer_size
+    ):
         while True:
             num_words_so_far = len(list(itertools.chain(*text_so_far)))
             if num_words_so_far < context_buffer_size:

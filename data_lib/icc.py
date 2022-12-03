@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 10:46:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-01 03:19:26
+# @Last Modified time: 2022-12-03 00:57:29
 
 import sys
 import os
@@ -21,11 +21,22 @@ from data_lib.core import (
     get_extension,
     get_filename,
     create_normalizer_sequence,
+    replace_word_from_string,
+    remove_words_from_string,
     process_files_in_dir,
     create_dir,
     remove_file
 )
 
+# TODO: For the no labels dataset, how do we indicate separate turns by the same
+# speaker? We should be able to indicate this in TurnGPT since the turns
+# may be syntactically incoherent, but might make sense as individual subsequent
+# turns by the same speaker.
+# Should this really matter since there is no temporal embeddings. It might
+# because subsequent sequences by speakers may matter.
+# I might want to change the no labels dataset to include a speaker tag
+# that may be used by turngpt - but I'm not sure how to even approach this
+# problem.
 class ICCDataset:
     """
     Prepares the ICC dataset and can also act as a loader.
@@ -78,7 +89,7 @@ class ICCDataset:
         Read a csv file prepared by this Dataset and obtain conversations b/w
         [start_conv_no, end_conv_no].
         """
-        df = self._load_dataset_from_csv(csv_path)
+        conversation_dfs = self._load_dataset_from_csv(csv_path)
         if end_conv_no > len(conversation_dfs) or end_conv_no == -1:
             end_conv_no = len(conversation_dfs)
         assert len(conversation_dfs) >= end_conv_no
@@ -89,12 +100,72 @@ class ICCDataset:
     def _process_file(self, cha_path : str, variant : str):
         assert os.path.isfile(cha_path), f"ERROR: {cha_path} does not exist"
 
+        if variant == "no_labels":
+            return self._process_no_labels_variant(cha_path)
+        elif variant == "special_labels":
+            return self._process_labels_variant(cha_path)
+        else:
+            raise NotImplementedError(
+                f"ERROR: Variant is not defined: {variant}"
+            )
+
+
+    def _process_no_labels_variant(self, cha_path):
+        """
+        Here, we want to remove all explicit speaker labels and make the assumption
+        that speakers alternate for each utterance in the list.
+        """
         conv_name = get_filename(cha_path)
         conv = read_text(cha_path)
 
-        # Create and apply normalizer sequence
         normalizer_seq = create_normalizer_sequence(
-            **self._get_variant_normalizer_params(variant))
+            remove_words=["start", "end"],
+            custom_regex= "(\*)"
+        )
+
+        data = []
+        for j in range(len(conv)):
+            target_str = conv[j].strip()
+            # Split on punctuation
+            split_toks = re.split(r"\. |\?|\t+", target_str)
+            split_toks = [normalizer_seq(tok) for tok in split_toks[:-1]]
+            split_toks = [tok for tok in split_toks if len(tok) > 0]
+            if len(split_toks) > 0:
+                if len(data) > 0 and data[-1][-1][0] == split_toks[0]:
+                    data[-1][-1][-1] += " " +  " ".join(split_toks[1:])
+                elif len(split_toks) == 2:
+                    data.append([conv_name, split_toks])
+        # Removing the speaker labels
+        for i in range(len(data)):
+            conv_name, split_toks = data[i]
+            data[i] = [conv_name, split_toks[1]]
+            print(data[i])
+
+        return data
+
+
+
+    def _process_labels_variant(self, cha_path):
+        """
+        Here, we extract the text from the cha files and create a List
+        of normalizer utterances from different speakers with explicit sequence
+        start and end tokens, as well as explicit speaker tokens.
+        """
+        conv_name = get_filename(cha_path)
+        conv = read_text(cha_path)
+
+        # Using default normalizer for the text and replace normalizer for the
+        # start, end, and speaker labels.
+        text_normalizer_seq = create_normalizer_sequence()
+        labels_normalizer_seq = create_normalizer_sequence(
+            replace_words= {
+                "sp1" : "<SP1>",
+                "sp2" : "<SP2>",
+                "start" : "<START>",
+                "end" : "<END>"
+            },
+            custom_regex= "\*"
+        )
 
         data = []
         for j in range(len(conv)):
@@ -102,47 +173,22 @@ class ICCDataset:
 
             # Split on punctuation
             split_toks = re.split(r"\. |\?|\t+", target_str)
-            # Apply normalizer
-            split_toks = [normalizer_seq(toks) for toks in split_toks]
+
+            # NOTE: split_toks is either len 1 or 3.
+            # We only want to apply the normalizer to the actual text.
+            if len(split_toks) == 3:
+                split_toks[0] = labels_normalizer_seq(split_toks[0])
+                split_toks[1] = text_normalizer_seq(split_toks[1])
+                split_toks[2] = labels_normalizer_seq(split_toks[2])
+            else:
+                split_toks = [labels_normalizer_seq(tok) for tok in split_toks]
 
             split_toks = [tok for tok in split_toks if len(tok) > 0]
             if len(split_toks) > 0:
                 split_toks = " ".join(split_toks)
                 data.append([conv_name,split_toks])
-        return data
 
-    def _get_variant_normalizer_params(self, variant : str):
-        if variant == "no_labels":
-            return {
-                "lowercase" : True,
-                "unicode_normalizer" : "nfd",
-                "strip_accents" : True,
-                "remove_punctuation" : True,
-                "remove_extra_whitespaces" : True,
-                "add_whitespace_punc" : True,
-                "replace_words" : {},
-                "remove_words" :  ["sp1", "sp2", "start", "end"],
-                "custom_regex" : "(\*)"
-            }
-        elif variant == "special_labels":
-            return {
-                "lowercase" : True,
-                "unicode_normalizer" : "nfd",
-                "strip_accents" : True,
-                "remove_punctuation" : True,
-                "remove_extra_whitespaces" : True,
-                "add_whitespace_punc" : True,
-                "replace_words" : {
-                    "sp1" : "<SP1>",
-                    "sp2" : "<SP2>",
-                    "start" : "<START>",
-                    "end" : "<END>"
-                },
-                "remove_words" :  [],
-                "custom_regex" : "(\*)"
-            }
-        else:
-            raise NotImplementedError()
+        return data
 
     def _save_dataset_as_csv(self, csv_path, dataset):
         # Save the data as a dataframe
@@ -151,26 +197,4 @@ class ICCDataset:
         dataset_df.to_csv(csv_path)
 
     def _load_dataset_from_csv(self, csv_path):
-        df = pd.read_csv(csv_path,names=self._CSV_HEADERS, index_col=0)
-        # conversation_dfs = [df.loc[df[conv_key] == i] for i in range(
-        # np.max(df[conv_key].unique()) + 1)]
-        return df
-
-# if __name__ == "__main__":
-
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument(
-#         "--path", type=str, required=True,
-#         help="ICC .cha file path or directory containing .cha files")
-#     parser.add_argument(
-#         "--variant", type=str, help="Variant of the ICC to generate")
-#     parser.add_argument(
-#         "--outdir", type=str, default="./", help="Output directory")
-#     parser.add_argument(
-#         "--outfile", type=str,  help="Name of the output file")
-
-#     args = parser.parse_args()
-
-
-#     dataset = ICCDataset(args.path)
-#     dataset(args.variant, args.outdir, args.outfile)
+        return pd.read_csv(csv_path,names=self._CSV_HEADERS, index_col=0)
