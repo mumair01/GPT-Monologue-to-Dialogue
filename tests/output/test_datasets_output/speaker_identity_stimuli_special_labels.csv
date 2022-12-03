@@ -1,0 +1,3001 @@
+,convID,convName,Utterance
+0,0,30b,<START>
+1,0,30b,<SP1> i haven't seen the keys anywhere <SP1>
+2,0,30b,<SP2> have you <SP2>
+3,0,30b,<END>
+4,1,101bf,<START>
+5,1,101bf,<SP1> did you get enough to eat <SP1>
+6,1,101bf,<SP1> why's that <SP1>
+7,1,101bf,<END>
+8,2,113c,<START>
+9,2,113c,<SP1> sorry that i'm preventing you from finishing the homework tonight <SP1>
+10,2,113c,<SP2> no rush <SP2>
+11,2,113c,<END>
+12,3,16bf,<START>
+13,3,16bf,<SP1> my mom is coming to campus for parents weekend <SP1>
+14,3,16bf,<SP1> i did <SP1>
+15,3,16bf,<END>
+16,4,53bf,<START>
+17,4,53bf,<SP1> i won't tell anyone your secret <SP1>
+18,4,53bf,<SP1> how <SP1>
+19,4,53bf,<END>
+20,5,67b,<START>
+21,5,67b,<SP1> i can't believe you haven't heard yet <SP1>
+22,5,67b,<SP2> you won <SP2>
+23,5,67b,<END>
+24,6,88b,<START>
+25,6,88b,<SP1> i tripped in front of my boss at work today <SP1>
+26,6,88b,<SP2> don't laugh <SP2>
+27,6,88b,<END>
+28,7,8bf,<START>
+29,7,8bf,<SP1> how did your exam go <SP1>
+30,7,8bf,<SP1> of course <SP1>
+31,7,8bf,<END>
+32,8,103bd,<START>
+33,8,103bd,<SP1> i finally heard from my grandma last night <SP1>
+34,8,103bd,<SP1> oh yeah <SP1>
+35,8,103bd,<END>
+36,9,51bd,<START>
+37,9,51bd,<SP1> i'll give you my notes if you let me borrow your book <SP1>
+38,9,51bd,<SP1> i'm in <SP1>
+39,9,51bd,<END>
+40,10,85e,<START>
+41,10,85e,<SP1> do you have another hat i could borrow <SP1>
+42,10,85e,<SP2> well done <SP2>
+43,10,85e,<END>
+44,11,14bd,<START>
+45,11,14bd,<SP1> you really shouldn't have bought me such a nice gift <SP1>
+46,11,14bd,<SP1> nonsense <SP1>
+47,11,14bd,<END>
+48,12,1e,<START>
+49,12,1e,<SP1> i've been trying to unscrew this bolt for fifteen minutes but it just won't budge <SP1>
+50,12,1e,<SP2> safe flight <SP2>
+51,12,1e,<END>
+52,13,71b,<START>
+53,13,71b,<SP1> i would love to borrow your book when you've finished reading it <SP1>
+54,13,71b,<SP2> may i <SP2>
+55,13,71b,<END>
+56,14,29bd,<START>
+57,14,29bd,<SP1> could you remind me how to get to the library again <SP1>
+58,14,29bd,<SP1> turn right <SP1>
+59,14,29bd,<END>
+60,15,91bd,<START>
+61,15,91bd,<SP1> you need to pay me by the thirtieth <SP1>
+62,15,91bd,<SP1> will do <SP1>
+63,15,91bd,<END>
+64,16,124e,<START>
+65,16,124e,<SP1> we can borrow jess's car for the roadtrip <SP1>
+66,16,124e,<SP2> i fell <SP2>
+67,16,124e,<END>
+68,17,123ba,<START>
+69,17,123ba,<SP1> do you think you'll make it to my presentation tomorrow <SP1>
+70,17,123ba,<SP1> i'm first <SP1>
+71,17,123ba,<END>
+72,18,34ba,<START>
+73,18,34ba,<SP1> your car isn't in your parking spot <SP1>
+74,18,34ba,<SP1> you walked <SP1>
+75,18,34ba,<END>
+76,19,71ba,<START>
+77,19,71ba,<SP1> i would love to borrow your book when you've finished reading it <SP1>
+78,19,71ba,<SP1> may i <SP1>
+79,19,71ba,<END>
+80,20,93e,<START>
+81,20,93e,<SP1> you mentioned that practicing the interview beforehand was helpful <SP1>
+82,20,93e,<SP2> you walked <SP2>
+83,20,93e,<END>
+84,21,26b,<START>
+85,21,26b,<SP1> are you going to be away for my birthday <SP1>
+86,21,26b,<SP2> that's sad <SP2>
+87,21,26b,<END>
+88,22,105c,<START>
+89,22,105c,<SP1> would you rather have sweet or salty popcorn <SP1>
+90,22,105c,<SP2> neither <SP2>
+91,22,105c,<END>
+92,23,93bf,<START>
+93,23,93bf,<SP1> you mentioned that practicing the interview beforehand was helpful <SP1>
+94,23,93bf,<SP1> i will <SP1>
+95,23,93bf,<END>
+96,24,10ba,<START>
+97,24,10ba,<SP1> i really liked your presentation <SP1>
+98,24,10ba,<SP1> good work <SP1>
+99,24,10ba,<END>
+100,25,55ba,<START>
+101,25,55ba,<SP1> i'm selling cookies for a fundraiser <SP1>
+102,25,55ba,<SP1> buy one <SP1>
+103,25,55ba,<END>
+104,26,105b,<START>
+105,26,105b,<SP1> would you rather have sweet or salty popcorn <SP1>
+106,26,105b,<SP2> or both <SP2>
+107,26,105b,<END>
+108,27,107ba,<START>
+109,27,107ba,<SP1> you're going to love the new exhibit <SP1>
+110,27,107ba,<SP1> you'll see <SP1>
+111,27,107ba,<END>
+112,28,48bd,<START>
+113,28,48bd,<SP1> it's my birthday next week <SP1>
+114,28,48bd,<SP1> what day <SP1>
+115,28,48bd,<END>
+116,29,108e,<START>
+117,29,108e,<SP1> want to study at the library with me later <SP1>
+118,29,108e,<SP2> it sucked <SP2>
+119,29,108e,<END>
+120,30,50e,<START>
+121,30,50e,<SP1> you always get the last slice of pizza <SP1>
+122,30,50e,<SP2> i'm screwed <SP2>
+123,30,50e,<END>
+124,31,26c,<START>
+125,31,26c,<SP1> are you going to be away for my birthday <SP1>
+126,31,26c,<SP2> sadly <SP2>
+127,31,26c,<END>
+128,32,71c,<START>
+129,32,71c,<SP1> i would love to borrow your book when you've finished reading it <SP1>
+130,32,71c,<SP2> of course <SP2>
+131,32,71c,<END>
+132,33,118bf,<START>
+133,33,118bf,<SP1> i'm taking stats next semester <SP1>
+134,33,118bf,<SP1> bring her <SP1>
+135,33,118bf,<END>
+136,34,32bf,<START>
+137,34,32bf,<SP1> i sprained my wrist yesterday <SP1>
+138,34,32bf,<SP1> will do <SP1>
+139,34,32bf,<END>
+140,35,77bf,<START>
+141,35,77bf,<SP1> sage told me you're going skiing over break <SP1>
+142,35,77bf,<SP1> go on <SP1>
+143,35,77bf,<END>
+144,36,125bf,<START>
+145,36,125bf,<SP1> do you have any experience filing taxes <SP1>
+146,36,125bf,<SP1> no chance <SP1>
+147,36,125bf,<END>
+148,37,88c,<START>
+149,37,88c,<SP1> i tripped in front of my boss at work today <SP1>
+150,37,88c,<SP2> that's rough <SP2>
+151,37,88c,<END>
+152,38,11e,<START>
+153,38,11e,<SP1> you parked in my spot again <SP1>
+154,38,11e,<SP2> with you <SP2>
+155,38,11e,<END>
+156,39,67c,<START>
+157,39,67c,<SP1> i can't believe you haven't heard yet <SP1>
+158,39,67c,<SP2> heard what <SP2>
+159,39,67c,<END>
+160,40,75bd,<START>
+161,40,75bd,<SP1> i'd never ride a motorcycle <SP1>
+162,40,75bd,<SP1> you're scared <SP1>
+163,40,75bd,<END>
+164,41,30bd,<START>
+165,41,30bd,<SP1> i haven't seen the keys anywhere <SP1>
+166,41,30bd,<SP1> they're here <SP1>
+167,41,30bd,<END>
+168,42,113b,<START>
+169,42,113b,<SP1> sorry that i'm preventing you from finishing the homework tonight <SP1>
+170,42,113b,<SP2> i'm slow <SP2>
+171,42,113b,<END>
+172,43,95ba,<START>
+173,43,95ba,<SP1> i'm living alone and it's not always easy <SP1>
+174,43,95ba,<SP1> you know <SP1>
+175,43,95ba,<END>
+176,44,68ba,<START>
+177,44,68ba,<SP1> my flight gets into boston 20 minutes before yours <SP1>
+178,44,68ba,<SP1> i'll wait <SP1>
+179,44,68ba,<END>
+180,45,30c,<START>
+181,45,30c,<SP1> i haven't seen the keys anywhere <SP1>
+182,45,30c,<SP2> they're here <SP2>
+183,45,30c,<END>
+184,46,46e,<START>
+185,46,46e,<SP1> i have an exam this afternoon <SP1>
+186,46,46e,<SP2> did i <SP2>
+187,46,46e,<END>
+188,47,88bd,<START>
+189,47,88bd,<SP1> i tripped in front of my boss at work today <SP1>
+190,47,88bd,<SP1> that's rough <SP1>
+191,47,88bd,<END>
+192,48,88bf,<START>
+193,48,88bf,<SP1> i tripped in front of my boss at work today <SP1>
+194,48,88bf,<SP1> you think <SP1>
+195,48,88bf,<END>
+196,49,31e,<START>
+197,49,31e,<SP1> tell me why you got home so late last night <SP1>
+198,49,31e,<SP2> buy one <SP2>
+199,49,31e,<END>
+200,50,47c,<START>
+201,50,47c,<SP1> i have eaten so much candy today <SP1>
+202,50,47c,<SP2> save some <SP2>
+203,50,47c,<END>
+204,51,30bf,<START>
+205,51,30bf,<SP1> i haven't seen the keys anywhere <SP1>
+206,51,30bf,<SP1> i'm in <SP1>
+207,51,30bf,<END>
+208,52,75bf,<START>
+209,52,75bf,<SP1> i'd never ride a motorcycle <SP1>
+210,52,75bf,<SP1> tell me <SP1>
+211,52,75bf,<END>
+212,53,10c,<START>
+213,53,10c,<SP1> i really liked your presentation <SP1>
+214,53,10c,<SP2> i'm glad <SP2>
+215,53,10c,<END>
+216,54,66e,<START>
+217,54,66e,<SP1> i got an a on my exam <SP1>
+218,54,66e,<SP2> do it <SP2>
+219,54,66e,<END>
+220,55,89e,<START>
+221,55,89e,<SP1> how did the game go the other day <SP1>
+222,55,89e,<SP2> it's free <SP2>
+223,55,89e,<END>
+224,56,97ba,<START>
+225,56,97ba,<SP1> i need to go to the grocery store <SP1>
+226,56,97ba,<SP1> come with <SP1>
+227,56,97ba,<END>
+228,57,125bd,<START>
+229,57,125bd,<SP1> do you have any experience filing taxes <SP1>
+230,57,125bd,<SP1> a bit <SP1>
+231,57,125bd,<END>
+232,58,77bd,<START>
+233,58,77bd,<SP1> sage told me you're going skiing over break <SP1>
+234,58,77bd,<SP1> i am <SP1>
+235,58,77bd,<END>
+236,59,84b,<START>
+237,59,84b,<SP1> you haven't looked at your inbox in way too long <SP1>
+238,59,84b,<SP2> check it <SP2>
+239,59,84b,<END>
+240,60,32bd,<START>
+241,60,32bd,<SP1> i sprained my wrist yesterday <SP1>
+242,60,32bd,<SP1> which side <SP1>
+243,60,32bd,<END>
+244,61,118bd,<START>
+245,61,118bd,<SP1> i'm taking stats next semester <SP1>
+246,61,118bd,<SP1> what else <SP1>
+247,61,118bd,<END>
+248,62,70e,<START>
+249,62,70e,<SP1> where have you been <SP1>
+250,62,70e,<SP2> that's great <SP2>
+251,62,70e,<END>
+252,63,125b,<START>
+253,63,125b,<SP1> do you have any experience filing taxes <SP1>
+254,63,125b,<SP2> i'm stuck <SP2>
+255,63,125b,<END>
+256,64,105ba,<START>
+257,64,105ba,<SP1> would you rather have sweet or salty popcorn <SP1>
+258,64,105ba,<SP1> or both <SP1>
+259,64,105ba,<END>
+260,65,12ba,<START>
+261,65,12ba,<SP1> are you celebrating your birthday <SP1>
+262,65,12ba,<SP1> you must <SP1>
+263,65,12ba,<END>
+264,66,57ba,<START>
+265,66,57ba,<SP1> you'll need a calculator for your exam later <SP1>
+266,66,57ba,<SP1> take mine <SP1>
+267,66,57ba,<END>
+268,67,92b,<START>
+269,67,92b,<SP1> let's pack our stuff tonight and leave early tomorrow morning <SP1>
+270,67,92b,<SP2> sound good <SP2>
+271,67,92b,<END>
+272,68,51c,<START>
+273,68,51c,<SP1> i'll give you my notes if you let me borrow your book <SP1>
+274,68,51c,<SP2> i'm in <SP2>
+275,68,51c,<END>
+276,69,27e,<START>
+277,69,27e,<SP1> i know you're skeptical but this has to work <SP1>
+278,69,27e,<SP2> it blows <SP2>
+279,69,27e,<END>
+280,70,109c,<START>
+281,70,109c,<SP1> we need more coffee filters <SP1>
+282,70,109c,<SP2> do we <SP2>
+283,70,109c,<END>
+284,71,48bf,<START>
+285,71,48bf,<SP1> it's my birthday next week <SP1>
+286,71,48bf,<SP1> where <SP1>
+287,71,48bf,<END>
+288,72,36ba,<START>
+289,72,36ba,<SP1> i thought i already gave you the book <SP1>
+290,72,36ba,<SP1> did i <SP1>
+291,72,36ba,<END>
+292,73,73ba,<START>
+293,73,73ba,<SP1> i don't really like that podcast you told me about <SP1>
+294,73,73ba,<SP1> so far <SP1>
+295,73,73ba,<END>
+296,74,104e,<START>
+297,74,104e,<SP1> we went on our second date last night <SP1>
+298,74,104e,<SP2> don't look <SP2>
+299,74,104e,<END>
+300,75,93bd,<START>
+301,75,93bd,<SP1> you mentioned that practicing the interview beforehand was helpful <SP1>
+302,75,93bd,<SP1> for sure <SP1>
+303,75,93bd,<END>
+304,76,121ba,<START>
+305,76,121ba,<SP1> i found the perfect shelf for our living room on craigslist <SP1>
+306,76,121ba,<SP1> brand new <SP1>
+307,76,121ba,<END>
+308,77,109b,<START>
+309,77,109b,<SP1> we need more coffee filters <SP1>
+310,77,109b,<SP2> don't we <SP2>
+311,77,109b,<END>
+312,78,51b,<START>
+313,78,51b,<SP1> i'll give you my notes if you let me borrow your book <SP1>
+314,78,51b,<SP2> how's that <SP2>
+315,78,51b,<END>
+316,79,92c,<START>
+317,79,92c,<SP1> let's pack our stuff tonight and leave early tomorrow morning <SP1>
+318,79,92c,<SP2> sounds good <SP2>
+319,79,92c,<END>
+320,80,125c,<START>
+321,80,125c,<SP1> do you have any experience filing taxes <SP1>
+322,80,125c,<SP2> a bit <SP2>
+323,80,125c,<END>
+324,81,91bf,<START>
+325,81,91bf,<SP1> you need to pay me by the thirtieth <SP1>
+326,81,91bf,<SP1> congrats <SP1>
+327,81,91bf,<END>
+328,82,29bf,<START>
+329,82,29bf,<SP1> could you remind me how to get to the library again <SP1>
+330,82,29bf,<SP1> nice job <SP1>
+331,82,29bf,<END>
+332,83,14bf,<START>
+333,83,14bf,<SP1> you really shouldn't have bought me such a nice gift <SP1>
+334,83,14bf,<SP1> next week <SP1>
+335,83,14bf,<END>
+336,84,51bf,<START>
+337,84,51bf,<SP1> i'll give you my notes if you let me borrow your book <SP1>
+338,84,51bf,<SP1> you are <SP1>
+339,84,51bf,<END>
+340,85,84c,<START>
+341,85,84c,<SP1> you haven't looked at your inbox in way too long <SP1>
+342,85,84c,<SP2> that's true <SP2>
+343,85,84c,<END>
+344,86,103bf,<START>
+345,86,103bf,<SP1> i finally heard from my grandma last night <SP1>
+346,86,103bf,<SP1> how much <SP1>
+347,86,103bf,<END>
+348,87,8bd,<START>
+349,87,8bd,<SP1> how did your exam go <SP1>
+350,87,8bd,<SP1> alright <SP1>
+351,87,8bd,<END>
+352,88,10b,<START>
+353,88,10b,<SP1> i really liked your presentation <SP1>
+354,88,10b,<SP2> good work <SP2>
+355,88,10b,<END>
+356,89,53Bd,<START>
+357,89,53Bd,<SP1> i won't tell anyone your secret <SP1>
+358,89,53Bd,<SP1> you swear <SP1>
+359,89,53Bd,<END>
+360,90,16bd,<START>
+361,90,16bd,<SP1> my mom is coming to campus for parents weekend <SP1>
+362,90,16bd,<SP1> that's fun <SP1>
+363,90,16bd,<END>
+364,91,112e,<START>
+365,91,112e,<SP1> will you come to the concert later <SP1>
+366,91,112e,<SP2> brand new <SP2>
+367,91,112e,<END>
+368,92,101bd,<START>
+369,92,101bd,<SP1> did you get enough to eat <SP1>
+370,92,101bd,<SP1> yeah thanks <SP1>
+371,92,101bd,<END>
+372,93,47b,<START>
+373,93,47b,<SP1> i have eaten so much candy today <SP1>
+374,93,47b,<SP2> it's bad <SP2>
+375,93,47b,<END>
+376,94,68bf,<START>
+377,94,68bf,<SP1> my flight gets into boston 20 minutes before yours <SP1>
+378,94,68bf,<SP1> for what <SP1>
+379,94,68bf,<END>
+380,95,46b,<START>
+381,95,46b,<SP1> i have an exam this afternoon <SP1>
+382,95,46b,<SP2> i'm tense <SP2>
+383,95,46b,<END>
+384,96,113e,<START>
+385,96,113e,<SP1> sorry that i'm preventing you from finishing the homework tonight <SP1>
+386,96,113e,<SP2> i'm sure <SP2>
+387,96,113e,<END>
+388,97,95bf,<START>
+389,97,95bf,<SP1> i'm living alone and it's not always easy <SP1>
+390,97,95bf,<SP1> we're out <SP1>
+391,97,95bf,<END>
+392,98,11b,<START>
+393,98,11b,<SP1> you parked in my spot again <SP1>
+394,98,11b,<SP2> please stop <SP2>
+395,98,11b,<END>
+396,99,32ba,<START>
+397,99,32ba,<SP1> i sprained my wrist yesterday <SP1>
+398,99,32ba,<SP1> it hurts <SP1>
+399,99,32ba,<END>
+400,100,77ba,<START>
+401,100,77ba,<SP1> sage told me you're going skiing over break <SP1>
+402,100,77ba,<SP1> enjoy <SP1>
+403,100,77ba,<END>
+404,101,85c,<START>
+405,101,85c,<SP1> do you have another hat i could borrow <SP1>
+406,101,85c,<SP2> i don't <SP2>
+407,101,85c,<END>
+408,102,1c,<START>
+409,102,1c,<SP1> i've been trying to unscrew this bolt for fifteen minutes but it just won't budge <SP1>
+410,102,1c,<SP2> want help <SP2>
+411,102,1c,<END>
+412,103,97bd,<START>
+413,103,97bd,<SP1> i need to go to the grocery store <SP1>
+414,103,97bd,<SP1> for what <SP1>
+415,103,97bd,<END>
+416,104,125ba,<START>
+417,104,125ba,<SP1> do you have any experience filing taxes <SP1>
+418,104,125ba,<SP1> i'm stuck <SP1>
+419,104,125ba,<END>
+420,105,118ba,<START>
+421,105,118ba,<SP1> i'm taking stats next semester <SP1>
+422,105,118ba,<SP1> with you <SP1>
+423,105,118ba,<END>
+424,106,93c,<START>
+425,106,93c,<SP1> you mentioned that practicing the interview beforehand was helpful <SP1>
+426,106,93c,<SP2> for sure <SP2>
+427,106,93c,<END>
+428,107,57bd,<START>
+429,107,57bd,<SP1> you'll need a calculator for your exam <SP1>
+430,107,57bd,<SP1> later really <SP1>
+431,107,57bd,<END>
+432,108,12bd,<START>
+433,108,12bd,<SP1> are you celebrating your birthday <SP1>
+434,108,12bd,<SP1> i guess <SP1>
+435,108,12bd,<END>
+436,109,124c,<START>
+437,109,124c,<SP1> we can borrow jess's car for the roadtrip <SP1>
+438,109,124c,<SP2> for real <SP2>
+439,109,124c,<END>
+440,110,105bd,<START>
+441,110,105bd,<SP1> would you rather have sweet or salty popcorn <SP1>
+442,110,105bd,<SP1> neither <SP1>
+443,110,105bd,<END>
+444,111,108b,<START>
+445,111,108b,<SP1> want to study at the library with me later <SP1>
+446,111,108b,<SP2> please come <SP2>
+447,111,108b,<END>
+448,112,50b,<START>
+449,112,50b,<SP1> you always get the last slice of pizza <SP1>
+450,112,50b,<SP2> not fair <SP2>
+451,112,50b,<END>
+452,113,10bf,<START>
+453,113,10bf,<SP1> i really liked your presentation <SP1>
+454,113,10bf,<SP1> not sure <SP1>
+455,113,10bf,<END>
+456,114,55bf,<START>
+457,114,55bf,<SP1> i'm selling cookies for a fundraiser <SP1>
+458,114,55bf,<SP1> do we <SP1>
+459,114,55bf,<END>
+460,115,107bf,<START>
+461,115,107bf,<SP1> you're going to love the new exhibit <SP1>
+462,115,107bf,<SP1> yes please <SP1>
+463,115,107bf,<END>
+464,116,105e,<START>
+465,116,105e,<SP1> would you rather have sweet or salty popcorn <SP1>
+466,116,105e,<SP2> i'm hot <SP2>
+467,116,105e,<END>
+468,117,93ba,<START>
+469,117,93ba,<SP1> you mentioned that practicing the interview beforehand was helpful <SP1>
+470,117,93ba,<SP1> how so <SP1>
+471,117,93ba,<END>
+472,118,121bd,<START>
+473,118,121bd,<SP1> i found the perfect shelf for our living room on craigslist <SP1>
+474,118,121bd,<SP1> how much <SP1>
+475,118,121bd,<END>
+476,119,73bd,<START>
+477,119,73bd,<SP1> i don't really like that podcast you told me about <SP1>
+478,119,73bd,<SP1> you don't <SP1>
+479,119,73bd,<END>
+480,120,36bd,<START>
+481,120,36bd,<SP1> i thought i already gave you the book <SP1>
+482,120,36bd,<SP1> you did <SP1>
+483,120,36bd,<END>
+484,121,50c,<START>
+485,121,50c,<SP1> you always get the last slice of pizza <SP1>
+486,121,50c,<SP2> i'll share <SP2>
+487,121,50c,<END>
+488,122,26e,<START>
+489,122,26e,<SP1> are you going to be away for my birthday <SP1>
+490,122,26e,<SP2> i'm new <SP2>
+491,122,26e,<END>
+492,123,108c,<START>
+493,123,108c,<SP1> want to study at the library with me later <SP1>
+494,123,108c,<SP2> it's closed <SP2>
+495,123,108c,<END>
+496,124,123bf,<START>
+497,124,123bf,<SP1> do you think you'll make it to my presentation tomorrow <SP1>
+498,124,123bf,<SP1> that's true <SP1>
+499,124,123bf,<END>
+500,125,124b,<START>
+501,125,124b,<SP1> we can borrow jess's car for the roadtrip <SP1>
+502,125,124b,<SP2> i asked <SP2>
+503,125,124b,<END>
+504,126,34bf,<START>
+505,126,34bf,<SP1> your car isn't in your parking spot <SP1>
+506,126,34bf,<SP1> no thanks <SP1>
+507,126,34bf,<END>
+508,127,71bf,<START>
+509,127,71bf,<SP1> i would love to borrow your book when you've finished reading it <SP1>
+510,127,71bf,<SP1> i tried <SP1>
+511,127,71bf,<END>
+512,128,93b,<START>
+513,128,93b,<SP1> you mentioned that practicing the interview beforehand was helpful <SP1>
+514,128,93b,<SP2> how so <SP2>
+515,128,93b,<END>
+516,129,71e,<START>
+517,129,71e,<SP1> i would love to borrow your book when you've finished reading it <SP1>
+518,129,71e,<SP2> you won <SP2>
+519,129,71e,<END>
+520,130,8ba,<START>
+521,130,8ba,<SP1> how did your exam go <SP1>
+522,130,8ba,<SP1> you passed <SP1>
+523,130,8ba,<END>
+524,131,1b,<START>
+525,131,1b,<SP1> i've been trying to unscrew this bolt for fifteen minutes but it just won't budge <SP1>
+526,131,1b,<SP2> help me <SP2>
+527,131,1b,<END>
+528,132,85b,<START>
+529,132,85b,<SP1> do you have another hat i could borrow <SP1>
+530,132,85b,<SP2> i'm cold <SP2>
+531,132,85b,<END>
+532,133,11c,<START>
+533,133,11c,<SP1> you parked in my spot again <SP1>
+534,133,11c,<SP2> not true <SP2>
+535,133,11c,<END>
+536,134,67e,<START>
+537,134,67e,<SP1> i can't believe you haven't heard yet <SP1>
+538,134,67e,<SP2> apply <SP2>
+539,134,67e,<END>
+540,135,88e,<START>
+541,135,88e,<SP1> i tripped in front of my boss at work today <SP1>
+542,135,88e,<SP2> cash please <SP2>
+543,135,88e,<END>
+544,136,101ba,<START>
+545,136,101ba,<SP1> did you get enough to eat <SP1>
+546,136,101ba,<SP1> have more <SP1>
+547,136,101ba,<END>
+548,137,16ba,<START>
+549,137,16ba,<SP1> my mom is coming to campus for parents weekend <SP1>
+550,137,16ba,<SP1> is yours <SP1>
+551,137,16ba,<END>
+552,138,53ba,<START>
+553,138,53ba,<SP1> i won't tell anyone your secret <SP1>
+554,138,53ba,<SP1> trust me <SP1>
+555,138,53ba,<END>
+556,139,30e,<START>
+557,139,30e,<SP1> i haven't seen the keys anywhere <SP1>
+558,139,30e,<SP2> i'm first <SP2>
+559,139,30e,<END>
+560,140,46c,<START>
+561,140,46c,<SP1> i have an exam this afternoon <SP1>
+562,140,46c,<SP2> good luck <SP2>
+563,140,46c,<END>
+564,141,31c,<START>
+565,141,31c,<SP1> tell me why you got home so late last night <SP1>
+566,141,31c,<SP2> no way <SP2>
+567,141,31c,<END>
+568,142,47e,<START>
+569,142,47e,<SP1> i have eaten so much candy today <SP1>
+570,142,47e,<SP2> are you <SP2>
+571,142,47e,<END>
+572,143,112b,<START>
+573,143,112b,<SP1> will you come to the concert later <SP1>
+574,143,112b,<SP2> it's free <SP2>
+575,143,112b,<END>
+576,144,89c,<START>
+577,144,89c,<SP1> how did the game go the other day <SP1>
+578,144,89c,<SP2> i scored <SP2>
+579,144,89c,<END>
+580,145,10e,<START>
+581,145,10e,<SP1> i really liked your presentation <SP1>
+582,145,10e,<SP2> try one <SP2>
+583,145,10e,<END>
+584,146,66c,<START>
+585,146,66c,<SP1> i got an a on my exam <SP1>
+586,146,66c,<SP2> nice job <SP2>
+587,146,66c,<END>
+588,147,14ba,<START>
+589,147,14ba,<SP1> you really shouldn't have bought me such a nice gift <SP1>
+590,147,14ba,<SP1> thank you <SP1>
+591,147,14ba,<END>
+592,148,51ba,<START>
+593,148,51ba,<SP1> i'll give you my notes if you let me borrow your book <SP1>
+594,148,51ba,<SP1> how's that <SP1>
+595,148,51ba,<END>
+596,149,103ba,<START>
+597,149,103ba,<SP1> i finally heard from my grandma last night <SP1>
+598,149,103ba,<SP1> she's fine <SP1>
+599,149,103ba,<END>
+600,150,29ba,<START>
+601,150,29ba,<SP1> could you remind me how to get to the library again <SP1>
+602,150,29ba,<SP1> i'm lost <SP1>
+603,150,29ba,<END>
+604,151,70c,<START>
+605,151,70c,<SP1> where have you been <SP1>
+606,151,70c,<SP2> nowhere <SP2>
+607,151,70c,<END>
+608,152,71bd,<START>
+609,152,71bd,<SP1> i would love to borrow your book when you've finished reading it <SP1>
+610,152,71bd,<SP1> of course <SP1>
+611,152,71bd,<END>
+612,153,34bd,<START>
+613,153,34bd,<SP1> your car isn't in your parking spot <SP1>
+614,153,34bd,<SP1> i biked <SP1>
+615,153,34bd,<END>
+616,154,91ba,<START>
+617,154,91ba,<SP1> you need to pay me by the thirtieth <SP1>
+618,154,91ba,<SP1> cash please <SP1>
+619,154,91ba,<END>
+620,155,123bd,<START>
+621,155,123bd,<SP1> do you think you'll make it to my presentation tomorrow <SP1>
+622,155,123bd,<SP1> no chance <SP1>
+623,155,123bd,<END>
+624,156,109e,<START>
+625,156,109e,<SP1> we need more coffee filters <SP1>
+626,156,109e,<SP2> it's long <SP2>
+627,156,109e,<END>
+628,157,51e,<START>
+629,157,51e,<SP1> i'll give you my notes if you let me borrow your book <SP1>
+630,157,51e,<SP2> i'm cold <SP2>
+631,157,51e,<END>
+632,158,27c,<START>
+633,158,27c,<SP1> i know you're skeptical but this has to work <SP1>
+634,158,27c,<SP2> you sure <SP2>
+635,158,27c,<END>
+636,159,36bf,<START>
+637,159,36bf,<SP1> i thought i already gave you the book <SP1>
+638,159,36bf,<SP1> i am <SP1>
+639,159,36bf,<END>
+640,160,73bf,<START>
+641,160,73bf,<SP1> i don't really like that podcast you told me about <SP1>
+642,160,73bf,<SP1> not now <SP1>
+643,160,73bf,<END>
+644,161,121bf,<START>
+645,161,121bf,<SP1> i found the perfect shelf for our living room on craigslist <SP1>
+646,161,121bf,<SP1> a bit <SP1>
+647,161,121bf,<END>
+648,162,104b,<START>
+649,162,104b,<SP1> we went on our second date last night <SP1>
+650,162,104b,<SP2> he's sweet <SP2>
+651,162,104b,<END>
+652,163,104c,<START>
+653,163,104c,<SP1> we went on our second date last night <SP1>
+654,163,104c,<SP2> go on <SP2>
+655,163,104c,<END>
+656,164,107Bd,<START>
+657,164,107Bd,<SP1> you're going to love the new exhibit <SP1>
+658,164,107Bd,<SP1> we'll see <SP1>
+659,164,107Bd,<END>
+660,165,55bd,<START>
+661,165,55bd,<SP1> i'm selling cookies for a fundraiser <SP1>
+662,165,55bd,<SP1> what kind <SP1>
+663,165,55bd,<END>
+664,166,10bd,<START>
+665,166,10bd,<SP1> i really liked your presentation <SP1>
+666,166,10bd,<SP1> i'm glad <SP1>
+667,166,10bd,<END>
+668,167,27b,<START>
+669,167,27b,<SP1> i know you're skeptical but this has to work <SP1>
+670,167,27b,<SP2> i'm sure <SP2>
+671,167,27b,<END>
+672,168,48ba,<START>
+673,168,48ba,<SP1> it's my birthday next week <SP1>
+674,168,48ba,<SP1> i'm old <SP1>
+675,168,48ba,<END>
+676,169,105bf,<START>
+677,169,105bf,<SP1> would you rather have sweet or salty popcorn <SP1>
+678,169,105bf,<SP1> oh yeah <SP1>
+679,169,105bf,<END>
+680,170,125e,<START>
+681,170,125e,<SP1> do you have any experience filing taxes <SP1>
+682,170,125e,<SP2> he's sweet <SP2>
+683,170,125e,<END>
+684,171,12bf,<START>
+685,171,12bf,<SP1> are you celebrating your birthday <SP1>
+686,171,12bf,<SP1> i'm quick <SP1>
+687,171,12bf,<END>
+688,172,57bf,<START>
+689,172,57bf,<SP1> you'll need a calculator for your exam later <SP1>
+690,172,57bf,<SP1> one sec <SP1>
+691,172,57bf,<END>
+692,173,92e,<START>
+693,173,92e,<SP1> let's pack our stuff tonight and leave early tomorrow morning <SP1>
+694,173,92e,<SP2> it's bad <SP2>
+695,173,92e,<END>
+696,174,70b,<START>
+697,174,70b,<SP1> where have you been <SP1>
+698,174,70b,<SP2> you're late <SP2>
+699,174,70b,<END>
+700,175,97bf,<START>
+701,175,97bf,<SP1> i need to go to the grocery store <SP1>
+702,175,97bf,<SP1> who <SP1>
+703,175,97bf,<END>
+704,176,84e,<START>
+705,176,84e,<SP1> you haven't looked at your inbox in way too long <SP1>
+706,176,84e,<SP2> good work <SP2>
+707,176,84e,<END>
+708,177,66b,<START>
+709,177,66b,<SP1> i got an a on my exam <SP1>
+710,177,66b,<SP2> i'm psyched <SP2>
+711,177,66b,<END>
+712,178,89b,<START>
+713,178,89b,<SP1> how did the game go the other day <SP1>
+714,178,89b,<SP2> you win <SP2>
+715,178,89b,<END>
+716,179,95bd,<START>
+717,179,95bd,<SP1> i'm living alone and it's not always easy <SP1>
+718,179,95bd,<SP1> i bet <SP1>
+719,179,95bd,<END>
+720,180,112c,<START>
+721,180,112c,<SP1> will you come to the concert later <SP1>
+722,180,112c,<SP2> no time <SP2>
+723,180,112c,<END>
+724,181,30ba,<START>
+725,181,30ba,<SP1> i haven't seen the keys anywhere <SP1>
+726,181,30ba,<SP1> have you <SP1>
+727,181,30ba,<END>
+728,182,75ba,<START>
+729,182,75ba,<SP1> i'd never ride a motorcycle <SP1>
+730,182,75ba,<SP1> would you <SP1>
+731,182,75ba,<END>
+732,183,88ba,<START>
+733,183,88ba,<SP1> i tripped in front of my boss at work today <SP1>
+734,183,88ba,<SP1> don't laugh <SP1>
+735,183,88ba,<END>
+736,184,31b,<START>
+737,184,31b,<SP1> tell me why you got home so late last night <SP1>
+738,184,31b,<SP2> don't lie <SP2>
+739,184,31b,<END>
+740,185,68bd,<START>
+741,185,68bd,<SP1> my flight gets into boston 20 minutes before yours <SP1>
+742,185,68bd,<SP1> don't wait <SP1>
+743,185,68bd,<END>
+744,186,37e,<START>
+745,186,37e,<SP1> i really want you to meet my brother <SP1>
+746,186,37e,<SP2> rest up <SP2>
+747,186,37e,<END>
+748,187,41c,<START>
+749,187,41c,<SP1> i was up super late watching tv last night <SP1>
+750,187,41c,<SP2> which show <SP2>
+751,187,41c,<END>
+752,188,119c,<START>
+753,188,119c,<SP1> did i pronounce your name correctly <SP1>
+754,188,119c,<SP2> not quite <SP2>
+755,188,119c,<END>
+756,189,49bf,<START>
+757,189,49bf,<SP1> i have to get going <SP1>
+758,189,49bf,<SP1> guilty <SP1>
+759,189,49bf,<END>
+760,190,16c,<START>
+761,190,16c,<SP1> my mom is coming to campus for parents weekend <SP1>
+762,190,16c,<SP2> that's fun <SP2>
+763,190,16c,<END>
+764,191,119bd,<START>
+765,191,119bd,<SP1> did i pronounce your name correctly <SP1>
+766,191,119bd,<SP1> not quite <SP1>
+767,191,119bd,<END>
+768,192,60e,<START>
+769,192,60e,<SP1> i'm going to give you some great life advice <SP1>
+770,192,60e,<SP2> it's rough <SP2>
+771,192,60e,<END>
+772,193,104ba,<START>
+773,193,104ba,<SP1> we went on our second date last night <SP1>
+774,193,104ba,<SP1> he's sweet <SP1>
+775,193,104ba,<END>
+776,194,56ba,<START>
+777,194,56ba,<SP1> you have a big game tomorrow <SP1>
+778,194,56ba,<SP1> rest up <SP1>
+779,194,56ba,<END>
+780,195,13ba,<START>
+781,195,13ba,<SP1> why are you crying <SP1>
+782,195,13ba,<SP1> what's wrong <SP1>
+783,195,13ba,<END>
+784,196,82b,<START>
+785,196,82b,<SP1> i'm getting bagels for my class tomorrow <SP1>
+786,196,82b,<SP2> want one <SP2>
+787,196,82b,<END>
+788,197,6b,<START>
+789,197,6b,<SP1> you haven't been answering any of my emails <SP1>
+790,197,6b,<SP2> it's weird <SP2>
+791,197,6b,<END>
+792,198,76e,<START>
+793,198,76e,<SP1> tell your family i say hello when you arrive <SP1>
+794,198,76e,<SP2> i'm old <SP2>
+795,198,76e,<END>
+796,199,99e,<START>
+797,199,99e,<SP1> that was a funny joke <SP1>
+798,199,99e,<SP2> i'll wait <SP2>
+799,199,99e,<END>
+800,200,123b,<START>
+801,200,123b,<SP1> do you think you'll make it to my presentation tomorrow <SP1>
+802,200,123b,<SP2> i'm first <SP2>
+803,200,123b,<END>
+804,201,124bd,<START>
+805,201,124bd,<SP1> we can borrow jess's car for the roadtrip <SP1>
+806,201,124bd,<SP1> for real <SP1>
+807,201,124bd,<END>
+808,202,96ba,<START>
+809,202,96ba,<SP1> you got married <SP1>
+810,202,96ba,<SP1> that's great <SP1>
+811,202,96ba,<END>
+812,203,94b,<START>
+813,203,94b,<SP1> i forgot that you wanted me not to tell anyone <SP1>
+814,203,94b,<SP2> my bad <SP2>
+815,203,94b,<END>
+816,204,33bd,<START>
+817,204,33bd,<SP1> my bag got lost during the transfer <SP1>
+818,204,33bd,<SP1> that sucks <SP1>
+819,204,33bd,<END>
+820,205,76bd,<START>
+821,205,76bd,<SP1> tell your family i say hello when you arrive <SP1>
+822,205,76bd,<SP1> i will <SP1>
+823,205,76bd,<END>
+824,206,57c,<START>
+825,206,57c,<SP1> you'll need a calculator for your exam later <SP1>
+826,206,57c,<SP2> really <SP2>
+827,206,57c,<END>
+828,207,21e,<START>
+829,207,21e,<SP1> i'd like to meet your girlfriend <SP1>
+830,207,21e,<SP2> i'm late <SP2>
+831,207,21e,<END>
+832,208,89bf,<START>
+833,208,89bf,<SP1> how did the game go the other day <SP1>
+834,208,89bf,<SP1> doubt it <SP1>
+835,208,89bf,<END>
+836,209,74bf,<START>
+837,209,74bf,<SP1> i wasn't sure if you understood my instructions <SP1>
+838,209,74bf,<SP1> you too <SP1>
+839,209,74bf,<END>
+840,210,31bf,<START>
+841,210,31bf,<SP1> tell me why you got home so late last night <SP1>
+842,210,31bf,<SP1> save some <SP1>
+843,210,31bf,<END>
+844,211,17bd,<START>
+845,211,17bd,<SP1> i finally got a chance to watch that show you recommended <SP1>
+846,211,17bd,<SP1> and <SP1>
+847,211,17bd,<END>
+848,212,52bd,<START>
+849,212,52bd,<SP1> there might be some ice on your drive to work <SP1>
+850,212,52bd,<SP1> i'll walk <SP1>
+851,212,52bd,<END>
+852,213,102e,<START>
+853,213,102e,<SP1> i don't think i should drive home <SP1>
+854,213,102e,<SP2> it sucks <SP2>
+855,213,102e,<END>
+856,214,100bd,<START>
+857,214,100bd,<SP1> i'm having trouble making rent this month <SP1>
+858,214,100bd,<SP1> don't stress <SP1>
+859,214,100bd,<END>
+860,215,57b,<START>
+861,215,57b,<SP1> you'll need a calculator for your exam later <SP1>
+862,215,57b,<SP2> take mine <SP2>
+863,215,57b,<END>
+864,216,50bf,<START>
+865,216,50bf,<SP1> you always get the last slice of pizza <SP1>
+866,216,50bf,<SP1> what time <SP1>
+867,216,50bf,<END>
+868,217,15bf,<START>
+869,217,15bf,<SP1> i'm not going out tonight because my cousin's in town <SP1>
+870,217,15bf,<SP1> heard what <SP1>
+871,217,15bf,<END>
+872,218,94c,<START>
+873,218,94c,<SP1> i forgot that you wanted me not to tell anyone <SP1>
+874,218,94c,<SP2> all good <SP2>
+875,218,94c,<END>
+876,219,123c,<START>
+877,219,123c,<SP1> do you think you'll make it to my presentation tomorrow <SP1>
+878,219,123c,<SP2> no chance <SP2>
+879,219,123c,<END>
+880,220,102bf,<START>
+881,220,102bf,<SP1> i don't think i should drive home <SP1>
+882,220,102bf,<SP1> which one <SP1>
+883,220,102bf,<END>
+884,221,9bd,<START>
+885,221,9bd,<SP1> you handled that situation so calmly <SP1>
+886,221,9bd,<SP1> i tried <SP1>
+887,221,9bd,<END>
+888,222,6c,<START>
+889,222,6c,<SP1> you haven't been answering any of my emails <SP1>
+890,222,6c,<SP2> guilty <SP2>
+891,222,6c,<END>
+892,223,82c,<START>
+893,223,82c,<SP1> i'm getting bagels for my class tomorrow <SP1>
+894,223,82c,<SP2> what for <SP2>
+895,223,82c,<END>
+896,224,90bf,<START>
+897,224,90bf,<SP1> i'm going to the fair tomorrow <SP1>
+898,224,90bf,<SP1> don't stress <SP1>
+899,224,90bf,<END>
+900,225,28bf,<START>
+901,225,28bf,<SP1> we're renting a cabin for the weekend <SP1>
+902,225,28bf,<SP1> you did <SP1>
+903,225,28bf,<END>
+904,226,16b,<START>
+905,226,16b,<SP1> my mom is coming to campus for parents weekend <SP1>
+906,226,16b,<SP2> is yours <SP2>
+907,226,16b,<END>
+908,227,72ba,<START>
+909,227,72ba,<SP1> are you walking home tonight <SP1>
+910,227,72ba,<SP1> stay safe <SP1>
+911,227,72ba,<END>
+912,228,37ba,<START>
+913,228,37ba,<SP1> i really want you to meet my brother <SP1>
+914,228,37ba,<SP1> he's great <SP1>
+915,228,37ba,<END>
+916,229,120ba,<START>
+917,229,120ba,<SP1> we're going to be at city hall this monday anyway <SP1>
+918,229,120ba,<SP1> aren't we <SP1>
+919,229,120ba,<END>
+920,230,114e,<START>
+921,230,114e,<SP1> would you like one of my homemade cupcakes <SP1>
+922,230,114e,<SP2> how so <SP2>
+923,230,114e,<END>
+924,231,92bd,<START>
+925,231,92bd,<SP1> let's pack our stuff tonight and leave early tomorrow morning <SP1>
+926,231,92bd,<SP1> sounds good <SP1>
+927,231,92bd,<END>
+928,232,119b,<START>
+929,232,119b,<SP1> did i pronounce your name correctly <SP1>
+930,232,119b,<SP2> i'm new <SP2>
+931,232,119b,<END>
+932,233,41b,<START>
+933,233,41b,<SP1> i was up super late watching tv last night <SP1>
+934,233,41b,<SP2> i'm spent <SP2>
+935,233,41b,<END>
+936,234,36b,<START>
+937,234,36b,<SP1> i thought i already gave you the book <SP1>
+938,234,36b,<SP2> did i <SP2>
+939,234,36b,<END>
+940,235,115c,<START>
+941,235,115c,<SP1> you should come to the screening tomorrow <SP1>
+942,235,115c,<SP2> maybe <SP2>
+943,235,115c,<END>
+944,236,92bf,<START>
+945,236,92bf,<SP1> let's pack our stuff tonight and leave early tomorrow morning <SP1>
+946,236,92bf,<SP1> i bet <SP1>
+947,236,92bf,<END>
+948,237,61b,<START>
+949,237,61b,<SP1> are you allowed to bring a plus one to the wedding <SP1>
+950,237,61b,<SP2> pick me <SP2>
+951,237,61b,<END>
+952,238,28bd,<START>
+953,238,28bd,<SP1> we're renting a cabin for the weekend <SP1>
+954,238,28bd,<SP1> you are <SP1>
+955,238,28bd,<END>
+956,239,122ba,<START>
+957,239,122ba,<SP1> why haven't you paid our rent yet <SP1>
+958,239,122ba,<SP1> it's late <SP1>
+959,239,122ba,<END>
+960,240,90bd,<START>
+961,240,90bd,<SP1> i'm going to the fair tomorrow <SP1>
+962,240,90bd,<SP1> oh cool <SP1>
+963,240,90bd,<END>
+964,241,70ba,<START>
+965,241,70ba,<SP1> where have you been <SP1>
+966,241,70ba,<SP1> you're late <SP1>
+967,241,70ba,<END>
+968,242,35ba,<START>
+969,242,35ba,<SP1> james asked me if you could pick him up from the airport <SP1>
+970,242,35ba,<SP1> you free <SP1>
+971,242,35ba,<END>
+972,243,83e,<START>
+973,243,83e,<SP1> text her back <SP1>
+974,243,83e,<SP2> take note <SP2>
+975,243,83e,<END>
+976,244,7e,<START>
+977,244,7e,<SP1> can you come to my party tomorrow <SP1>
+978,244,7e,<SP2> careful <SP2>
+979,244,7e,<END>
+980,245,77b,<START>
+981,245,77b,<SP1> sage told me you're going skiing over break <SP1>
+982,245,77b,<SP2> enjoy <SP2>
+983,245,77b,<END>
+984,246,98b,<START>
+985,246,98b,<SP1> i'm having trouble understanding some of the concepts from class today <SP1>
+986,246,98b,<SP2> teach me <SP2>
+987,246,98b,<END>
+988,247,122e,<START>
+989,247,122e,<SP1> why haven't you paid our rent yet <SP1>
+990,247,122e,<SP2> don't laugh <SP2>
+991,247,122e,<END>
+992,248,9bf,<START>
+993,248,9bf,<SP1> you handled that situation so calmly <SP1>
+994,248,9bf,<SP1> what kind <SP1>
+995,248,9bf,<END>
+996,249,102bd,<START>
+997,249,102bd,<SP1> i don't think i should drive home <SP1>
+998,249,102bd,<SP1> please don't <SP1>
+999,249,102bd,<END>
+1000,250,15bd,<START>
+1001,250,15bd,<SP1> i'm not going out tonight because my cousin's in town <SP1>
+1002,250,15bd,<SP1> bring her <SP1>
+1003,250,15bd,<END>
+1004,251,95e,<START>
+1005,251,95e,<SP1> i'm living alone and it's not always easy <SP1>
+1006,251,95e,<SP2> were you <SP2>
+1007,251,95e,<END>
+1008,252,50bd,<START>
+1009,252,50bd,<SP1> you always get the last slice of pizza <SP1>
+1010,252,50bd,<SP1> i'll share <SP1>
+1011,252,50bd,<END>
+1012,253,20b,<START>
+1013,253,20b,<SP1> i don't know what time the game starts tonight <SP1>
+1014,253,20b,<SP2> do you <SP2>
+1015,253,20b,<END>
+1016,254,103c,<START>
+1017,254,103c,<SP1> i finally heard from my grandma last night <SP1>
+1018,254,103c,<SP2> oh yeah <SP2>
+1019,254,103c,<END>
+1020,255,100bf,<START>
+1021,255,100bf,<SP1> i'm having trouble making rent this month <SP1>
+1022,255,100bf,<SP1> you don't <SP1>
+1023,255,100bf,<END>
+1024,256,52bf,<START>
+1025,256,52bf,<SP1> there might be some ice on your drive to work <SP1>
+1026,256,52bf,<SP1> i scored <SP1>
+1027,256,52bf,<END>
+1028,257,17bf,<START>
+1029,257,17bf,<SP1> i finally got a chance to watch that show you recommended <SP1>
+1030,257,17bf,<SP1> i can <SP1>
+1031,257,17bf,<END>
+1032,258,31bd,<START>
+1033,258,31bd,<SP1> tell me why you got home so late last night <SP1>
+1034,258,31bd,<SP1> no way <SP1>
+1035,258,31bd,<END>
+1036,259,74bd,<START>
+1037,259,74bd,<SP1> i wasn't sure if you understood my instructions <SP1>
+1038,259,74bd,<SP1> i did <SP1>
+1039,259,74bd,<END>
+1040,260,103b,<START>
+1041,260,103b,<SP1> i finally heard from my grandma last night <SP1>
+1042,260,103b,<SP2> she's fine <SP2>
+1043,260,103b,<END>
+1044,261,94ba,<START>
+1045,261,94ba,<SP1> i forgot that you wanted me not to tell anyone <SP1>
+1046,261,94ba,<SP1> my bad <SP1>
+1047,261,94ba,<END>
+1048,262,69ba,<START>
+1049,262,69ba,<SP1> there are going to be huge sales this friday <SP1>
+1050,262,69ba,<SP1> just wait <SP1>
+1051,262,69ba,<END>
+1052,263,56e,<START>
+1053,263,56e,<SP1> you have a big game tomorrow <SP1>
+1054,263,56e,<SP2> good one <SP2>
+1055,263,56e,<END>
+1056,264,20c,<START>
+1057,264,20c,<SP1> i don't know what time the game starts tonight <SP1>
+1058,264,20c,<SP2> eight <SP2>
+1059,264,20c,<END>
+1060,265,89bd,<START>
+1061,265,89bd,<SP1> how did the game go the other day <SP1>
+1062,265,89bd,<SP1> i scored <SP1>
+1063,265,89bd,<END>
+1064,266,76bf,<START>
+1065,266,76bf,<SP1> tell your family i say hello when you arrive <SP1>
+1066,266,76bf,<SP1> i guessed <SP1>
+1067,266,76bf,<END>
+1068,267,33bf,<START>
+1069,267,33bf,<SP1> my bag got lost during the transfer <SP1>
+1070,267,33bf,<SP1> why not <SP1>
+1071,267,33bf,<END>
+1072,268,124bf,<START>
+1073,268,124bf,<SP1> we can borrow jess's car for the roadtrip <SP1>
+1074,268,124bf,<SP1> please don't <SP1>
+1075,268,124bf,<END>
+1076,269,98c,<START>
+1077,269,98c,<SP1> i'm having trouble understanding some of the concepts from class today <SP1>
+1078,269,98c,<SP2> i'll help <SP2>
+1079,269,98c,<END>
+1080,270,77c,<START>
+1081,270,77c,<SP1> sage told me you're going skiing over break <SP1>
+1082,270,77c,<SP2> i am <SP2>
+1083,270,77c,<END>
+1084,271,17e,<START>
+1085,271,17e,<SP1> i finally got a chance to watch that show you recommended <SP1>
+1086,271,17e,<SP2> please come <SP2>
+1087,271,17e,<END>
+1088,272,61c,<START>
+1089,272,61c,<SP1> are you allowed to bring a plus one to the wedding <SP1>
+1090,272,61c,<SP2> doubt it <SP2>
+1091,272,61c,<END>
+1092,273,119bf,<START>
+1093,273,119bf,<SP1> did i pronounce your name correctly <SP1>
+1094,273,119bf,<SP1> it's closed <SP1>
+1095,273,119bf,<END>
+1096,274,54ba,<START>
+1097,274,54ba,<SP1> i have an extra copy of the textbook <SP1>
+1098,274,54ba,<SP1> want it <SP1>
+1099,274,54ba,<END>
+1100,275,11ba,<START>
+1101,275,11ba,<SP1> you parked in my spot again <SP1>
+1102,275,11ba,<SP1> please stop <SP1>
+1103,275,11ba,<END>
+1104,276,115b,<START>
+1105,276,115b,<SP1> you should come to the screening tomorrow <SP1>
+1106,276,115b,<SP2> you down <SP2>
+1107,276,115b,<END>
+1108,277,106ba,<START>
+1109,277,106ba,<SP1> can i get you a cup of coffee <SP1>
+1110,277,106ba,<SP1> or tea <SP1>
+1111,277,106ba,<END>
+1112,278,49bd,<START>
+1113,278,49bd,<SP1> i have to get going <SP1>
+1114,278,49bd,<SP1> same <SP1>
+1115,278,49bd,<END>
+1116,279,118e,<START>
+1117,279,118e,<SP1> i'm taking stats next semester <SP1>
+1118,279,118e,<SP2> pick me <SP2>
+1119,279,118e,<END>
+1120,280,36c,<START>
+1121,280,36c,<SP1> i thought i already gave you the book <SP1>
+1122,280,36c,<SP2> you did <SP2>
+1123,280,36c,<END>
+1124,281,40e,<START>
+1125,281,40e,<SP1> unfortunately i won't be there for the ceremony <SP1>
+1126,281,40e,<SP2> would you <SP2>
+1127,281,40e,<END>
+1128,282,119e,<START>
+1129,282,119e,<SP1> did i pronounce your name correctly <SP1>
+1130,282,119e,<SP2> i'm psyched <SP2>
+1131,282,119e,<END>
+1132,283,37c,<START>
+1133,283,37c,<SP1> i really want you to meet my brother <SP1>
+1134,283,37c,<SP2> love to <SP2>
+1135,283,37c,<END>
+1136,284,41e,<START>
+1137,284,41e,<SP1> i was up super late watching tv last night <SP1>
+1138,284,41e,<SP2> he's great <SP2>
+1139,284,41e,<END>
+1140,285,72bf,<START>
+1141,285,72bf,<SP1> are you walking home tonight <SP1>
+1142,285,72bf,<SP1> there are <SP1>
+1143,285,72bf,<END>
+1144,286,37bf,<START>
+1145,286,37bf,<SP1> i really want you to meet my brother <SP1>
+1146,286,37bf,<SP1> eight <SP1>
+1147,286,37bf,<END>
+1148,287,114b,<START>
+1149,287,114b,<SP1> would you like one of my homemade cupcakes <SP1>
+1150,287,114b,<SP2> try one <SP2>
+1151,287,114b,<END>
+1152,288,120bf,<START>
+1153,288,120bf,<SP1> we're going to be at city hall this monday anyway <SP1>
+1154,288,120bf,<SP1> neither <SP1>
+1155,288,120bf,<END>
+1156,289,28ba,<START>
+1157,289,28ba,<SP1> we're renting a cabin for the weekend <SP1>
+1158,289,28ba,<SP1> you in <SP1>
+1159,289,28ba,<END>
+1160,290,16e,<START>
+1161,290,16e,<SP1> my mom is coming to campus for parents weekend <SP1>
+1162,290,16e,<SP2> have more <SP2>
+1163,290,16e,<END>
+1164,291,60c,<START>
+1165,291,60c,<SP1> i'm going to give you some great life advice <SP1>
+1166,291,60c,<SP2> shoot <SP2>
+1167,291,60c,<END>
+1168,292,35bd,<START>
+1169,292,35bd,<SP1> james asked me if you could pick him up from the airport <SP1>
+1170,292,35bd,<SP1> i'm free <SP1>
+1171,292,35bd,<END>
+1172,293,70bd,<START>
+1173,293,70bd,<SP1> where have you been <SP1>
+1174,293,70bd,<SP1> nowhere <SP1>
+1175,293,70bd,<END>
+1176,294,122bd,<START>
+1177,294,122bd,<SP1> why haven't you paid our rent yet <SP1>
+1178,294,122bd,<SP1> just did <SP1>
+1179,294,122bd,<END>
+1180,295,90ba,<START>
+1181,295,90ba,<SP1> i'm going to the fair tomorrow <SP1>
+1182,295,90ba,<SP1> i think <SP1>
+1183,295,90ba,<END>
+1184,296,99c,<START>
+1185,296,99c,<SP1> that was a funny joke <SP1>
+1186,296,99c,<SP2> you think <SP2>
+1187,296,99c,<END>
+1188,297,76c,<START>
+1189,297,76c,<SP1> tell your family i say hello when you arrive <SP1>
+1190,297,76c,<SP2> i will <SP2>
+1191,297,76c,<END>
+1192,298,50ba,<START>
+1193,298,50ba,<SP1> you always get the last slice of pizza <SP1>
+1194,298,50ba,<SP1> not fair <SP1>
+1195,298,50ba,<END>
+1196,299,15ba,<START>
+1197,299,15ba,<SP1> i'm not going out tonight because my cousin's in town <SP1>
+1198,299,15ba,<SP1> are you <SP1>
+1199,299,15ba,<END>
+1200,300,102ba,<START>
+1201,300,102ba,<SP1> i don't think i should drive home <SP1>
+1202,300,102ba,<SP1> i'm drunk <SP1>
+1203,300,102ba,<END>
+1204,301,57e,<START>
+1205,301,57e,<SP1> you'll need a calculator for your exam later <SP1>
+1206,301,57e,<SP2> it's rude <SP2>
+1207,301,57e,<END>
+1208,302,21c,<START>
+1209,302,21c,<SP1> i'd like to meet your girlfriend <SP1>
+1210,302,21c,<SP2> sure when <SP2>
+1211,302,21c,<END>
+1212,303,102b,<START>
+1213,303,102b,<SP1> i don't think i should drive home <SP1>
+1214,303,102b,<SP2> i'm drunk <SP2>
+1215,303,102b,<END>
+1216,304,102c,<START>
+1217,304,102c,<SP1> i don't think i should drive home <SP1>
+1218,304,102c,<SP2> please don't <SP2>
+1219,304,102c,<END>
+1220,305,94bd,<START>
+1221,305,94bd,<SP1> i forgot that you wanted me not to tell anyone <SP1>
+1222,305,94bd,<SP1> all good <SP1>
+1223,305,94bd,<END>
+1224,306,74ba,<START>
+1225,306,74ba,<SP1> i wasn't sure if you understood my instructions <SP1>
+1226,306,74ba,<SP1> did you <SP1>
+1227,306,74ba,<END>
+1228,307,31ba,<START>
+1229,307,31ba,<SP1> tell me why you got home so late last night <SP1>
+1230,307,31ba,<SP1> don't lie <SP1>
+1231,307,31ba,<END>
+1232,308,21b,<START>
+1233,308,21b,<SP1> i'd like to meet your girlfriend <SP1>
+1234,308,21b,<SP2> can i <SP2>
+1235,308,21b,<END>
+1236,309,89ba,<START>
+1237,309,89ba,<SP1> how did the game go the other day <SP1>
+1238,309,89ba,<SP1> you win <SP1>
+1239,309,89ba,<END>
+1240,310,69bd,<START>
+1241,310,69bd,<SP1> there are going to be huge sales this friday <SP1>
+1242,310,69bd,<SP1> there are <SP1>
+1243,310,69bd,<END>
+1244,311,123e,<START>
+1245,311,123e,<SP1> do you think you'll make it to my presentation tomorrow <SP1>
+1246,311,123e,<SP2> it's wild <SP2>
+1247,311,123e,<END>
+1248,312,96bf,<START>
+1249,312,96bf,<SP1> you got married <SP1>
+1250,312,96bf,<SP1> sounds good <SP1>
+1251,312,96bf,<END>
+1252,313,94e,<START>
+1253,313,94e,<SP1> i forgot that you wanted me not to tell anyone <SP1>
+1254,313,94e,<SP2> check it <SP2>
+1255,313,94e,<END>
+1256,314,76b,<START>
+1257,314,76b,<SP1> tell your family i say hello when you arrive <SP1>
+1258,314,76b,<SP2> safe flight <SP2>
+1259,314,76b,<END>
+1260,315,99b,<START>
+1261,315,99b,<SP1> that was a funny joke <SP1>
+1262,315,99b,<SP2> good one <SP2>
+1263,315,99b,<END>
+1264,316,104bf,<START>
+1265,316,104bf,<SP1> we went on our second date last night <SP1>
+1266,316,104bf,<SP1> you're scared <SP1>
+1267,316,104bf,<END>
+1268,317,56bf,<START>
+1269,317,56bf,<SP1> you have a big game tomorrow <SP1>
+1270,317,56bf,<SP1> sam did <SP1>
+1271,317,56bf,<END>
+1272,318,13bf,<START>
+1273,318,13bf,<SP1> why are you crying <SP1>
+1274,318,13bf,<SP1> no way <SP1>
+1275,318,13bf,<END>
+1276,319,6e,<START>
+1277,319,6e,<SP1> you haven't been answering any of my emails <SP1>
+1278,319,6e,<SP2> don't we <SP2>
+1279,319,6e,<END>
+1280,320,82e,<START>
+1281,320,82e,<SP1> i'm getting bagels for my class tomorrow <SP1>
+1282,320,82e,<SP2> what's wrong <SP2>
+1283,320,82e,<END>
+1284,321,60b,<START>
+1285,321,60b,<SP1> i'm going to give you some great life advice <SP1>
+1286,321,60b,<SP2> take note <SP2>
+1287,321,60b,<END>
+1288,322,114c,<START>
+1289,322,114c,<SP1> would you like one of my homemade cupcakes <SP1>
+1290,322,114c,<SP2> no thanks <SP2>
+1291,322,114c,<END>
+1292,323,106bd,<START>
+1293,323,106bd,<SP1> can i get you a cup of coffee <SP1>
+1294,323,106bd,<SP1> yes please <SP1>
+1295,323,106bd,<END>
+1296,324,11bd,<START>
+1297,324,11bd,<SP1> you parked in my spot again <SP1>
+1298,324,11bd,<SP1> not true <SP1>
+1299,324,11bd,<END>
+1300,325,54bd,<START>
+1301,325,54bd,<SP1> i have an extra copy of the textbook <SP1>
+1302,325,54bd,<SP1> from where <SP1>
+1303,325,54bd,<END>
+1304,326,37b,<START>
+1305,326,37b,<SP1> i really want you to meet my brother <SP1>
+1306,326,37b,<SP2> he's great <SP2>
+1307,326,37b,<END>
+1308,327,49ba,<START>
+1309,327,49ba,<SP1> i have to get going <SP1>
+1310,327,49ba,<SP1> i'm late <SP1>
+1311,327,49ba,<END>
+1312,328,118b,<START>
+1313,328,118b,<SP1> i'm taking stats next semester <SP1>
+1314,328,118b,<SP2> with you <SP2>
+1315,328,118b,<END>
+1316,329,40b,<START>
+1317,329,40b,<SP1> unfortunately i won't be there for the ceremony <SP1>
+1318,329,40b,<SP2> will you <SP2>
+1319,329,40b,<END>
+1320,330,54bf,<START>
+1321,330,54bf,<SP1> i have an extra copy of the textbook <SP1>
+1322,330,54bf,<SP1> never <SP1>
+1323,330,54bf,<END>
+1324,331,11bf,<START>
+1325,331,11bf,<SP1> you parked in my spot again <SP1>
+1326,331,11bf,<SP1> sure <SP1>
+1327,331,11bf,<END>
+1328,332,106bf,<START>
+1329,332,106bf,<SP1> can i get you a cup of coffee <SP1>
+1330,332,106bf,<SP1> sadly <SP1>
+1331,332,106bf,<END>
+1332,333,115e,<START>
+1333,333,115e,<SP1> you should come to the screening tomorrow <SP1>
+1334,333,115e,<SP2> did you <SP2>
+1335,333,115e,<END>
+1336,334,17b,<START>
+1337,334,17b,<SP1> i finally got a chance to watch that show you recommended <SP1>
+1338,334,17b,<SP2> it sucked <SP2>
+1339,334,17b,<END>
+1340,335,119ba,<START>
+1341,335,119ba,<SP1> did i pronounce your name correctly <SP1>
+1342,335,119ba,<SP1> i'm new <SP1>
+1343,335,119ba,<END>
+1344,336,13bd,<START>
+1345,336,13bd,<SP1> why are you crying <SP1>
+1346,336,13bd,<SP1> i'm not <SP1>
+1347,336,13bd,<END>
+1348,337,83c,<START>
+1349,337,83c,<SP1> text her back <SP1>
+1350,337,83c,<SP2> never <SP2>
+1351,337,83c,<END>
+1352,338,7c,<START>
+1353,338,7c,<SP1> can you come to my party tomorrow <SP1>
+1354,338,7c,<SP2> i can't <SP2>
+1355,338,7c,<END>
+1356,339,56bd,<START>
+1357,339,56bd,<SP1> you have a big game tomorrow <SP1>
+1358,339,56bd,<SP1> come watch <SP1>
+1359,339,56bd,<END>
+1360,340,104bd,<START>
+1361,340,104bd,<SP1> we went on our second date last night <SP1>
+1362,340,104bd,<SP1> go on <SP1>
+1363,340,104bd,<END>
+1364,341,76ba,<START>
+1365,341,76ba,<SP1> tell your family i say hello when you arrive <SP1>
+1366,341,76ba,<SP1> safe flight <SP1>
+1367,341,76ba,<END>
+1368,342,33ba,<START>
+1369,342,33ba,<SP1> my bag got lost during the transfer <SP1>
+1370,342,33ba,<SP1> it blows <SP1>
+1371,342,33ba,<END>
+1372,343,95c,<START>
+1373,343,95c,<SP1> i'm living alone and it's not always easy <SP1>
+1374,343,95c,<SP2> i bet <SP2>
+1375,343,95c,<END>
+1376,344,122c,<START>
+1377,344,122c,<SP1> why haven't you paid our rent yet <SP1>
+1378,344,122c,<SP2> just did <SP2>
+1379,344,122c,<END>
+1380,345,124ba,<START>
+1381,345,124ba,<SP1> we can borrow jess's car for the roadtrip <SP1>
+1382,345,124ba,<SP1> i asked <SP1>
+1383,345,124ba,<END>
+1384,346,96bd,<START>
+1385,346,96bd,<SP1> you got married <SP1>
+1386,346,96bd,<SP1> sure did <SP1>
+1387,346,96bd,<END>
+1388,347,69bf,<START>
+1389,347,69bf,<SP1> there are going to be huge sales this friday <SP1>
+1390,347,69bf,<SP1> do you <SP1>
+1391,347,69bf,<END>
+1392,348,56b,<START>
+1393,348,56b,<SP1> you have a big game tomorrow <SP1>
+1394,348,56b,<SP2> rest up <SP2>
+1395,348,56b,<END>
+1396,349,103e,<START>
+1397,349,103e,<SP1> i finally heard from my grandma last night <SP1>
+1398,349,103e,<SP2> can i <SP2>
+1399,349,103e,<END>
+1400,350,94bf,<START>
+1401,350,94bf,<SP1> i forgot that you wanted me not to tell anyone <SP1>
+1402,350,94bf,<SP1> you heard <SP1>
+1403,350,94bf,<END>
+1404,351,100ba,<START>
+1405,351,100ba,<SP1> i'm having trouble making rent this month <SP1>
+1406,351,100ba,<SP1> i'm broke <SP1>
+1407,351,100ba,<END>
+1408,352,52ba,<START>
+1409,352,52ba,<SP1> there might be some ice on your drive to work <SP1>
+1410,352,52ba,<SP1> careful <SP1>
+1411,352,52ba,<END>
+1412,353,17ba,<START>
+1413,353,17ba,<SP1> i finally got a chance to watch that show you recommended <SP1>
+1414,353,17ba,<SP1> it sucked <SP1>
+1415,353,17ba,<END>
+1416,354,56c,<START>
+1417,354,56c,<SP1> you have a big game tomorrow <SP1>
+1418,354,56c,<SP2> come watch <SP2>
+1419,354,56c,<END>
+1420,355,20e,<START>
+1421,355,20e,<SP1> i don't know what time the game starts tonight <SP1>
+1422,355,20e,<SP2> thank you <SP2>
+1423,355,20e,<END>
+1424,356,122b,<START>
+1425,356,122b,<SP1> why haven't you paid our rent yet <SP1>
+1426,356,122b,<SP2> it's late <SP2>
+1427,356,122b,<END>
+1428,357,9ba,<START>
+1429,357,9ba,<SP1> you handled that situation so calmly <SP1>
+1430,357,9ba,<SP1> well done <SP1>
+1431,357,9ba,<END>
+1432,358,95b,<START>
+1433,358,95b,<SP1> i'm living alone and it's not always easy <SP1>
+1434,358,95b,<SP2> you know <SP2>
+1435,358,95b,<END>
+1436,359,77e,<START>
+1437,359,77e,<SP1> sage told me you're going skiing over break <SP1>
+1438,359,77e,<SP2> you passed <SP2>
+1439,359,77e,<END>
+1440,360,98e,<START>
+1441,360,98e,<SP1> i'm having trouble understanding some of the concepts from class today <SP1>
+1442,360,98e,<SP2> you in <SP2>
+1443,360,98e,<END>
+1444,361,122bf,<START>
+1445,361,122bf,<SP1> why haven't you paid our rent yet <SP1>
+1446,361,122bf,<SP1> i guess <SP1>
+1447,361,122bf,<END>
+1448,362,70bf,<START>
+1449,362,70bf,<SP1> where have you been <SP1>
+1450,362,70bf,<SP1> maybe <SP1>
+1451,362,70bf,<END>
+1452,363,35bf,<START>
+1453,363,35bf,<SP1> james asked me if you could pick him up from the airport <SP1>
+1454,363,35bf,<SP1> not quite <SP1>
+1455,363,35bf,<END>
+1456,364,7b,<START>
+1457,364,7b,<SP1> can you come to my party tomorrow <SP1>
+1458,364,7b,<SP2> you should <SP2>
+1459,364,7b,<END>
+1460,365,83b,<START>
+1461,365,83b,<SP1> text her back <SP1>
+1462,365,83b,<SP2> do it <SP2>
+1463,365,83b,<END>
+1464,366,17c,<START>
+1465,366,17c,<SP1> i finally got a chance to watch that show you recommended <SP1>
+1466,366,17c,<SP2> and <SP2>
+1467,366,17c,<END>
+1468,367,61e,<START>
+1469,367,61e,<SP1> are you allowed to bring a plus one to the wedding <SP1>
+1470,367,61e,<SP2> work hard <SP2>
+1471,367,61e,<END>
+1472,368,120bd,<START>
+1473,368,120bd,<SP1> we're going to be at city hall this monday anyway <SP1>
+1474,368,120bd,<SP1> next week <SP1>
+1475,368,120bd,<END>
+1476,369,92ba,<START>
+1477,369,92ba,<SP1> let's pack our stuff tonight and leave early tomorrow morning <SP1>
+1478,369,92ba,<SP1> sound good <SP1>
+1479,369,92ba,<END>
+1480,370,37bd,<START>
+1481,370,37bd,<SP1> i really want you to meet my brother <SP1>
+1482,370,37bd,<SP1> love to <SP1>
+1483,370,37bd,<END>
+1484,371,72bd,<START>
+1485,371,72bd,<SP1> are you walking home tonight <SP1>
+1486,371,72bd,<SP1> not sure <SP1>
+1487,371,72bd,<END>
+1488,372,36e,<START>
+1489,372,36e,<SP1> i thought i already gave you the book <SP1>
+1490,372,36e,<SP2> is yours <SP2>
+1491,372,36e,<END>
+1492,373,40c,<START>
+1493,373,40c,<SP1> unfortunately i won't be there for the ceremony <SP1>
+1494,373,40c,<SP2> why's that <SP2>
+1495,373,40c,<END>
+1496,374,118c,<START>
+1497,374,118c,<SP1> i'm taking stats next semester <SP1>
+1498,374,118c,<SP2> what else <SP2>
+1499,374,118c,<END>
+1500,375,43b,<START>
+1501,375,43b,<SP1> the job posting i sent you looks awesome <SP1>
+1502,375,43b,<SP2> apply <SP2>
+1503,375,43b,<END>
+1504,376,39bf,<START>
+1505,376,39bf,<SP1> what if you need to use your camera tomorrow <SP1>
+1506,376,39bf,<SP1> i'm glad <SP1>
+1507,376,39bf,<END>
+1508,377,116e,<START>
+1509,377,116e,<SP1> could you put your phone away please <SP1>
+1510,377,116e,<SP2> take mine <SP2>
+1511,377,116e,<END>
+1512,378,38c,<START>
+1513,378,38c,<SP1> my landlord hasn't turned on our heat yet <SP1>
+1514,378,38c,<SP2> mine has <SP2>
+1515,378,38c,<END>
+1516,379,81bf,<START>
+1517,379,81bf,<SP1> why weren't you in class earlier <SP1>
+1518,379,81bf,<SP1> indeed <SP1>
+1519,379,81bf,<END>
+1520,380,14b,<START>
+1521,380,14b,<SP1> you really shouldn't have bought me such a nice gift <SP1>
+1522,380,14b,<SP2> thank you <SP2>
+1523,380,14b,<END>
+1524,381,19e,<START>
+1525,381,19e,<SP1> i haven't told you this story yet <SP1>
+1526,381,19e,<SP2> you know <SP2>
+1527,381,19e,<END>
+1528,382,26ba,<START>
+1529,382,26ba,<SP1> are you going to be away for my birthday <SP1>
+1530,382,26ba,<SP1> that's sad <SP1>
+1531,382,26ba,<END>
+1532,383,63ba,<START>
+1533,383,63ba,<SP1> we're hosting a game night on tuesday <SP1>
+1534,383,63ba,<SP1> join us <SP1>
+1535,383,63ba,<END>
+1536,384,83bd,<START>
+1537,384,83bd,<SP1> text her back <SP1>
+1538,384,83bd,<SP1> never <SP1>
+1539,384,83bd,<END>
+1540,385,80c,<START>
+1541,385,80c,<SP1> i wasn't expecting the film to end like that <SP1>
+1542,385,80c,<SP2> you weren't <SP2>
+1543,385,80c,<END>
+1544,386,4c,<START>
+1545,386,4c,<SP1> it's great that you could cover this shift for me <SP1>
+1546,386,4c,<SP2> sure <SP2>
+1547,386,4c,<END>
+1548,387,121c,<START>
+1549,387,121c,<SP1> i found the perfect shelf for our living room on craigslist <SP1>
+1550,387,121c,<SP2> how much <SP2>
+1551,387,121c,<END>
+1552,388,43bd,<START>
+1553,388,43bd,<SP1> the job posting i sent you looks awesome <SP1>
+1554,388,43bd,<SP1> which one <SP1>
+1555,388,43bd,<END>
+1556,389,79c,<START>
+1557,389,79c,<SP1> sam can't help me set up <SP1>
+1558,389,79c,<SP2> i can <SP2>
+1559,389,79c,<END>
+1560,390,96c,<START>
+1561,390,96c,<SP1> you got married <SP1>
+1562,390,96c,<SP2> sure did <SP2>
+1563,390,96c,<END>
+1564,391,111Bd,<START>
+1565,391,111Bd,<SP1> call jake to come over <SP1>
+1566,391,111Bd,<SP1> not now <SP1>
+1567,391,111Bd,<END>
+1568,392,55b,<START>
+1569,392,55b,<SP1> i'm selling cookies for a fundraiser <SP1>
+1570,392,55b,<SP2> buy one <SP2>
+1571,392,55b,<END>
+1572,393,5ba,<START>
+1573,393,5ba,<SP1> so you're telling me you climbed up that whole cliff without a rope <SP1>
+1574,393,5ba,<SP1> you're nuts <SP1>
+1575,393,5ba,<END>
+1576,394,58e,<START>
+1577,394,58e,<SP1> you'll never believe who i saw yesterday <SP1>
+1578,394,58e,<SP2> nice <SP2>
+1579,394,58e,<END>
+1580,395,100e,<START>
+1581,395,100e,<SP1> i'm having trouble making rent this month <SP1>
+1582,395,100e,<SP2> enjoy <SP2>
+1583,395,100e,<END>
+1584,396,41bf,<START>
+1585,396,41bf,<SP1> i was up super late watching tv last night <SP1>
+1586,396,41bf,<SP1> can do <SP1>
+1587,396,41bf,<END>
+1588,397,113bf,<START>
+1589,397,113bf,<SP1> sorry that i'm preventing you from finishing the homework tonight <SP1>
+1590,397,113bf,<SP1> and <SP1>
+1591,397,113bf,<END>
+1592,398,87ba,<START>
+1593,398,87ba,<SP1> i can't believe you went skydiving <SP1>
+1594,398,87ba,<SP1> you're brave <SP1>
+1595,398,87ba,<END>
+1596,399,67bd,<START>
+1597,399,67bd,<SP1> i can't believe you haven't heard yet <SP1>
+1598,399,67bd,<SP2> heard what <SP2>
+1599,399,67bd,<END>
+1600,400,22bd,<START>
+1601,400,22bd,<SP1> i lost my credit card <SP1>
+1602,400,22bd,<SP1> how <SP1>
+1603,400,22bd,<END>
+1604,401,55c,<START>
+1605,401,55c,<SP1> i'm selling cookies for a fundraiser <SP1>
+1606,401,55c,<SP2> what kind <SP2>
+1607,401,55c,<END>
+1608,402,23e,<START>
+1609,402,23e,<SP1> i've had a cold for a while now <SP1>
+1610,402,23e,<SP2> i asked <SP2>
+1611,402,23e,<END>
+1612,403,96b,<START>
+1613,403,96b,<SP1> you got married <SP1>
+1614,403,96b,<SP2> that's great <SP2>
+1615,403,96b,<END>
+1616,404,79b,<START>
+1617,404,79b,<SP1> sam can't help me set up <SP1>
+1618,404,79b,<SP2> can you <SP2>
+1619,404,79b,<END>
+1620,405,20bf,<START>
+1621,405,20bf,<SP1> i don't know what time the game starts tonight <SP1>
+1622,405,20bf,<SP1> yeah thanks <SP1>
+1623,405,20bf,<END>
+1624,406,121b,<START>
+1625,406,121b,<SP1> i found the perfect shelf for our living room on craigslist <SP1>
+1626,406,121b,<SP2> brand new <SP2>
+1627,406,121b,<END>
+1628,407,65bf,<START>
+1629,407,65bf,<SP1> did i tell you what happened to me during the race <SP1>
+1630,407,65bf,<SP1> how sweet <SP1>
+1631,407,65bf,<END>
+1632,408,98bf,<START>
+1633,408,98bf,<SP1> i'm having trouble understanding some of the concepts from class today <SP1>
+1634,408,98bf,<SP1> sure when <SP1>
+1635,408,98bf,<END>
+1636,409,74e,<START>
+1637,409,74e,<SP1> i wasn't sure if you understood my instructions <SP1>
+1638,409,74e,<SP2> not fair <SP2>
+1639,409,74e,<END>
+1640,410,4b,<START>
+1641,410,4b,<SP1> it's great that you could cover this shift for me <SP1>
+1642,410,4b,<SP2> thanks <SP2>
+1643,410,4b,<END>
+1644,411,80b,<START>
+1645,411,80b,<SP1> i wasn't expecting the film to end like that <SP1>
+1646,411,80b,<SP2> were you <SP2>
+1647,411,80b,<END>
+1648,412,1bd,<START>
+1649,412,1bd,<SP1> i've been trying to unscrew this bolt for fifteen minutes but it just won't budge <SP1>
+1650,412,1bd,<SP1> want help <SP1>
+1651,412,1bd,<END>
+1652,413,9e,<START>
+1653,413,9e,<SP1> you handled that situation so calmly <SP1>
+1654,413,9e,<SP2> i'm broke <SP2>
+1655,413,9e,<END>
+1656,414,14c,<START>
+1657,414,14c,<SP1> you really shouldn't have bought me such a nice gift <SP1>
+1658,414,14c,<SP2> nonsense <SP2>
+1659,414,14c,<END>
+1660,415,62e,<START>
+1661,415,62e,<SP1> i got you a present <SP1>
+1662,415,62e,<SP2> stay safe <SP2>
+1663,415,62e,<END>
+1664,416,58bf,<START>
+1665,416,58bf,<SP1> you'll never believe who i saw yesterday <SP1>
+1666,416,58bf,<SP1> i'll help <SP1>
+1667,416,58bf,<END>
+1668,417,115ba,<START>
+1669,417,115ba,<SP1> you should come to the screening tomorrow <SP1>
+1670,417,115ba,<SP1> you down <SP1>
+1671,417,115ba,<END>
+1672,418,38b,<START>
+1673,418,38b,<SP1> my landlord hasn't turned on our heat yet <SP1>
+1674,418,38b,<SP2> it's rough <SP2>
+1675,418,38b,<END>
+1676,419,47ba,<START>
+1677,419,47ba,<SP1> i have eaten so much candy today <SP1>
+1678,419,47ba,<SP1> it's bad <SP1>
+1679,419,47ba,<END>
+1680,420,108bd,<START>
+1681,420,108bd,<SP1> want to study at the library with me later <SP1>
+1682,420,108bd,<SP1> it's closed <SP1>
+1683,420,108bd,<END>
+1684,421,3bf,<START>
+1685,421,3bf,<SP1> so you already submitted your paper <SP1>
+1686,421,3bf,<SP1> love to <SP1>
+1687,421,3bf,<END>
+1688,422,35e,<START>
+1689,422,35e,<SP1> james asked me if you could pick him up from the airport <SP1>
+1690,422,35e,<SP2> please stop <SP2>
+1691,422,35e,<END>
+1692,423,43c,<START>
+1693,423,43c,<SP1> the job posting i sent you looks awesome <SP1>
+1694,423,43c,<SP2> which one <SP2>
+1695,423,43c,<END>
+1696,424,34c,<START>
+1697,424,34c,<SP1> your car isn't in your parking spot <SP1>
+1698,424,34c,<SP2> i biked <SP2>
+1699,424,34c,<END>
+1700,425,42e,<START>
+1701,425,42e,<SP1> i can't believe i got into grad school <SP1>
+1702,425,42e,<SP2> i'm stuck <SP2>
+1703,425,42e,<END>
+1704,426,3bd,<START>
+1705,426,3bd,<SP1> so you already submitted your paper <SP1>
+1706,426,3bd,<SP1> yup <SP1>
+1707,426,3bd,<END>
+1708,427,108bf,<START>
+1709,427,108bf,<SP1> want to study at the library with me later <SP1>
+1710,427,108bf,<SP1> not true <SP1>
+1711,427,108bf,<END>
+1712,428,117b,<START>
+1713,428,117b,<SP1> why did you turn off the ac <SP1>
+1714,428,117b,<SP2> i'm hot <SP2>
+1715,428,117b,<END>
+1716,429,15e,<START>
+1717,429,15e,<SP1> i'm not going out tonight because my cousin's in town <SP1>
+1718,429,15e,<SP2> hurry <SP2>
+1719,429,15e,<END>
+1720,430,58bd,<START>
+1721,430,58bd,<SP1> you'll never believe who i saw yesterday <SP1>
+1722,430,58bd,<SP1> who <SP1>
+1723,430,58bd,<END>
+1724,431,63c,<START>
+1725,431,63c,<SP1> we're hosting a game night on tuesday <SP1>
+1726,431,63c,<SP2> what time <SP2>
+1727,431,63c,<END>
+1728,432,8c,<START>
+1729,432,8c,<SP1> how did your exam go <SP1>
+1730,432,8c,<SP2> alright <SP2>
+1731,432,8c,<END>
+1732,433,1bf,<START>
+1733,433,1bf,<SP1> i've been trying to unscrew this bolt for fifteen minutes but it just won't budge <SP1>
+1734,433,1bf,<SP1> what day <SP1>
+1735,433,1bf,<END>
+1736,434,18b,<START>
+1737,434,18b,<SP1> i can't find my phone <SP1>
+1738,434,18b,<SP2> call me <SP2>
+1739,434,18b,<END>
+1740,435,45ba,<START>
+1741,435,45ba,<SP1> i have the secret santa gift in my bag <SP1>
+1742,435,45ba,<SP1> don't look <SP1>
+1743,435,45ba,<END>
+1744,436,117ba,<START>
+1745,436,117ba,<SP1> why did you turn off the ac <SP1>
+1746,436,117ba,<SP1> i'm hot <SP1>
+1747,436,117ba,<END>
+1748,437,75c,<START>
+1749,437,75c,<SP1> i'd never ride a motorcycle <SP1>
+1750,437,75c,<SP2> you're scared <SP2>
+1751,437,75c,<END>
+1752,438,78ba,<START>
+1753,438,78ba,<SP1> you're going to florida with lily <SP1>
+1754,438,78ba,<SP1> sounds nice <SP1>
+1755,438,78ba,<END>
+1756,439,98bd,<START>
+1757,439,98bd,<SP1> i'm having trouble understanding some of the concepts from class today <SP1>
+1758,439,98bd,<SP1> i'll help <SP1>
+1759,439,98bd,<END>
+1760,440,65bd,<START>
+1761,440,65bd,<SP1> did i tell you what happened to me during the race <SP1>
+1762,440,65bd,<SP1> not yet <SP1>
+1763,440,65bd,<END>
+1764,441,20bd,<START>
+1765,441,20bd,<SP1> i don't know what time the game starts tonight <SP1>
+1766,441,20bd,<SP1> eight <SP1>
+1767,441,20bd,<END>
+1768,442,85ba,<START>
+1769,442,85ba,<SP1> do you have another hat i could borrow <SP1>
+1770,442,85ba,<SP1> i'm cold <SP1>
+1771,442,85ba,<END>
+1772,443,54e,<START>
+1773,443,54e,<SP1> i have an extra copy of the textbook <SP1>
+1774,443,54e,<SP2> or tea <SP2>
+1775,443,54e,<END>
+1776,444,22c,<START>
+1777,444,22c,<SP1> i lost my credit card <SP1>
+1778,444,22c,<SP2> how <SP2>
+1779,444,22c,<END>
+1780,445,59b,<START>
+1781,445,59b,<SP1> something crazy happened to me this weekend <SP1>
+1782,445,59b,<SP2> it's wild <SP2>
+1783,445,59b,<END>
+1784,446,22bf,<START>
+1785,446,22bf,<SP1> i lost my credit card <SP1>
+1786,446,22bf,<SP1> what for <SP1>
+1787,446,22bf,<END>
+1788,447,101b,<START>
+1789,447,101b,<SP1> did you get enough to eat <SP1>
+1790,447,101b,<SP2> have more <SP2>
+1791,447,101b,<END>
+1792,448,67bf,<START>
+1793,448,67bf,<SP1> i can't believe you haven't heard yet <SP1>
+1794,448,67bf,<SP1> for sure <SP1>
+1795,448,67bf,<END>
+1796,449,113bd,<START>
+1797,449,113bd,<SP1> sorry that i'm preventing you from finishing the homework tonight <SP1>
+1798,449,113bd,<SP1> no rush <SP1>
+1799,449,113bd,<END>
+1800,450,101c,<START>
+1801,450,101c,<SP1> did you get enough to eat <SP1>
+1802,450,101c,<SP2> yeah thanks <SP2>
+1803,450,101c,<END>
+1804,451,41bd,<START>
+1805,451,41bd,<SP1> i was up super late watching tv last night <SP1>
+1806,451,41bd,<SP1> which show <SP1>
+1807,451,41bd,<END>
+1808,452,59c,<START>
+1809,452,59c,<SP1> something crazy happened to me this weekend <SP1>
+1810,452,59c,<SP2> tell me <SP2>
+1811,452,59c,<END>
+1812,453,22b,<START>
+1813,453,22b,<SP1> i lost my credit card <SP1>
+1814,453,22b,<SP2> i'm screwed <SP2>
+1815,453,22b,<END>
+1816,454,19ba,<START>
+1817,454,19ba,<SP1> i haven't told you this story yet <SP1>
+1818,454,19ba,<SP1> it's long <SP1>
+1819,454,19ba,<END>
+1820,455,111bf,<START>
+1821,455,111bf,<SP1> call jake to come over <SP1>
+1822,455,111bf,<SP1> all good <SP1>
+1823,455,111bf,<END>
+1824,456,97e,<START>
+1825,456,97e,<SP1> i need to go to the grocery store <SP1>
+1826,456,97e,<SP2> it hurts <SP2>
+1827,456,97e,<END>
+1828,457,78e,<START>
+1829,457,78e,<SP1> you're going to florida with lily <SP1>
+1830,457,78e,<SP2> help me <SP2>
+1831,457,78e,<END>
+1832,458,120e,<START>
+1833,458,120e,<SP1> we're going to be at city hall this monday anyway <SP1>
+1834,458,120e,<SP2> please <SP2>
+1835,458,120e,<END>
+1836,459,43bf,<START>
+1837,459,43bf,<SP1> the job posting i sent you looks awesome <SP1>
+1838,459,43bf,<SP1> that's rough <SP1>
+1839,459,43bf,<END>
+1840,460,7ba,<START>
+1841,460,7ba,<SP1> can you come to my party tomorrow <SP1>
+1842,460,7ba,<SP1> you should <SP1>
+1843,460,7ba,<END>
+1844,461,75b,<START>
+1845,461,75b,<SP1> i'd never ride a motorcycle <SP1>
+1846,461,75b,<SP2> would you <SP2>
+1847,461,75b,<END>
+1848,462,5e,<START>
+1849,462,5e,<SP1> so you're telling me you climbed up that whole cliff without a rope <SP1>
+1850,462,5e,<SP2> open it <SP2>
+1851,462,5e,<END>
+1852,463,81e,<START>
+1853,463,81e,<SP1> why weren't you in class earlier <SP1>
+1854,463,81e,<SP2> thanks <SP2>
+1855,463,81e,<END>
+1856,464,83bf,<START>
+1857,464,83bf,<SP1> text her back <SP1>
+1858,464,83bf,<SP1> me too <SP1>
+1859,464,83bf,<END>
+1860,465,18c,<START>
+1861,465,18c,<SP1> i can't find my phone <SP1>
+1862,465,18c,<SP2> since when <SP2>
+1863,465,18c,<END>
+1864,466,8b,<START>
+1865,466,8b,<SP1> how did your exam go <SP1>
+1866,466,8b,<SP2> you passed <SP2>
+1867,466,8b,<END>
+1868,467,63b,<START>
+1869,467,63b,<SP1> we're hosting a game night on tuesday <SP1>
+1870,467,63b,<SP2> join us <SP2>
+1871,467,63b,<END>
+1872,468,81bd,<START>
+1873,468,81bd,<SP1> why weren't you in class earlier <SP1>
+1874,468,81bd,<SP1> i'm sick <SP1>
+1875,468,81bd,<END>
+1876,469,39e,<START>
+1877,469,39e,<SP1> what if you need to use your camera tomorrow <SP1>
+1878,469,39e,<SP2> i think <SP2>
+1879,469,39e,<END>
+1880,470,24ba,<START>
+1881,470,24ba,<SP1> i'm going to have a tea <SP1>
+1882,470,24ba,<SP1> yourself <SP1>
+1883,470,24ba,<END>
+1884,471,117c,<START>
+1885,471,117c,<SP1> why did you turn off the ac <SP1>
+1886,471,117c,<SP2> sam did <SP2>
+1887,471,117c,<END>
+1888,472,61ba,<START>
+1889,472,61ba,<SP1> are you allowed to bring a plus one to the wedding <SP1>
+1890,472,61ba,<SP1> pick me <SP1>
+1891,472,61ba,<END>
+1892,473,39bd,<START>
+1893,473,39bd,<SP1> what if you need to use your camera tomorrow <SP1>
+1894,473,39bd,<SP1> i won't <SP1>
+1895,473,39bd,<END>
+1896,474,34b,<START>
+1897,474,34b,<SP1> your car isn't in your parking spot <SP1>
+1898,474,34b,<SP2> you walked <SP2>
+1899,474,34b,<END>
+1900,475,3ba,<START>
+1901,475,3ba,<SP1> so you already submitted your paper <SP1>
+1902,475,3ba,<SP1> nice <SP1>
+1903,475,3ba,<END>
+1904,476,35b,<START>
+1905,476,35b,<SP1> james asked me if you could pick him up from the airport <SP1>
+1906,476,35b,<SP2> you free <SP2>
+1907,476,35b,<END>
+1908,477,115bf,<START>
+1909,477,115bf,<SP1> you should come to the screening tomorrow <SP1>
+1910,477,115bf,<SP1> just did <SP1>
+1911,477,115bf,<END>
+1912,478,38e,<START>
+1913,478,38e,<SP1> my landlord hasn't turned on our heat yet <SP1>
+1914,478,38e,<SP2> sound good <SP2>
+1915,478,38e,<END>
+1916,479,47bf,<START>
+1917,479,47bf,<SP1> i have eaten so much candy today <SP1>
+1918,479,47bf,<SP1> which show <SP1>
+1919,479,47bf,<END>
+1920,480,116c,<START>
+1921,480,116c,<SP1> could you put your phone away please <SP1>
+1922,480,116c,<SP2> one sec <SP2>
+1923,480,116c,<END>
+1924,481,9b,<START>
+1925,481,9b,<SP1> you handled that situation so calmly <SP1>
+1926,481,9b,<SP2> well done <SP2>
+1927,481,9b,<END>
+1928,482,62b,<START>
+1929,482,62b,<SP1> i got you a present <SP1>
+1930,482,62b,<SP2> open it <SP2>
+1931,482,62b,<END>
+1932,483,58ba,<START>
+1933,483,58ba,<SP1> you'll never believe who i saw yesterday <SP1>
+1934,483,58ba,<SP1> guess <SP1>
+1935,483,58ba,<END>
+1936,484,80e,<START>
+1937,484,80e,<SP1> i wasn't expecting the film to end like that <SP1>
+1938,484,80e,<SP2> come with <SP2>
+1939,484,80e,<END>
+1940,485,4e,<START>
+1941,485,4e,<SP1> it's great that you could cover this shift for me <SP1>
+1942,485,4e,<SP2> i'm drunk <SP2>
+1943,485,4e,<END>
+1944,486,117bd,<START>
+1945,486,117bd,<SP1> why did you turn off the ac <SP1>
+1946,486,117bd,<SP1> sam did <SP1>
+1947,486,117bd,<END>
+1948,487,45bd,<START>
+1949,487,45bd,<SP1> i have the secret santa gift in my bag <SP1>
+1950,487,45bd,<SP1> you do <SP1>
+1951,487,45bd,<END>
+1952,488,19c,<START>
+1953,488,19c,<SP1> i haven't told you this story yet <SP1>
+1954,488,19c,<SP2> why not <SP2>
+1955,488,19c,<END>
+1956,489,98ba,<START>
+1957,489,98ba,<SP1> i'm having trouble understanding some of the concepts from class today <SP1>
+1958,489,98ba,<SP1> teach me <SP1>
+1959,489,98ba,<END>
+1960,490,74b,<START>
+1961,490,74b,<SP1> i wasn't sure if you understood my instructions <SP1>
+1962,490,74b,<SP2> did you <SP2>
+1963,490,74b,<END>
+1964,491,78bd,<START>
+1965,491,78bd,<SP1> you're going to florida with lily <SP1>
+1966,491,78bd,<SP1> you heard <SP1>
+1967,491,78bd,<END>
+1968,492,85bd,<START>
+1969,492,85bd,<SP1> do you have another hat i could borrow <SP1>
+1970,492,85bd,<SP1> i don't <SP1>
+1971,492,85bd,<END>
+1972,493,96e,<START>
+1973,493,96e,<SP1> you got married <SP1>
+1974,493,96e,<SP2> just wait <SP2>
+1975,493,96e,<END>
+1976,494,79e,<START>
+1977,494,79e,<SP1> sam can't help me set up <SP1>
+1978,494,79e,<SP2> aren't we <SP2>
+1979,494,79e,<END>
+1980,495,121e,<START>
+1981,495,121e,<SP1> i found the perfect shelf for our living room on craigslist <SP1>
+1982,495,121e,<SP2> you might <SP2>
+1983,495,121e,<END>
+1984,496,20ba,<START>
+1985,496,20ba,<SP1> i don't know what time the game starts tonight <SP1>
+1986,496,20ba,<SP1> do you <SP1>
+1987,496,20ba,<END>
+1988,497,65ba,<START>
+1989,497,65ba,<SP1> did i tell you what happened to me during the race <SP1>
+1990,497,65ba,<SP1> i fell <SP1>
+1991,497,65ba,<END>
+1992,498,23b,<START>
+1993,498,23b,<SP1> i've had a cold for a while now <SP1>
+1994,498,23b,<SP2> it sucks <SP2>
+1995,498,23b,<END>
+1996,499,87bf,<START>
+1997,499,87bf,<SP1> i can't believe you went skydiving <SP1>
+1998,499,87bf,<SP1> we'll see <SP1>
+1999,499,87bf,<END>
+2000,500,100c,<START>
+2001,500,100c,<SP1> i'm having trouble making rent this month <SP1>
+2002,500,100c,<SP2> don't stress <SP2>
+2003,500,100c,<END>
+2004,501,58c,<START>
+2005,501,58c,<SP1> you'll never believe who i saw yesterday <SP1>
+2006,501,58c,<SP2> who <SP2>
+2007,501,58c,<END>
+2008,502,58b,<START>
+2009,502,58b,<SP1> you'll never believe who i saw yesterday <SP1>
+2010,502,58b,<SP2> guess <SP2>
+2011,502,58b,<END>
+2012,503,100b,<START>
+2013,503,100b,<SP1> i'm having trouble making rent this month <SP1>
+2014,503,100b,<SP2> i'm broke <SP2>
+2015,503,100b,<END>
+2016,504,41ba,<START>
+2017,504,41ba,<SP1> i was up super late watching tv last night <SP1>
+2018,504,41ba,<SP1> i'm spent <SP1>
+2019,504,41ba,<END>
+2020,505,113ba,<START>
+2021,505,113ba,<SP1> sorry that i'm preventing you from finishing the homework tonight <SP1>
+2022,505,113ba,<SP1> i'm slow <SP1>
+2023,505,113ba,<END>
+2024,506,19bd,<START>
+2025,506,19bd,<SP1> i haven't told you this story yet <SP1>
+2026,506,19bd,<SP1> why not <SP1>
+2027,506,19bd,<END>
+2028,507,55e,<START>
+2029,507,55e,<SP1> i'm selling cookies for a fundraiser <SP1>
+2030,507,55e,<SP2> i'm slow <SP2>
+2031,507,55e,<END>
+2032,508,23c,<START>
+2033,508,23c,<SP1> i've had a cold for a while now <SP1>
+2034,508,23c,<SP2> how long <SP2>
+2035,508,23c,<END>
+2036,509,5bf,<START>
+2037,509,5bf,<SP1> so you're telling me you climbed up that whole cliff without a rope <SP1>
+2038,509,5bf,<SP1> mine has <SP1>
+2039,509,5bf,<END>
+2040,510,74c,<START>
+2041,510,74c,<SP1> i wasn't sure if you understood my instructions <SP1>
+2042,510,74c,<SP2> i did <SP2>
+2043,510,74c,<END>
+2044,511,7bd,<START>
+2045,511,7bd,<SP1> can you come to my party tomorrow <SP1>
+2046,511,7bd,<SP1> i can't <SP1>
+2047,511,7bd,<END>
+2048,512,19b,<START>
+2049,512,19b,<SP1> i haven't told you this story yet <SP1>
+2050,512,19b,<SP2> it's long <SP2>
+2051,512,19b,<END>
+2052,513,26bf,<START>
+2053,513,26bf,<SP1> are you going to be away for my birthday <SP1>
+2054,513,26bf,<SP1> want help <SP1>
+2055,513,26bf,<END>
+2056,514,63bf,<START>
+2057,514,63bf,<SP1> we're hosting a game night on tuesday <SP1>
+2058,514,63bf,<SP1> what else <SP1>
+2059,514,63bf,<END>
+2060,515,14e,<START>
+2061,515,14e,<SP1> you really shouldn't have bought me such a nice gift <SP1>
+2062,515,14e,<SP2> yourself <SP2>
+2063,515,14e,<END>
+2064,516,62c,<START>
+2065,516,62c,<SP1> i got you a present <SP1>
+2066,516,62c,<SP2> how sweet <SP2>
+2067,516,62c,<END>
+2068,517,9c,<START>
+2069,517,9c,<SP1> you handled that situation so calmly <SP1>
+2070,517,9c,<SP2> i tried <SP2>
+2071,517,9c,<END>
+2072,518,116b,<START>
+2073,518,116b,<SP1> could you put your phone away please <SP1>
+2074,518,116b,<SP2> it's rude <SP2>
+2075,518,116b,<END>
+2076,519,61bd,<START>
+2077,519,61bd,<SP1> are you allowed to bring a plus one to the wedding <SP1>
+2078,519,61bd,<SP1> doubt it <SP1>
+2079,519,61bd,<END>
+2080,520,24bd,<START>
+2081,520,24bd,<SP1> i'm going to have a tea <SP1>
+2082,520,24bd,<SP1> me too <SP1>
+2083,520,24bd,<END>
+2084,521,81ba,<START>
+2085,521,81ba,<SP1> why weren't you in class earlier <SP1>
+2086,521,81ba,<SP1> you good <SP1>
+2087,521,81ba,<END>
+2088,522,35c,<START>
+2089,522,35c,<SP1> james asked me if you could pick him up from the airport <SP1>
+2090,522,35c,<SP2> i'm free <SP2>
+2091,522,35c,<END>
+2092,523,43e,<START>
+2093,523,43e,<SP1> the job posting i sent you looks awesome <SP1>
+2094,523,43e,<SP2> pinch me <SP2>
+2095,523,43e,<END>
+2096,524,39ba,<START>
+2097,524,39ba,<SP1> what if you need to use your camera tomorrow <SP1>
+2098,524,39ba,<SP1> you might <SP1>
+2099,524,39ba,<END>
+2100,525,34e,<START>
+2101,525,34e,<SP1> your car isn't in your parking spot <SP1>
+2102,525,34e,<SP2> quick <SP2>
+2103,525,34e,<END>
+2104,526,42c,<START>
+2105,526,42c,<SP1> i can't believe i got into grad school <SP1>
+2106,526,42c,<SP2> congrats <SP2>
+2107,526,42c,<END>
+2108,527,39b,<START>
+2109,527,39b,<SP1> what if you need to use your camera tomorrow <SP1>
+2110,527,39b,<SP2> you might <SP2>
+2111,527,39b,<END>
+2112,528,24bf,<START>
+2113,528,24bf,<SP1> i'm going to have a tea <SP1>
+2114,528,24bf,<SP1> sure did <SP1>
+2115,528,24bf,<END>
+2116,529,61bf,<START>
+2117,529,61bf,<SP1> are you allowed to bring a plus one to the wedding <SP1>
+2118,529,61bf,<SP1> i'll share <SP1>
+2119,529,61bf,<END>
+2120,530,8e,<START>
+2121,530,8e,<SP1> how did your exam go <SP1>
+2122,530,8e,<SP2> want one <SP2>
+2123,530,8e,<END>
+2124,531,15c,<START>
+2125,531,15c,<SP1> i'm not going out tonight because my cousin's in town <SP1>
+2126,531,15c,<SP2> bring her <SP2>
+2127,531,15c,<END>
+2128,532,63e,<START>
+2129,532,63e,<SP1> we're hosting a game night on tuesday <SP1>
+2130,532,63e,<SP2> you're late <SP2>
+2131,532,63e,<END>
+2132,533,81b,<START>
+2133,533,81b,<SP1> why weren't you in class earlier <SP1>
+2134,533,81b,<SP2> you good <SP2>
+2135,533,81b,<END>
+2136,534,83ba,<START>
+2137,534,83ba,<SP1> text her back <SP1>
+2138,534,83ba,<SP1> do it <SP1>
+2139,534,83ba,<END>
+2140,535,5b,<START>
+2141,535,5b,<SP1> so you're telling me you climbed up that whole cliff without a rope <SP1>
+2142,535,5b,<SP2> you're nuts <SP2>
+2143,535,5b,<END>
+2144,536,63bd,<START>
+2145,536,63bd,<SP1> we're hosting a game night on tuesday <SP1>
+2146,536,63bd,<SP1> what time <SP1>
+2147,536,63bd,<END>
+2148,537,26bd,<START>
+2149,537,26bd,<SP1> are you going to be away for my birthday <SP1>
+2150,537,26bd,<SP1> sadly <SP1>
+2151,537,26bd,<END>
+2152,538,7bf,<START>
+2153,538,7bf,<SP1> can you come to my party tomorrow <SP1>
+2154,538,7bf,<SP1> turn right <SP1>
+2155,538,7bf,<END>
+2156,539,75e,<START>
+2157,539,75e,<SP1> i'd never ride a motorcycle <SP1>
+2158,539,75e,<SP2> call me <SP2>
+2159,539,75e,<END>
+2160,540,111ba,<START>
+2161,540,111ba,<SP1> call jake to come over <SP1>
+2162,540,111ba,<SP1> hurry <SP1>
+2163,540,111ba,<END>
+2164,541,97b,<START>
+2165,541,97b,<SP1> i need to go to the grocery store <SP1>
+2166,541,97b,<SP2> come with <SP2>
+2167,541,97b,<END>
+2168,542,78b,<START>
+2169,542,78b,<SP1> you're going to florida with lily <SP1>
+2170,542,78b,<SP2> sounds nice <SP2>
+2171,542,78b,<END>
+2172,543,120b,<START>
+2173,543,120b,<SP1> we're going to be at city hall this monday anyway <SP1>
+2174,543,120b,<SP2> aren't we <SP2>
+2175,543,120b,<END>
+2176,544,43ba,<START>
+2177,544,43ba,<SP1> the job posting i sent you looks <SP1>
+2178,544,43ba,<SP1> awesome apply <SP1>
+2179,544,43ba,<END>
+2180,545,5bd,<START>
+2181,545,5bd,<SP1> so you're telling me you climbed up that whole cliff without a rope <SP1>
+2182,545,5bd,<SP1> indeed <SP1>
+2183,545,5bd,<END>
+2184,546,54c,<START>
+2185,546,54c,<SP1> i have an extra copy of the textbook <SP1>
+2186,546,54c,<SP2> from where <SP2>
+2187,546,54c,<END>
+2188,547,22e,<START>
+2189,547,22e,<SP1> i lost my credit card <SP1>
+2190,547,22e,<SP2> it's late <SP2>
+2191,547,22e,<END>
+2192,548,19bf,<START>
+2193,548,19bf,<SP1> i haven't told you this story yet <SP1>
+2194,548,19bf,<SP1> that's fun <SP1>
+2195,548,19bf,<END>
+2196,549,59e,<START>
+2197,549,59e,<SP1> something crazy happened to me this weekend <SP1>
+2198,549,59e,<SP2> nice work <SP2>
+2199,549,59e,<END>
+2200,550,101e,<START>
+2201,550,101e,<SP1> did you get enough to eat <SP1>
+2202,550,101e,<SP2> you're nuts <SP2>
+2203,550,101e,<END>
+2204,551,22ba,<START>
+2205,551,22ba,<SP1> i lost my credit card <SP1>
+2206,551,22ba,<SP1> i'm screwed <SP1>
+2207,551,22ba,<END>
+2208,552,67ba,<START>
+2209,552,67ba,<SP1> i can't believe you haven't heard yet <SP1>
+2210,552,67ba,<SP1> you won <SP1>
+2211,552,67ba,<END>
+2212,553,87bd,<START>
+2213,553,87bd,<SP1> i can't believe you went skydiving <SP1>
+2214,553,87bd,<SP1> i know <SP1>
+2215,553,87bd,<END>
+2216,554,54b,<START>
+2217,554,54b,<SP1> i have an extra copy of the textbook <SP1>
+2218,554,54b,<SP2> want it <SP2>
+2219,554,54b,<END>
+2220,555,120c,<START>
+2221,555,120c,<SP1> we're going to be at city hall this monday anyway <SP1>
+2222,555,120c,<SP2> next week <SP2>
+2223,555,120c,<END>
+2224,556,78c,<START>
+2225,556,78c,<SP1> you're going to florida with lily <SP1>
+2226,556,78c,<SP2> you heard <SP2>
+2227,556,78c,<END>
+2228,557,97c,<START>
+2229,557,97c,<SP1> i need to go to the grocery store <SP1>
+2230,557,97c,<SP2> for what <SP2>
+2231,557,97c,<END>
+2232,558,85bf,<START>
+2233,558,85bf,<SP1> do you have another hat i could borrow <SP1>
+2234,558,85bf,<SP1> good luck <SP1>
+2235,558,85bf,<END>
+2236,559,78bf,<START>
+2237,559,78bf,<SP1> you're going to florida with lily <SP1>
+2238,559,78bf,<SP1> don't wait <SP1>
+2239,559,78bf,<END>
+2240,560,18e,<START>
+2241,560,18e,<SP1> i can't find my phone <SP1>
+2242,560,18e,<SP2> you're brave <SP2>
+2243,560,18e,<END>
+2244,561,45bf,<START>
+2245,561,45bf,<SP1> i have the secret santa gift in my bag <SP1>
+2246,561,45bf,<SP1> you weren't <SP1>
+2247,561,45bf,<END>
+2248,562,117bf,<START>
+2249,562,117bf,<SP1> why did you turn off the ac <SP1>
+2250,562,117bf,<SP1> yup <SP1>
+2251,562,117bf,<END>
+2252,563,5c,<START>
+2253,563,5c,<SP1> so you're telling me you climbed up that whole cliff without a rope <SP1>
+2254,563,5c,<SP2> indeed <SP2>
+2255,563,5c,<END>
+2256,564,81c,<START>
+2257,564,81c,<SP1> why weren't you in class earlier <SP1>
+2258,564,81c,<SP2> i'm sick <SP2>
+2259,564,81c,<END>
+2260,565,15b,<START>
+2261,565,15b,<SP1> i'm not going out tonight because my cousin's in town <SP1>
+2262,565,15b,<SP2> are you <SP2>
+2263,565,15b,<END>
+2264,566,1ba,<START>
+2265,566,1ba,<SP1> i've been trying to unscrew this bolt for fifteen minutes but it just won't budge <SP1>
+2266,566,1ba,<SP1> help me <SP1>
+2267,566,1ba,<END>
+2268,567,117e,<START>
+2269,567,117e,<SP1> why did you turn off the ac <SP1>
+2270,567,117e,<SP2> sounds nice <SP2>
+2271,567,117e,<END>
+2272,568,47bd,<START>
+2273,568,47bd,<SP1> i have eaten so much candy today <SP1>
+2274,568,47bd,<SP1> save some <SP1>
+2275,568,47bd,<END>
+2276,569,39c,<START>
+2277,569,39c,<SP1> what if you need to use your camera tomorrow <SP1>
+2278,569,39c,<SP2> i won't <SP2>
+2279,569,39c,<END>
+2280,570,115bd,<START>
+2281,570,115bd,<SP1> you should come to the screening tomorrow <SP1>
+2282,570,115bd,<SP1> maybe <SP1>
+2283,570,115bd,<END>
+2284,571,42b,<START>
+2285,571,42b,<SP1> i can't believe i got into grad school <SP1>
+2286,571,42b,<SP2> pinch me <SP2>
+2287,571,42b,<END>
+2288,572,108ba,<START>
+2289,572,108ba,<SP1> want to study at the library with me later <SP1>
+2290,572,108ba,<SP1> please come <SP1>
+2291,572,108ba,<END>
+2292,573,32c,<START>
+2293,573,32c,<SP1> i sprained my wrist yesterday <SP1>
+2294,573,32c,<SP2> which side <SP2>
+2295,573,32c,<END>
+2296,574,44e,<START>
+2297,574,44e,<SP1> we just moved into a new house <SP1>
+2298,574,44e,<SP2> i'm lost <SP2>
+2299,574,44e,<END>
+2300,575,49b,<START>
+2301,575,49b,<SP1> i have to get going <SP1>
+2302,575,49b,<SP2> i'm late <SP2>
+2303,575,49b,<END>
+2304,576,66bf,<START>
+2305,576,66bf,<SP1> i got an a on my exam <SP1>
+2306,576,66bf,<SP1> how long <SP1>
+2307,576,66bf,<END>
+2308,577,23bf,<START>
+2309,577,23bf,<SP1> i've had a cold for a while now <SP1>
+2310,577,23bf,<SP1> i won't <SP1>
+2311,577,23bf,<END>
+2312,578,111b,<START>
+2313,578,111b,<SP1> call jake to come over <SP1>
+2314,578,111b,<SP2> hurry <SP2>
+2315,578,111b,<END>
+2316,579,13e,<START>
+2317,579,13e,<SP1> why are you crying <SP1>
+2318,579,13e,<SP2> will you <SP2>
+2319,579,13e,<END>
+2320,580,65c,<START>
+2321,580,65c,<SP1> did i tell you what happened to me during the race <SP1>
+2322,580,65c,<SP2> not yet <SP2>
+2323,580,65c,<END>
+2324,581,79ba,<START>
+2325,581,79ba,<SP1> sam can't help me set up <SP1>
+2326,581,79ba,<SP1> can you <SP1>
+2327,581,79ba,<END>
+2328,582,99bd,<START>
+2329,582,99bd,<SP1> that was a funny joke <SP1>
+2330,582,99bd,<SP1> you think <SP1>
+2331,582,99bd,<END>
+2332,583,21bd,<START>
+2333,583,21bd,<SP1> i'd like to meet your girlfriend <SP1>
+2334,583,21bd,<SP1> sure when <SP1>
+2335,583,21bd,<END>
+2336,584,64bd,<START>
+2337,584,64bd,<SP1> good luck at the library later <SP1>
+2338,584,64bd,<SP1> you too <SP1>
+2339,584,64bd,<END>
+2340,585,84ba,<START>
+2341,585,84ba,<SP1> you haven't looked at your inbox in way too long <SP1>
+2342,585,84ba,<SP1> check it <SP1>
+2343,585,84ba,<END>
+2344,586,59bd,<START>
+2345,586,59bd,<SP1> something crazy happened to me this weekend <SP1>
+2346,586,59bd,<SP1> tell me <SP1>
+2347,586,59bd,<END>
+2348,587,73c,<START>
+2349,587,73c,<SP1> i don't really like that podcast you told me about <SP1>
+2350,587,73c,<SP2> you don't <SP2>
+2351,587,73c,<END>
+2352,588,44ba,<START>
+2353,588,44ba,<SP1> we just moved into a new house <SP1>
+2354,588,44ba,<SP1> come by <SP1>
+2355,588,44ba,<END>
+2356,589,116ba,<START>
+2357,589,116ba,<SP1> could you put your phone away please <SP1>
+2358,589,116ba,<SP1> it's rude <SP1>
+2359,589,116ba,<END>
+2360,590,52e,<START>
+2361,590,52e,<SP1> there might be some ice on your drive to work <SP1>
+2362,590,52e,<SP2> come by <SP2>
+2363,590,52e,<END>
+2364,591,24c,<START>
+2365,591,24c,<SP1> i'm going to have a tea <SP1>
+2366,591,24c,<SP2> me too <SP2>
+2367,591,24c,<END>
+2368,592,2bd,<START>
+2369,592,2bd,<SP1> do you mind helping with my homework <SP1>
+2370,592,2bd,<SP1> can do <SP1>
+2371,592,2bd,<END>
+2372,593,109bf,<START>
+2373,593,109bf,<SP1> we need more coffee filters <SP1>
+2374,593,109bf,<SP1> i'm sick <SP1>
+2375,593,109bf,<END>
+2376,594,107b,<START>
+2377,594,107b,<SP1> you're going to love the new exhibit <SP1>
+2378,594,107b,<SP2> you'll see <SP2>
+2379,594,107b,<END>
+2380,595,80bd,<START>
+2381,595,80bd,<SP1> i wasn't expecting the film to end like that <SP1>
+2382,595,80bd,<SP1> you weren't <SP1>
+2383,595,80bd,<END>
+2384,596,29e,<START>
+2385,596,29e,<SP1> could you remind me how to get to the library again <SP1>
+2386,596,29e,<SP2> i'm tense <SP2>
+2387,596,29e,<END>
+2388,597,60ba,<START>
+2389,597,60ba,<SP1> i'm going to give you some great life advice <SP1>
+2390,597,60ba,<SP1> take note <SP1>
+2391,597,60ba,<END>
+2392,598,107c,<START>
+2393,598,107c,<SP1> you're going to love the new exhibit <SP1>
+2394,598,107c,<SP2> we'll see <SP2>
+2395,598,107c,<END>
+2396,599,25ba,<START>
+2397,599,25ba,<SP1> oh how did you remember the password <SP1>
+2398,599,25ba,<SP1> nice work <SP1>
+2399,599,25ba,<END>
+2400,600,38bd,<START>
+2401,600,38bd,<SP1> my landlord hasn't turned on our heat yet <SP1>
+2402,600,38bd,<SP1> mine has <SP1>
+2403,600,38bd,<END>
+2404,601,24b,<START>
+2405,601,24b,<SP1> i'm going to have a tea <SP1>
+2406,601,24b,<SP2> yourself <SP2>
+2407,601,24b,<END>
+2408,602,82bf,<START>
+2409,602,82bf,<SP1> i'm getting bagels for my class tomorrow <SP1>
+2410,602,82bf,<SP1> shoot <SP1>
+2411,602,82bf,<END>
+2412,603,91e,<START>
+2413,603,91e,<SP1> you need to pay me by the thirtieth <SP1>
+2414,603,91e,<SP2> join us <SP2>
+2415,603,91e,<END>
+2416,604,73b,<START>
+2417,604,73b,<SP1> i don't really like that podcast you told me about <SP1>
+2418,604,73b,<SP2> so far <SP2>
+2419,604,73b,<END>
+2420,605,110bf,<START>
+2421,605,110bf,<SP1> could you pass me a tissue <SP1>
+2422,605,110bf,<SP1> i'll walk <SP1>
+2423,605,110bf,<END>
+2424,606,3e,<START>
+2425,606,3e,<SP1> so you already submitted your paper <SP1>
+2426,606,3e,<SP2> you down <SP2>
+2427,606,3e,<END>
+2428,607,87e,<START>
+2429,607,87e,<SP1> i can't believe you went skydiving <SP1>
+2430,607,87e,<SP2> you free <SP2>
+2431,607,87e,<END>
+2432,608,68e,<START>
+2433,608,68e,<SP1> my flight gets into boston 20 minutes before yours <SP1>
+2434,608,68e,<SP2> you should <SP2>
+2435,608,68e,<END>
+2436,609,42bf,<START>
+2437,609,42bf,<SP1> i can't believe i got into grad school <SP1>
+2438,609,42bf,<SP1> no rush <SP1>
+2439,609,42bf,<END>
+2440,610,6ba,<START>
+2441,610,6ba,<SP1> you haven't been answering any of my emails <SP1>
+2442,610,6ba,<SP1> it's weird <SP1>
+2443,610,6ba,<END>
+2444,611,65b,<START>
+2445,611,65b,<SP1> did i tell you what happened to me during the race <SP1>
+2446,611,65b,<SP2> i fell <SP2>
+2447,611,65b,<END>
+2448,612,112bd,<START>
+2449,612,112bd,<SP1> will you come to the concert later <SP1>
+2450,612,112bd,<SP1> no time <SP1>
+2451,612,112bd,<END>
+2452,613,111c,<START>
+2453,613,111c,<SP1> call jake to come over <SP1>
+2454,613,111c,<SP2> not now <SP2>
+2455,613,111c,<END>
+2456,614,49c,<START>
+2457,614,49c,<SP1> i have to get going <SP1>
+2458,614,49c,<SP2> same <SP2>
+2459,614,49c,<END>
+2460,615,40bd,<START>
+2461,615,40bd,<SP1> unfortunately i won't be there for the ceremony <SP1>
+2462,615,40bd,<SP1> why's that <SP1>
+2463,615,40bd,<END>
+2464,616,32b,<START>
+2465,616,32b,<SP1> i sprained my wrist yesterday <SP1>
+2466,616,32b,<SP2> it hurts <SP2>
+2467,616,32b,<END>
+2468,617,18ba,<START>
+2469,617,18ba,<SP1> i can't find my phone <SP1>
+2470,617,18ba,<SP1> call me <SP1>
+2471,617,18ba,<END>
+2472,618,45b,<START>
+2473,618,45b,<SP1> i have the secret santa gift in my bag <SP1>
+2474,618,45b,<SP2> don't look <SP2>
+2475,618,45b,<END>
+2476,619,4ba,<START>
+2477,619,4ba,<SP1> it's great that you could cover this shift for me <SP1>
+2478,619,4ba,<SP1> thanks <SP1>
+2479,619,4ba,<END>
+2480,620,48e,<START>
+2481,620,48e,<SP1> it's my birthday next week <SP1>
+2482,620,48e,<SP2> you're quick <SP2>
+2483,620,48e,<END>
+2484,621,40bf,<START>
+2485,621,40bf,<SP1> unfortunately i won't be there for the ceremony <SP1>
+2486,621,40bf,<SP1> not yet <SP1>
+2487,621,40bf,<END>
+2488,622,110e,<START>
+2489,622,110e,<SP1> could you pass me a tissue <SP1>
+2490,622,110e,<SP2> don't lie <SP2>
+2491,622,110e,<END>
+2492,623,112bf,<START>
+2493,623,112bf,<SP1> will you come to the concert later <SP1>
+2494,623,112bf,<SP1> i know <SP1>
+2495,623,112bf,<END>
+2496,624,12b,<START>
+2497,624,12b,<SP1> are you celebrating your birthday <SP1>
+2498,624,12b,<SP2> you must <SP2>
+2499,624,12b,<END>
+2500,625,69c,<START>
+2501,625,69c,<SP1> there are going to be huge sales this friday <SP1>
+2502,625,69c,<SP2> there are <SP2>
+2503,625,69c,<END>
+2504,626,42bd,<START>
+2505,626,42bd,<SP1> i can't believe i got into grad school <SP1>
+2506,626,42bd,<SP1> congrats <SP1>
+2507,626,42bd,<END>
+2508,627,110bd,<START>
+2509,627,110bd,<SP1> could you pass me a tissue <SP1>
+2510,627,110bd,<SP1> we're out <SP1>
+2511,627,110bd,<END>
+2512,628,86c,<START>
+2513,628,86c,<SP1> you're back already <SP1>
+2514,628,86c,<SP2> i'm quick <SP2>
+2515,628,86c,<END>
+2516,629,2c,<START>
+2517,629,2c,<SP1> do you mind helping with my homework <SP1>
+2518,629,2c,<SP2> can do <SP2>
+2519,629,2c,<END>
+2520,630,62ba,<START>
+2521,630,62ba,<SP1> i got you a present <SP1>
+2522,630,62ba,<SP1> open it <SP1>
+2523,630,62ba,<END>
+2524,631,27ba,<START>
+2525,631,27ba,<SP1> i know you're skeptical but this has to work <SP1>
+2526,631,27ba,<SP1> i'm sure <SP1>
+2527,631,27ba,<END>
+2528,632,82bd,<START>
+2529,632,82bd,<SP1> i'm getting bagels for my class tomorrow <SP1>
+2530,632,82bd,<SP1> what for <SP1>
+2531,632,82bd,<END>
+2532,633,90c,<START>
+2533,633,90c,<SP1> i'm going to the fair tomorrow <SP1>
+2534,633,90c,<SP2> oh cool <SP2>
+2535,633,90c,<END>
+2536,634,53b,<START>
+2537,634,53b,<SP1> i won't tell anyone your secret <SP1>
+2538,634,53b,<SP2> trust me <SP2>
+2539,634,53b,<END>
+2540,635,38bf,<START>
+2541,635,38bf,<SP1> my landlord hasn't turned on our heat yet <SP1>
+2542,635,38bf,<SP1> no time <SP1>
+2543,635,38bf,<END>
+2544,636,106e,<START>
+2545,636,106e,<SP1> can i get you a cup of coffee <SP1>
+2546,636,106e,<SP2> that's sad <SP2>
+2547,636,106e,<END>
+2548,637,28c,<START>
+2549,637,28c,<SP1> we're renting a cabin for the weekend <SP1>
+2550,637,28c,<SP2> you are <SP2>
+2551,637,28c,<END>
+2552,638,80bf,<START>
+2553,638,80bf,<SP1> i wasn't expecting the film to end like that <SP1>
+2554,638,80bf,<SP1> from where <SP1>
+2555,638,80bf,<END>
+2556,639,114ba,<START>
+2557,639,114ba,<SP1> would you like one of my homemade cupcakes <SP1>
+2558,639,114ba,<SP1> try one <SP1>
+2559,639,114ba,<END>
+2560,640,28b,<START>
+2561,640,28b,<SP1> we're renting a cabin for the weekend <SP1>
+2562,640,28b,<SP2> you in <SP2>
+2563,640,28b,<END>
+2564,641,46ba,<START>
+2565,641,46ba,<SP1> i have an exam this afternoon <SP1>
+2566,641,46ba,<SP1> i'm tense <SP1>
+2567,641,46ba,<END>
+2568,642,109bd,<START>
+2569,642,109bd,<SP1> we need more coffee filters <SP1>
+2570,642,109bd,<SP1> do we <SP1>
+2571,642,109bd,<END>
+2572,643,2bf,<START>
+2573,643,2bf,<SP1> do you mind helping with my homework <SP1>
+2574,643,2bf,<SP1> that sucks <SP1>
+2575,643,2bf,<END>
+2576,644,53c,<START>
+2577,644,53c,<SP1> i won't tell anyone your secret <SP1>
+2578,644,53c,<SP2> you swear <SP2>
+2579,644,53c,<END>
+2580,645,25e,<START>
+2581,645,25e,<SP1> oh how did you remember the password <SP1>
+2582,645,25e,<SP2> i'm spent <SP2>
+2583,645,25e,<END>
+2584,646,90b,<START>
+2585,646,90b,<SP1> i'm going to the fair tomorrow <SP1>
+2586,646,90b,<SP2> i think <SP2>
+2587,646,90b,<END>
+2588,647,72e,<START>
+2589,647,72e,<SP1> are you walking home tonight <SP1>
+2590,647,72e,<SP2> it's weird <SP2>
+2591,647,72e,<END>
+2592,648,59bf,<START>
+2593,648,59bf,<SP1> something crazy happened to me this weekend <SP1>
+2594,648,59bf,<SP1> i'm free <SP1>
+2595,648,59bf,<END>
+2596,649,2b,<START>
+2597,649,2b,<SP1> do you mind helping with my homework <SP1>
+2598,649,2b,<SP2> please <SP2>
+2599,649,2b,<END>
+2600,650,86b,<START>
+2601,650,86b,<SP1> you're back already <SP1>
+2602,650,86b,<SP2> you're quick <SP2>
+2603,650,86b,<END>
+2604,651,69b,<START>
+2605,651,69b,<SP1> there are going to be huge sales this friday <SP1>
+2606,651,69b,<SP2> just wait <SP2>
+2607,651,69b,<END>
+2608,652,64bf,<START>
+2609,652,64bf,<SP1> good luck at the library later <SP1>
+2610,652,64bf,<SP1> nonsense <SP1>
+2611,652,64bf,<END>
+2612,653,21bf,<START>
+2613,653,21bf,<SP1> i'd like to meet your girlfriend <SP1>
+2614,653,21bf,<SP1> i biked <SP1>
+2615,653,21bf,<END>
+2616,654,99bf,<START>
+2617,654,99bf,<SP1> that was a funny joke <SP1>
+2618,654,99bf,<SP1> i'm not <SP1>
+2619,654,99bf,<END>
+2620,655,12c,<START>
+2621,655,12c,<SP1> are you celebrating your birthday <SP1>
+2622,655,12c,<SP2> i guess <SP2>
+2623,655,12c,<END>
+2624,656,64e,<START>
+2625,656,64e,<SP1> good luck at the library later <SP1>
+2626,656,64e,<SP2> guess <SP2>
+2627,656,64e,<END>
+2628,657,86ba,<START>
+2629,657,86ba,<SP1> you're back already <SP1>
+2630,657,86ba,<SP1> you're quick <SP1>
+2631,657,86ba,<END>
+2632,658,23bd,<START>
+2633,658,23bd,<SP1> i've had a cold for a while now <SP1>
+2634,658,23bd,<SP1> how long <SP1>
+2635,658,23bd,<END>
+2636,659,66bd,<START>
+2637,659,66bd,<SP1> i got an a on my exam <SP1>
+2638,659,66bd,<SP1> nice job <SP1>
+2639,659,66bd,<END>
+2640,660,33e,<START>
+2641,660,33e,<SP1> my bag got lost during the transfer <SP1>
+2642,660,33e,<SP2> can you <SP2>
+2643,660,33e,<END>
+2644,661,45c,<START>
+2645,661,45c,<SP1> i have the secret santa gift in my bag <SP1>
+2646,661,45c,<SP2> you do <SP2>
+2647,661,45c,<END>
+2648,662,4bd,<START>
+2649,662,4bd,<SP1> it's great that you could cover this shift for me <SP1>
+2650,662,4bd,<SP1> sure <SP1>
+2651,662,4bd,<END>
+2652,663,32e,<START>
+2653,663,32e,<SP1> i sprained my wrist yesterday <SP1>
+2654,663,32e,<SP2> may i <SP2>
+2655,663,32e,<END>
+2656,664,44c,<START>
+2657,664,44c,<SP1> we just moved into a new house <SP1>
+2658,664,44c,<SP2> where <SP2>
+2659,664,44c,<END>
+2660,665,18bf,<START>
+2661,665,18bf,<SP1> i can't find my phone <SP1>
+2662,665,18bf,<SP1> come watch <SP1>
+2663,665,18bf,<END>
+2664,666,6bf,<START>
+2665,666,6bf,<SP1> you haven't been answering any of my emails <SP1>
+2666,666,6bf,<SP1> which side <SP1>
+2667,666,6bf,<END>
+2668,667,13c,<START>
+2669,667,13c,<SP1> why are you crying <SP1>
+2670,667,13c,<SP2> i'm not <SP2>
+2671,667,13c,<END>
+2672,668,65e,<START>
+2673,668,65e,<SP1> did i tell you what happened to me during the race <SP1>
+2674,668,65e,<SP2> my bad <SP2>
+2675,668,65e,<END>
+2676,669,110ba,<START>
+2677,669,110ba,<SP1> could you pass me a tissue <SP1>
+2678,669,110ba,<SP1> quick <SP1>
+2679,669,110ba,<END>
+2680,670,87b,<START>
+2681,670,87b,<SP1> i can't believe you went skydiving <SP1>
+2682,670,87b,<SP2> you're brave <SP2>
+2683,670,87b,<END>
+2684,671,3b,<START>
+2685,671,3b,<SP1> so you already submitted your paper <SP1>
+2686,671,3b,<SP2> nice <SP2>
+2687,671,3b,<END>
+2688,672,68b,<START>
+2689,672,68b,<SP1> my flight gets into boston 20 minutes before yours <SP1>
+2690,672,68b,<SP2> i'll wait <SP2>
+2691,672,68b,<END>
+2692,673,42ba,<START>
+2693,673,42ba,<SP1> i can't believe i got into grad school <SP1>
+2694,673,42ba,<SP1> pinch me <SP1>
+2695,673,42ba,<END>
+2696,674,73e,<START>
+2697,674,73e,<SP1> i don't really like that podcast you told me about <SP1>
+2698,674,73e,<SP2> you win <SP2>
+2699,674,73e,<END>
+2700,675,82ba,<START>
+2701,675,82ba,<SP1> i'm getting bagels for my class tomorrow <SP1>
+2702,675,82ba,<SP1> want one <SP1>
+2703,675,82ba,<END>
+2704,676,91b,<START>
+2705,676,91b,<SP1> you need to pay me by the thirtieth <SP1>
+2706,676,91b,<SP2> cash please <SP2>
+2707,676,91b,<END>
+2708,677,27bd,<START>
+2709,677,27bd,<SP1> i know you're skeptical but this has to work <SP1>
+2710,677,27bd,<SP1> you sure <SP1>
+2711,677,27bd,<END>
+2712,678,62bd,<START>
+2713,678,62bd,<SP1> i got you a present <SP1>
+2714,678,62bd,<SP1> how sweet <SP1>
+2715,678,62bd,<END>
+2716,679,52c,<START>
+2717,679,52c,<SP1> there might be some ice on your drive to work <SP1>
+2718,679,52c,<SP2> i'll walk <SP2>
+2719,679,52c,<END>
+2720,680,24e,<START>
+2721,680,24e,<SP1> i'm going to have a tea <SP1>
+2722,680,24e,<SP2> trust me <SP2>
+2723,680,24e,<END>
+2724,681,29b,<START>
+2725,681,29b,<SP1> could you remind me how to get to the library again <SP1>
+2726,681,29b,<SP2> i'm lost <SP2>
+2727,681,29b,<END>
+2728,682,60bf,<START>
+2729,682,60bf,<SP1> i'm going to give you some great life advice <SP1>
+2730,682,60bf,<SP1> i don't <SP1>
+2731,682,60bf,<END>
+2732,683,25bf,<START>
+2733,683,25bf,<SP1> oh how did you remember the password <SP1>
+2734,683,25bf,<SP1> alright <SP1>
+2735,683,25bf,<END>
+2736,684,107e,<START>
+2737,684,107e,<SP1> you're going to love the new exhibit <SP1>
+2738,684,107e,<SP2> have you <SP2>
+2739,684,107e,<END>
+2740,685,29c,<START>
+2741,685,29c,<SP1> could you remind me how to get to the library again <SP1>
+2742,685,29c,<SP2> turn right <SP2>
+2743,685,29c,<END>
+2744,686,46bd,<START>
+2745,686,46bd,<SP1> i have an exam this afternoon <SP1>
+2746,686,46bd,<SP1> good luck <SP1>
+2747,686,46bd,<END>
+2748,687,114bd,<START>
+2749,687,114bd,<SP1> would you like one of my homemade cupcakes <SP1>
+2750,687,114bd,<SP1> no thanks <SP1>
+2751,687,114bd,<END>
+2752,688,52b,<START>
+2753,688,52b,<SP1> there might be some ice on your drive to work <SP1>
+2754,688,52b,<SP2> careful <SP2>
+2755,688,52b,<END>
+2756,689,109ba,<START>
+2757,689,109ba,<SP1> we need more coffee filters <SP1>
+2758,689,109ba,<SP1> don't we <SP1>
+2759,689,109ba,<END>
+2760,690,44bf,<START>
+2761,690,44bf,<SP1> we just moved into a new house <SP1>
+2762,690,44bf,<SP1> you sure <SP1>
+2763,690,44bf,<END>
+2764,691,116bf,<START>
+2765,691,116bf,<SP1> could you put your phone away <SP1>
+2766,691,116bf,<SP1> please really <SP1>
+2767,691,116bf,<END>
+2768,692,91c,<START>
+2769,692,91c,<SP1> you need to pay me by the thirtieth <SP1>
+2770,692,91c,<SP2> will do <SP2>
+2771,692,91c,<END>
+2772,693,68c,<START>
+2773,693,68c,<SP1> my flight gets into boston 20 minutes before yours <SP1>
+2774,693,68c,<SP2> don't wait <SP2>
+2775,693,68c,<END>
+2776,694,84bf,<START>
+2777,694,84bf,<SP1> you haven't looked at your inbox in way too long <SP1>
+2778,694,84bf,<SP1> they're here <SP1>
+2779,694,84bf,<END>
+2780,695,3c,<START>
+2781,695,3c,<SP1> so you already submitted your paper <SP1>
+2782,695,3c,<SP2> yup <SP2>
+2783,695,3c,<END>
+2784,696,87c,<START>
+2785,696,87c,<SP1> i can't believe you went skydiving <SP1>
+2786,696,87c,<SP2> i know <SP2>
+2787,696,87c,<END>
+2788,697,13b,<START>
+2789,697,13b,<SP1> why are you crying <SP1>
+2790,697,13b,<SP2> what's wrong <SP2>
+2791,697,13b,<END>
+2792,698,79bf,<START>
+2793,698,79bf,<SP1> sam can't help me set up <SP1>
+2794,698,79bf,<SP1> oh cool <SP1>
+2795,698,79bf,<END>
+2796,699,49e,<START>
+2797,699,49e,<SP1> i have to get going <SP1>
+2798,699,49e,<SP2> she's fine <SP2>
+2799,699,49e,<END>
+2800,700,66ba,<START>
+2801,700,66ba,<SP1> i got an a on my exam <SP1>
+2802,700,66ba,<SP1> i'm psyched <SP1>
+2803,700,66ba,<END>
+2804,701,111e,<START>
+2805,701,111e,<SP1> call jake to come over <SP1>
+2806,701,111e,<SP2> how's that <SP2>
+2807,701,111e,<END>
+2808,702,23ba,<START>
+2809,702,23ba,<SP1> i've had a cold for a while now <SP1>
+2810,702,23ba,<SP1> it sucks <SP1>
+2811,702,23ba,<END>
+2812,703,86bd,<START>
+2813,703,86bd,<SP1> you're back already <SP1>
+2814,703,86bd,<SP1> i'm quick <SP1>
+2815,703,86bd,<END>
+2816,704,44b,<START>
+2817,704,44b,<SP1> we just moved into a new house <SP1>
+2818,704,44b,<SP2> come by <SP2>
+2819,704,44b,<END>
+2820,705,33b,<START>
+2821,705,33b,<SP1> my bag got lost during the transfer <SP1>
+2822,705,33b,<SP2> it blows <SP2>
+2823,705,33b,<END>
+2824,706,86bf,<START>
+2825,706,86bf,<SP1> you're back already <SP1>
+2826,706,86bf,<SP1> you swear <SP1>
+2827,706,86bf,<END>
+2828,707,110c,<START>
+2829,707,110c,<SP1> could you pass me a tissue <SP1>
+2830,707,110c,<SP2> we're out <SP2>
+2831,707,110c,<END>
+2832,708,48c,<START>
+2833,708,48c,<SP1> it's my birthday next week <SP1>
+2834,708,48c,<SP2> what day <SP2>
+2835,708,48c,<END>
+2836,709,99ba,<START>
+2837,709,99ba,<SP1> that was a funny joke <SP1>
+2838,709,99ba,<SP1> good one <SP1>
+2839,709,99ba,<END>
+2840,710,79bd,<START>
+2841,710,79bd,<SP1> sam can't help me set up <SP1>
+2842,710,79bd,<SP1> i can <SP1>
+2843,710,79bd,<END>
+2844,711,64b,<START>
+2845,711,64b,<SP1> good luck at the library later <SP1>
+2846,711,64b,<SP2> work hard <SP2>
+2847,711,64b,<END>
+2848,712,84bd,<START>
+2849,712,84bd,<SP1> you haven't looked at your inbox in way too long <SP1>
+2850,712,84bd,<SP1> that's true <SP1>
+2851,712,84bd,<END>
+2852,713,86e,<START>
+2853,713,86e,<SP1> you're back already <SP1>
+2854,713,86e,<SP2> you must <SP2>
+2855,713,86e,<END>
+2856,714,2e,<START>
+2857,714,2e,<SP1> do you mind helping with my homework <SP1>
+2858,714,2e,<SP2> you'll see <SP2>
+2859,714,2e,<END>
+2860,715,69e,<START>
+2861,715,69e,<SP1> there are going to be huge sales this friday <SP1>
+2862,715,69e,<SP2> do you <SP2>
+2863,715,69e,<END>
+2864,716,64ba,<START>
+2865,716,64ba,<SP1> good luck at the library later <SP1>
+2866,716,64ba,<SP1> work hard <SP1>
+2867,716,64ba,<END>
+2868,717,21ba,<START>
+2869,717,21ba,<SP1> i'd like to meet your girlfriend <SP1>
+2870,717,21ba,<SP1> can i <SP1>
+2871,717,21ba,<END>
+2872,718,72b,<START>
+2873,718,72b,<SP1> are you walking home tonight <SP1>
+2874,718,72b,<SP2> stay safe <SP2>
+2875,718,72b,<END>
+2876,719,59ba,<START>
+2877,719,59ba,<SP1> something crazy happened to me this weekend <SP1>
+2878,719,59ba,<SP1> it's wild <SP1>
+2879,719,59ba,<END>
+2880,720,90e,<START>
+2881,720,90e,<SP1> i'm going to the fair tomorrow <SP1>
+2882,720,90e,<SP2> you good <SP2>
+2883,720,90e,<END>
+2884,721,116bd,<START>
+2885,721,116bd,<SP1> could you put your phone away please <SP1>
+2886,721,116bd,<SP1> one sec <SP1>
+2887,721,116bd,<END>
+2888,722,44bd,<START>
+2889,722,44bd,<SP1> we just moved into a new house <SP1>
+2890,722,44bd,<SP1> where <SP1>
+2891,722,44bd,<END>
+2892,723,2ba,<START>
+2893,723,2ba,<SP1> do you mind helping with my homework <SP1>
+2894,723,2ba,<SP1> please <SP1>
+2895,723,2ba,<END>
+2896,724,25b,<START>
+2897,724,25b,<SP1> oh how did you remember the password <SP1>
+2898,724,25b,<SP2> nice work <SP2>
+2899,724,25b,<END>
+2900,725,114bf,<START>
+2901,725,114bf,<SP1> would you like one of my homemade cupcakes <SP1>
+2902,725,114bf,<SP1> since when <SP1>
+2903,725,114bf,<END>
+2904,726,28e,<START>
+2905,726,28e,<SP1> we're renting a cabin for the weekend <SP1>
+2906,726,28e,<SP2> teach me <SP2>
+2907,726,28e,<END>
+2908,727,46bf,<START>
+2909,727,46bf,<SP1> i have an exam this afternoon <SP1>
+2910,727,46bf,<SP1> nowhere <SP1>
+2911,727,46bf,<END>
+2912,728,106c,<START>
+2913,728,106c,<SP1> can i get you a cup of coffee <SP1>
+2914,728,106c,<SP2> yes please <SP2>
+2915,728,106c,<END>
+2916,729,106b,<START>
+2917,729,106b,<SP1> can i get you a cup of coffee <SP1>
+2918,729,106b,<SP2> or tea <SP2>
+2919,729,106b,<END>
+2920,730,25bd,<START>
+2921,730,25bd,<SP1> oh how did you remember the password <SP1>
+2922,730,25bd,<SP1> i guessed <SP1>
+2923,730,25bd,<END>
+2924,731,60bd,<START>
+2925,731,60bd,<SP1> i'm going to give you some great life advice <SP1>
+2926,731,60bd,<SP1> shoot <SP1>
+2927,731,60bd,<END>
+2928,732,80ba,<START>
+2929,732,80ba,<SP1> i wasn't expecting the film to end like that <SP1>
+2930,732,80ba,<SP1> were you <SP1>
+2931,732,80ba,<END>
+2932,733,53e,<START>
+2933,733,53e,<SP1> i won't tell anyone your secret <SP1>
+2934,733,53e,<SP2> or both <SP2>
+2935,733,53e,<END>
+2936,734,25c,<START>
+2937,734,25c,<SP1> oh how did you remember the password <SP1>
+2938,734,25c,<SP2> i guessed <SP2>
+2939,734,25c,<END>
+2940,735,38ba,<START>
+2941,735,38ba,<SP1> my landlord hasn't turned on our heat yet <SP1>
+2942,735,38ba,<SP1> it's rough <SP1>
+2943,735,38ba,<END>
+2944,736,62bf,<START>
+2945,736,62bf,<SP1> i got you a present <SP1>
+2946,736,62bf,<SP1> i can't <SP1>
+2947,736,62bf,<END>
+2948,737,27bf,<START>
+2949,737,27bf,<SP1> i know you're skeptical but this has to work <SP1>
+2950,737,27bf,<SP1> same <SP1>
+2951,737,27bf,<END>
+2952,738,72c,<START>
+2953,738,72c,<SP1> are you walking home tonight <SP1>
+2954,738,72c,<SP2> not sure <SP2>
+2955,738,72c,<END>
+2956,739,12e,<START>
+2957,739,12e,<SP1> are you celebrating your birthday <SP1>
+2958,739,12e,<SP2> want it <SP2>
+2959,739,12e,<END>
+2960,740,64c,<START>
+2961,740,64c,<SP1> good luck at the library later <SP1>
+2962,740,64c,<SP2> you too <SP2>
+2963,740,64c,<END>
+2964,741,6bd,<START>
+2965,741,6bd,<SP1> you haven't been answering any of my emails <SP1>
+2966,741,6bd,<SP1> guilty <SP1>
+2967,741,6bd,<END>
+2968,742,48b,<START>
+2969,742,48b,<SP1> it's my birthday next week <SP1>
+2970,742,48b,<SP2> i'm old <SP2>
+2971,742,48b,<END>
+2972,743,40ba,<START>
+2973,743,40ba,<SP1> unfortunately i won't be there for the ceremony <SP1>
+2974,743,40ba,<SP1> will you <SP1>
+2975,743,40ba,<END>
+2976,744,110b,<START>
+2977,744,110b,<SP1> could you pass me a tissue <SP1>
+2978,744,110b,<SP2> quick <SP2>
+2979,744,110b,<END>
+2980,745,112ba,<START>
+2981,745,112ba,<SP1> will you come to the concert later <SP1>
+2982,745,112ba,<SP1> it's free <SP1>
+2983,745,112ba,<END>
+2984,746,33c,<START>
+2985,746,33c,<SP1> my bag got lost during the transfer <SP1>
+2986,746,33c,<SP2> that sucks <SP2>
+2987,746,33c,<END>
+2988,747,45e,<START>
+2989,747,45e,<SP1> i have the secret santa gift in my bag <SP1>
+2990,747,45e,<SP2> so far <SP2>
+2991,747,45e,<END>
+2992,748,18bd,<START>
+2993,748,18bd,<SP1> i can't find my phone <SP1>
+2994,748,18bd,<SP1> since when <SP1>
+2995,748,18bd,<END>
+2996,749,4bf,<START>
+2997,749,4bf,<SP1> it's great that you could cover this shift for me <SP1>
+2998,749,4bf,<SP1> for real <SP1>
+2999,749,4bf,<END>

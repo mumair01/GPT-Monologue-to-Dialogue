@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 10:46:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-03 00:57:29
+# @Last Modified time: 2022-12-03 01:45:33
 
 import sys
 import os
@@ -97,6 +97,14 @@ class ICCDataset:
         conversation_dfs = conversation_dfs[start_conv_no:end_conv_no]
         return conversation_dfs
 
+    @property
+    def special_labels_variant_labels(self):
+        return {
+            "speaker_base" : "<SP{}>",
+            "start" : "<START>",
+            "end" : "<END>"
+        }
+
     def _process_file(self, cha_path : str, variant : str):
         assert os.path.isfile(cha_path), f"ERROR: {cha_path} does not exist"
 
@@ -139,11 +147,8 @@ class ICCDataset:
         for i in range(len(data)):
             conv_name, split_toks = data[i]
             data[i] = [conv_name, split_toks[1]]
-            print(data[i])
 
         return data
-
-
 
     def _process_labels_variant(self, cha_path):
         """
@@ -159,10 +164,10 @@ class ICCDataset:
         text_normalizer_seq = create_normalizer_sequence()
         labels_normalizer_seq = create_normalizer_sequence(
             replace_words= {
-                "sp1" : "<SP1>",
-                "sp2" : "<SP2>",
-                "start" : "<START>",
-                "end" : "<END>"
+                "sp1" : self.special_labels_variant_labels["speaker_base"].format("1"),
+                "sp2" : self.special_labels_variant_labels["speaker_base"].format("2"),
+                "start" : self.special_labels_variant_labels["start"],
+                "end" : self.special_labels_variant_labels["end"]
             },
             custom_regex= "\*"
         )

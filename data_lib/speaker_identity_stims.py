@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 12:50:18
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-01 03:19:39
+# @Last Modified time: 2022-12-03 01:46:15
 
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
@@ -71,71 +71,97 @@ class SpeakerIdentityStimuliDataset:
         remove_file(csv_path)
         self._save_dataset_as_csv(csv_path, combined)
 
+    @property
+    def special_labels_variant_labels(self):
+        return {
+            "speaker_base" : "<SP{}>",
+            "start" : "<START>",
+            "end" : "<END>"
+        }
 
     def _process_file(self, cha_path : str, variant : str):
         assert os.path.isfile(cha_path),  f"ERROR: {cha_path} does not exist"
 
+        if variant == "no_labels":
+            return self._process_no_labels_variant(cha_path)
+        elif variant == "special_labels":
+            return self._process_special_labels_variant(cha_path)
+        else:
+            raise NotImplementedError(
+                f"ERROR: Variant is not defined: {variant}"
+            )
+
+    # TODO: Again, similar to the ICC dataset, this combines the turns by the same
+    # speaker into a single string, which might influence the probabilities
+    # of the second turn since it might not be syntactically coherent...
+    # I should refer back to the TurnGPT paper and see how they did this...
+    def _process_no_labels_variant(self, cha_path):
+        """
+        Removes the headers speaker labels from the turns in the given file
+        and combines turns from the same speaker into a single string - since
+        this is needed by TurnGPT tokenizer.
+        """
         conv_name = get_filename(cha_path)
         conv = read_text(cha_path)
 
         # Ignore / Remove all lines that start with comment marker.
         conv = [line for line in conv if line[0] != "@"]
 
-        # Create and apply normalizer sequence
+        # Create and apply normalizer sequence.
         normalizer_seq = create_normalizer_sequence(
-            **self._get_variant_normalizer_params(variant))
+            remove_words = ["start", "end"],
+            custom_regex = "(\*)"
+        )
         conv = [normalizer_seq(toks) for line in conv \
             for toks in re.split(r"\. |\?|\t+|:", line) ]
         conv = [line for line in conv if len(line) > 0]
 
         # Assumption: There are only two turns in the conversation.
-        if variant == "no_labels":
-            if conv[0] == conv[2]:
-                conv = [f"{conv[1].strip()} {conv[3].strip()}"]
-            else:
-                conv = [f"{conv[1].strip()}",  f"{conv[3].strip()}"]
-        elif variant == "special_labels":
-            speakers = [line for line in conv if re.match(r"(sp)[0-9]",line)]
-            lines = [line for line in conv if not re.match(r"(sp)[0-9]",line)]
-            conv = []
-            for sp, line in zip(speakers, lines):
-                sp = f"<SP{sp[-1]}>"
-                conv.append(f"{sp} {line.strip()} {sp}")
-            assert len(conv) == 2
-            conv.insert(0,"<START>")
-            conv.append("<END>")
+        if conv[0] == conv[2]:
+            conv = [f"{conv[1].strip()} {conv[3].strip()}"]
+        else:
+            conv = [f"{conv[1].strip()}",  f"{conv[3].strip()}"]
 
         # Add the conversation name to each item in list
         conv = [[conv_name, turn_no, item] for turn_no,item in enumerate(conv)]
         return conv
 
-    def _get_variant_normalizer_params(self, variant : str):
-        if variant == "no_labels":
-            return {
-                "lowercase" : True,
-                "unicode_normalizer" : "nfd",
-                "strip_accents" : True,
-                "remove_punctuation" : True,
-                "remove_extra_whitespaces" : True,
-                "add_whitespace_punc" : True,
-                "replace_words" : {},
-                "remove_words" :  ["start", "end"],
-                "custom_regex" : "(\*)"
-            }
-        elif variant == "special_labels":
-            return {
-                "lowercase" : True,
-                "unicode_normalizer" : "nfd",
-                "strip_accents" : True,
-                "remove_punctuation" : True,
-                "remove_extra_whitespaces" : True,
-                "add_whitespace_punc" : True,
-                "replace_words" : {},
-                "remove_words" :  [],
-                "custom_regex" : "(\*)"
-            }
-        else:
-            raise NotImplementedError()
+    def _process_special_labels_variant(self, cha_path):
+        """
+        Removes the headers from the given input files, wraps each sequence
+        in a start and end token and each turn with the speaker labels of the
+        given speaker. These speaker labels act as explicit indications of a new
+        speaker.
+        NOTE: The processing model should use the speaker labels here in it's
+        processing. This has now been added as a property of the dataset.
+        """
+        conv_name = get_filename(cha_path)
+        conv = read_text(cha_path)
+
+        # Ignore / Remove all lines that start with comment marker.
+        conv = [line for line in conv if line[0] != "@"]
+
+        # Create and apply normalizer sequence.
+        normalizer_seq = create_normalizer_sequence(
+            custom_regex = "(\*)"
+        )
+        conv = [normalizer_seq(toks) for line in conv \
+            for toks in re.split(r"\. |\?|\t+|:", line) ]
+        conv = [line for line in conv if len(line) > 0]
+
+        speakers = [line for line in conv if re.match(r"(sp)[0-9]",line)]
+        lines = [line for line in conv if not re.match(r"(sp)[0-9]",line)]
+        conv = []
+        for sp, line in zip(speakers, lines):
+            sp = self.special_labels_variant_labels["speaker_base"].format(sp[-1])
+            conv.append(f"{sp} {line.strip()} {sp}")
+        assert len(conv) == 2
+        conv.insert(0,self.special_labels_variant_labels["start"])
+        conv.append(self.special_labels_variant_labels["end"])
+
+        # Add the conversation name to each item in list
+        conv = [[conv_name, turn_no, item] for turn_no,item in enumerate(conv)]
+        return conv
 
     def _save_dataset_as_csv(self, csv_path, dataset):
         # Save the data as a dataframe after sorting.
@@ -149,23 +175,5 @@ class SpeakerIdentityStimuliDataset:
         dataset_df.to_csv(csv_path)
 
     def _load_dataset_from_csv(self, csv_path):
-        df = pd.read_csv(csv_path,names=self._CSV_HEADERS, index_col=0)
-        # conversation_dfs = [df.loc[df[conv_key] == i] for i in range(
-        # np.max(df[conv_key].unique()) + 1)]
-        return df
+        return pd.read_csv(csv_path,names=self._CSV_HEADERS, index_col=0)
 
-# if __name__ == "__main__":
-
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument(
-    #     "--path", type=str, required=True,
-    #     help="ICC .cha file path or directory containing .cha files")
-    # parser.add_argument(
-    #     "--variant", type=str, help="Variant of the ICC to generate")
-    # parser.add_argument(
-    #     "--outdir", type=str, default="./", help="Output directory")
-
-    # args = parser.parse_args()
-
-    # dataset = SpeakerIdentityStimuliDataset(args.path)
-    # dataset(args.variant, args.outdir)
