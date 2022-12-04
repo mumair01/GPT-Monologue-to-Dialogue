@@ -2,14 +2,16 @@
 
 [monologue_gpt.load]
 model_checkpoint = "gpt2"
-tokenizer_eos_token = "<|endoftext|>"
-tokenizer_pad_token = "<PAD>"
-tokenizer_additional_special_tokens = [
-    "<SP1>", # Speaker 1 token
-    "<SP2>", # Speaker 2 token
-    "<START>", # Conversation start token
-    "<END>" # Conversation end token
-]
+tokenizer_checkpoint = "gpt2"
+# NOTE: Comment following args to load the null model.
+# tokenizer_eos_token = "<|endoftext|>"
+# tokenizer_pad_token = "<PAD>"
+# tokenizer_additional_special_tokens = [
+#     "<SP1>", # Speaker 1 token
+#     "<SP2>", # Speaker 2 token
+#     "<START>", # Conversation start token
+#     "<END>" # Conversation end token
+# ]
 
 [turngpt.load]
 pretrained_model_name_or_path = "gpt2"
