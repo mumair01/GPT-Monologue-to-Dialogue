@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-10-07 14:44:52
+# @Last Modified time: 2022-12-03 02:33:23
 
 import os
 from typing import Union, List
@@ -61,17 +61,17 @@ class MonologueGPT(LanguageModel):
         # Load tokenizer
         self._tokenizer = AutoTokenizer.from_pretrained(
             tokenizer_checkpoint,
-            pad_token=tokenizer_pad_token,
-            eos_token=tokenizer_eos_token,
-            additional_special_tokens=tokenizer_additional_special_tokens
+            # pad_token=tokenizer_pad_token,
+            # eos_token=tokenizer_eos_token,
+            # additional_special_tokens=tokenizer_additional_special_tokens
             )
 
         self.model = AutoModelForCausalLM.from_pretrained(
             model_checkpoint,
-            pad_token_id = self._tokenizer.pad_token_id,
-            eos_token_id = self._tokenizer.eos_token_id
+            # pad_token_id = self._tokenizer.pad_token_id,
+            # eos_token_id = self._tokenizer.eos_token_id
         )
-        self.model.resize_token_embeddings(len(self._tokenizer))
+        # self.model.resize_token_embeddings(len(self._tokenizer))
 
     def finetune(
         self,
