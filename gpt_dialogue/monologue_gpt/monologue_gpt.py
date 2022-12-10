@@ -2,8 +2,9 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-04 01:53:24
+# @Last Modified time: 2022-12-10 18:47:50
 
+import sys
 import os
 from typing import Union, List
 
@@ -67,7 +68,6 @@ class MonologueGPT(LanguageModel):
                     "ERROR: Provide a valid path or selected pre-trained "
                     f"models from {self._SUPPORTED_MODELS}"
                 )
-
         self.model_checkpoint = model_checkpoint
         self.tokenizer_checkpoint = tokenizer_checkpoint
 
@@ -85,7 +85,6 @@ class MonologueGPT(LanguageModel):
         }
         # Load tokenizer
         self._tokenizer = AutoTokenizer.from_pretrained(**tokenizer_args)
-
         # Create the model args
         model_args = {
             "pretrained_model_name_or_path" : model_checkpoint,

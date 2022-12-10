@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-11-30 09:41:02
+# @Last Modified time: 2022-12-10 18:49:06
 
 import sys
 import os
@@ -45,7 +45,7 @@ def generate_wandb_run_name(cfg):
     logger=logger,
     wandb_project=WANDB_PROJECT,
     wandb_entity=WANDB_ENTITY,
-    wandb_init_mode=None,
+    wandb_init_mode="disabled",
     run_name_func=generate_wandb_run_name
 )
 def run_finetuning(cfg : DictConfig, run : wandb.run):
@@ -64,15 +64,15 @@ def run_finetuning(cfg : DictConfig, run : wandb.run):
         )
 
     # Load the model
+    model.load(**OmegaConf.to_object(cfg.experiment.load))
     logger.info(f"Loading model of type: {model}")
-    model.load(**cfg.experiment.load)
-
     # Finetune
+    logger.info("Starting finetuning...")
     model.finetune(
         train_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.train_csv_path),
         val_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.validation_csv_path),
         save_dir = os.getcwd(),
-        **cfg.experiment.finetune
+        **OmegaConf.to_object(cfg.experiment.finetune)
     )
     logger.info("Finetuning completed!")
 
