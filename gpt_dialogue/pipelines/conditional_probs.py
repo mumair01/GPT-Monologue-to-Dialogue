@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-01 03:28:16
+# @Last Modified time: 2022-12-10 13:47:53
 
 from distutils import text_file
 from email import message
@@ -20,6 +20,8 @@ from tqdm import tqdm
 
 from copy import deepcopy
 from dataclasses import dataclass
+from collections import defaultdict
+from dataclasses import dataclass
 
 from gpt_dialogue.model import LanguageModel
 
@@ -31,6 +33,73 @@ logger = logging.getLogger(__name__)
 class Param:
     value: Any = None
     required: bool = True
+
+class CPPipeOutput:
+    """
+    Output for the ConditionalProbabilityPipeline which includes convenience
+    methods.
+    """
+
+    def __init__(self, pipe_output : Dict):
+        self.pipe_output = pipe_output
+        self.turns = self.collect_turns()
+
+    def __iter__(self):
+        for item in self.pipe_output:
+            yield item
+
+    def number_of_turns(self) -> int:
+        return len(self.turns)
+
+    def collect_turns(self) -> Dict:
+        """
+        Given the ConditionalProbabilityPipe output, separates the output based
+        on turns.
+        """
+        data = defaultdict(lambda : list())
+        for item in self.pipe_output:
+            data[item["turn_no"]].append({
+                k:v for k, v in item.items() if k != "turn_no"
+            })
+        return data
+
+    def probability_of_turn_no(self, turn_no : int) -> torch.Tensor:
+        """
+        Assuming that pipe_output contains the output of the ConditionalProbabilityPipe
+        with N = -1, obtain the combined probability of the given turn no iff it exists.
+        """
+        return torch.tensor([item["last_word_prob"] \
+            for item in self.turns[turn_no]])
+
+    def turn_text(self, turn_no : int) -> str:
+        """Get the complete text of the given turn"""
+        return " ".join([item["word"] for item in self.turns[turn_no]])
+
+    def word_probabilities_of_matched_string(self, match_string : str) -> float:
+        """
+        Return the probabilities of words in a turn if it matches the given strings
+        """
+        # Collect all the turns and the corresponding text.
+        turns_text = {
+            item["turn_no"] : self.turn_text(item["turn_no"]) \
+                 for item in self.pipe_output
+        }
+        for turn_no, text in turns_text.items():
+            if text == match_string:
+                return self.probability_of_turn_no(turn_no)
+        raise Exception(
+            f"ERROR: No turn found with the given string: {match_string}\n{turns_text}"
+        )
+
+    def probability_of_matched_string(self, match_string : str) -> float:
+        word_probs = self.word_probabilities_of_matched_string(match_string)
+        return self._multiply_probabilities(word_probs)
+
+    def _multiply_probabilities(self, probs) -> float:
+        """
+        Generate the product of all the probabilities in a given list.
+        """
+        return  float(torch.exp(torch.sum(torch.log(torch.tensor(probs)))))
 
 
 class ConditionalProbabilityPipeline:
@@ -60,11 +129,13 @@ class ConditionalProbabilityPipeline:
             logger.warning(f"WARNING: Using device {self.device.type} in pipe "
                            "is slow - switch to gpu if possible")
 
-    def __call__(self, utterances: List[str]):
+    def __call__(self, utterances: List[str]) -> CPPipeOutput:
         """Processes a list of strings containing utterances"""
-        return self.postprocess(self._forward(self.preprocess(utterances)))
+        return CPPipeOutput(
+            self._postprocess(self._forward(self._preprocess(utterances)))
+        )
 
-    def preprocess(self, utterances: List[str]):
+    def _preprocess(self, utterances: List[str]):
         """Prepare inputs given to __call__ for _forward"""
         return {"utterances": utterances}
 
@@ -89,7 +160,7 @@ class ConditionalProbabilityPipeline:
             context_buffer_size=context_buffer_size
         )
 
-    def postprocess(self, forward_outputs):
+    def _postprocess(self, forward_outputs):
         """Prepare _forward outputs to be returned. """
         return forward_outputs
 
@@ -198,7 +269,7 @@ class ConditionalProbabilityPipeline:
         cw_extracted_probs_from_logits = softmax(cw_extracted_logits)
 
         # NOTE: Converting to log scale and taking exponential sum of the log
-        # probabilities at the end will ensure that there is not floating point
+        # probabilities at the end will ensure that there is no floating point
         # overflow issue for very small probability values.
         cw_extracted_log_probs_from_logits = torch.log(
             cw_extracted_probs_from_logits)

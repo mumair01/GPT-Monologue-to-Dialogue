@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-04 01:48:31
+# @Last Modified time: 2022-12-04 01:53:24
 
 import os
 from typing import Union, List
@@ -30,8 +30,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# TODO: Need to add a way of not adding the special and pad tokens directly
-# i.e, to load the base model and tokenizer.
+
 class MonologueGPT(LanguageModel):
 
     _SUPPORTED_MODELS = (

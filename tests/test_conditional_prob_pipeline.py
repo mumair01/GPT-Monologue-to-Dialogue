@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-04 00:06:21
+# @Last Modified time: 2022-12-10 13:28:45
 
 import pytest
 
@@ -42,62 +42,6 @@ def load_inference_text_from_file() -> List:
         data = f.read().split("\n\n")
     data = [item.replace("\n", "") for item in data]
     return data
-
-# TODO: I should move the pipe output manipulation methods directly into the
-# pipe for convenience and reuse.
-def multiply_probabilities(probs) -> float:
-    """
-    Generate the product of all the probabilities in a given list.
-    """
-    return  float(torch.exp(torch.sum(torch.log(torch.tensor(probs)))))
-
-def collect_turns_from_pipe_output(pipe_output):
-    """
-    Given the ConditionalProbabilityPipe output, separates the output based
-    on turns.
-    """
-    data = defaultdict(lambda : list())
-    for item in pipe_output:
-        data[item["turn_no"]].append({
-            k:v for k, v in item.items() if k != "turn_no"
-        })
-    return data
-
-def get_probability_of_turn_no(pipe_output, turn_no):
-    """
-    Assuming that pipe_output contains the output of the ConditionalProbabilityPipe
-    with N = -1, obtain the combined probability of the given turn no iff it exists.
-    """
-    turn_items = collect_turns_from_pipe_output(pipe_output)[turn_no]
-    return torch.tensor([item["last_word_prob"] for item in turn_items])
-
-def get_turn_text(pipe_output, turn_no):
-    """Get the complete text of the given turn"""
-    return " ".join([item["word"] for item in \
-        collect_turns_from_pipe_output(pipe_output)[turn_no]])
-
-def get_word_probabilities_of_matched_string(pipe_output, match_string):
-    """
-    Return the probabilities of words in a turn if it matches the given strings
-    """
-    # Collect all the turns and the corresponding text.
-    turns_text = {
-        item["turn_no"] : get_turn_text(pipe_output, item["turn_no"]) \
-            for item in pipe_output
-    }
-    for turn_no, text in turns_text.items():
-        if text == match_string:
-            return get_probability_of_turn_no(pipe_output, turn_no)
-    raise Exception(
-        f"ERROR: No turn found with the given string: {match_string}\n{turns_text}"
-    )
-
-def get_probability_of_matched_string(pipe_output, match_string):
-    word_probs = get_word_probabilities_of_matched_string(
-            pipe_output, match_string
-    )
-    return multiply_probabilities(word_probs)
-
 
 
 @pytest.fixture
@@ -143,6 +87,11 @@ def test_conditional_prob_pipe_call(model_class, string_list, configs):
     Use the given model to generate the probabilities for the given string
     using the conditional pipe.
     """
+    print("TEST: test_conditional_prob_pipe_call")
+    print(
+        f"ARGS:\nmodel_class: {model_class}\nstring_list: {string_list}\n"
+    )
+
     model = model_class()
     if model_class == MonologueGPT:
         model.load(**configs["monologue_gpt"]["load"])
@@ -227,6 +176,14 @@ def test_simple_congruent_violation_comparison_monologue_gpt(
     # probabilities because the model has not been trained on these values.
     # TODO: I need to change the null monologue model so it does not add special
     # tokens.
+
+    print("TEST: test_simple_congruent_violation_comparison_monologue_gpt")
+    print(
+        f"ARGS:\ncongruent: {congruent}\nviolation: {violation}\n"
+       f"congruent_match_turn: {congruent_match_turn}\n"
+       f"violation_match_turn: {violation_match_turn}"
+    )
+
     model = MonologueGPT()
     model.load(**configs["monologue_gpt"]["load"])
 
@@ -241,11 +198,11 @@ def test_simple_congruent_violation_comparison_monologue_gpt(
     # print(congruent_output)
 
     # Get the probabilities of the match_string turn.
-    congruent_prob = get_probability_of_matched_string(
-            congruent_output, congruent_match_turn
+    congruent_prob = congruent_output.probability_of_matched_string(
+        congruent_match_turn
     )
-    violation_prob = get_probability_of_matched_string(
-        violation_output, violation_match_turn
+    violation_prob = violation_output.probability_of_matched_string(
+        violation_match_turn
     )
     print(f"Congruent prob: {congruent_prob}")
     print(f"Violation prob: {violation_prob}")
@@ -277,6 +234,14 @@ def test_simple_congruent_violation_comparison_monologue_gpt(
 def test_congruent_incongruent_comparison_monologue_gpt(
     congruent, incongruent, congruent_match_turn, incongruent_match_turn, configs
 ):
+
+    print("TEST: test_congruent_incongruent_comparison_monologue_gpt")
+    print(
+        f"ARGS:\ncongruent: {congruent}\nincongruent: {incongruent}\n"
+       f"congruent_match_turn: {congruent_match_turn}\n"
+       f"incongruent_match_turn: {incongruent_match_turn}"
+    )
+
     model = MonologueGPT()
     model.load(**configs["monologue_gpt"]["load"])
 
@@ -289,13 +254,13 @@ def test_congruent_incongruent_comparison_monologue_gpt(
     incongruent_output = pipe(incongruent)
 
     # Get the probabilities of the match_string turn.
-    congruent_prob = get_probability_of_matched_string(
-        congruent_output, congruent_match_turn
+    congruent_prob = congruent_output.probability_of_matched_string(
+        congruent_match_turn
+    )
+    incongruent_prob = incongruent_output.probability_of_matched_string(
+        incongruent_match_turn
     )
 
-    incongruent_prob = get_probability_of_matched_string(
-        incongruent_output, incongruent_match_turn
-    )
     print(f"Congruent prob: {congruent_prob}")
     print(f"Incongruent prob: {incongruent_prob}")
     # Calculate the difference in probs
@@ -331,6 +296,8 @@ def test_congruent_incongruent_comparison_monologue_gpt(
         "don't laugh",
     )
 ])
+
+
 def test_simple_congruent_violation_comparison_turngpt(
     congruent, violation, congruent_match_turn, violation_match_turn, configs
 ):
@@ -358,12 +325,13 @@ def test_simple_congruent_violation_comparison_turngpt(
     # print(congruent_output)
 
     # Get the probabilities of the match_string turn.
-    congruent_prob = get_probability_of_matched_string(
-            congruent_output, congruent_match_turn
+    congruent_prob = congruent_output.probability_of_matched_string(
+        congruent_match_turn
     )
-    violation_prob = get_probability_of_matched_string(
-        violation_output, violation_match_turn
+    violation_prob = violation_output.probability_of_matched_string(
+        violation_match_turn
     )
+
     print(f"Congruent prob: {congruent_prob}")
     print(f"Violation prob: {violation_prob}")
     # Calculate the difference in probs
@@ -407,13 +375,13 @@ def test_congruent_incongruent_comparison_turngpt(
     incongruent_output = pipe(incongruent)
 
     # Get the probabilities of the match_string turn.
-    congruent_prob = get_probability_of_matched_string(
-        congruent_output, congruent_match_turn
+    congruent_prob = congruent_output.probability_of_matched_string(
+        congruent_match_turn
+    )
+    incongruent_prob = incongruent_output.probability_of_matched_string(
+        incongruent_match_turn
     )
 
-    incongruent_prob = get_probability_of_matched_string(
-        incongruent_output, incongruent_match_turn
-    )
     print(f"Congruent prob: {congruent_prob}")
     print(f"Incongruent prob: {incongruent_prob}")
     # Calculate the difference in probs
@@ -423,3 +391,5 @@ def test_congruent_incongruent_comparison_turngpt(
 
     assert congruent_prob != 1 and incongruent_prob != 1
     assert congruent_prob > incongruent_prob
+
+

@@ -7,13 +7,13 @@ load:
   tokenizer_checkpoint : gpt2
 
   ## NOTE: Uncomment to run trained model. These should be the same in finetuning.
-  tokenizer_eos_token : <|endoftext|>
-  tokenizer_pad_token : <PAD>
-  tokenizer_additional_special_tokens :
-    - <SP1>   # Speaker 1 token
-    - <SP2>   # Speaker 2 token
-    - <START> # Conversation start token
-    - <END>   # Conversation end token
+  # tokenizer_eos_token : <|endoftext|>
+  # tokenizer_pad_token : <PAD>
+  # tokenizer_additional_special_tokens :
+  #   - <SP1>   # Speaker 1 token
+  #   - <SP2>   # Speaker 2 token
+  #   - <START> # Conversation start token
+  #   - <END>   # Conversation end token
 
 dataset:
   start_conv_no : 0
