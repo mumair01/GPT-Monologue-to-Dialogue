@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 10:46:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-03 01:45:33
+# @Last Modified time: 2022-12-10 14:07:44
 
 import sys
 import os
@@ -15,6 +15,8 @@ from typing import List
 from functools import partial
 
 import shutil
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
 
 from data_lib.core import (
     read_text,
@@ -203,3 +205,25 @@ class ICCDataset:
 
     def _load_dataset_from_csv(self, csv_path):
         return pd.read_csv(csv_path,names=self._CSV_HEADERS, index_col=0)
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--path", type=str, required=True,
+        help="ICC .cha file path or directory containing .cha files")
+    parser.add_argument(
+        "--variant", type=str, help="Variant of the ICC to generate")
+    parser.add_argument(
+        "--outdir", type=str, default="./", help="Output directory")
+    parser.add_argument(
+        "--outfile", type=str,  help="Name of the output file")
+
+    args = parser.parse_args()
+
+    dataset = ICCDataset(dir_path=args.path)
+    dataset(
+        variant=args.variant,
+        save_dir=args.outdir,
+        outfile=args.outfile
+    )
