@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:48:46
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-10 15:59:16
+# @Last Modified time: 2022-12-13 11:24:24
 
 
 import pytest
@@ -52,7 +52,7 @@ def test_encode_decode(encodable, configs):
     """Given a string, encodes and decodes the model."""
     model = MonologueGPT()
     model.load(**configs["monologue_gpt"]["load"])
-    encoded = model(encodable)
+    encoded = model.encode(encodable)
     decoded = model.tokenizer.decode(encoded["input_ids"])
     print(f"Encoded: {encoded}")
     print(f"Decoded: {decoded}")

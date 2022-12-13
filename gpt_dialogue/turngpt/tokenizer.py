@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-10-07 14:56:32
+# @Last Modified time: 2022-12-13 14:18:15
 
 ############################
 # This module is a re-implementation of the TurnGPT tokenizer as a comparison to the
@@ -20,6 +20,7 @@ from typing import List, Union
 from collections import defaultdict
 from datasets import load_dataset
 
+import numpy as np
 from transformers import AutoTokenizer, PreTrainedTokenizer
 from transformers.tokenization_utils_base import BatchEncoding
 import torch
@@ -388,3 +389,9 @@ class SpokenDialogueTokenizer(SpokenTokenizer):
     @property
     def sp2_token_id(self):
         return self._tokenizer.convert_tokens_to_ids(self.sp2_token)
+
+    def decode_speaker(self, toks, speaker, *args, **kwargs):
+        sp_token_id = self.sp1_token_id if speaker == 1 else self.sp2_token_id
+        sp_idx = np.where(np.asarray(toks['speaker_ids']) == sp_token_id)
+        sp_input_ids = np.take(toks['input_ids'], sp_idx)
+        return self.decode(*sp_input_ids)
