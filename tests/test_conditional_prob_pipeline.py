@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-10 13:28:45
+# @Last Modified time: 2022-12-11 21:05:04
 
 import pytest
 
@@ -26,8 +26,8 @@ from tests.utils import load_configs, load_text
 
 from typing import List
 
-
-INFERENCE_TEXT_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/tests/data/large_text.txt"
+ROOT_PATH = "/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue"
+INFERENCE_TEXT_PATH = os.path.join(ROOT_PATH,"tests/data/large_text.txt")
 
 
 ################################ HELPERS ##################################
@@ -139,23 +139,24 @@ def test_conditional_prob_pipe_call(model_class, string_list, configs):
         "<SP1> don't laugh <SP1>",
         "<SP2> don't laugh <SP2>"
     ),
-    (
-        # Different congruent - no special tokens / speaker identities.
-        ["do you have any experience filing taxes", "a bit"],
-        # Same violation - no special tokens / speaker identities.
-        ["i found the perfect shelf for our living room on craigslist",
-        "a bit"],
-        "a bit",
-        "a bit",
-    ),
-    (
-        # Same congruent - no special tokens / speaker identities.
-        ["i tripped in front of my boss at work today", "don't laugh"],
-        # Same Violation -  no special tokens / speaker identities.
-        ["why haven't you paid our rent yet","don't laugh"],
-        "don't laugh",
-        "don't laugh"
-    )
+    # NOTE: These have been moved to the turngpt tests.
+    # (
+    #     # Different congruent - no special tokens / speaker identities.
+    #     ["do you have any experience filing taxes", "a bit"],
+    #     # Same violation - no special tokens / speaker identities.
+    #     ["i found the perfect shelf for our living room on craigslist",
+    #     "a bit"],
+    #     "a bit",
+    #     "a bit",
+    # ),
+    # (
+    #     # Same congruent - no special tokens / speaker identities.
+    #     ["i tripped in front of my boss at work today", "don't laugh"],
+    #     # Same Violation -  no special tokens / speaker identities.
+    #     ["why haven't you paid our rent yet","don't laugh"],
+    #     "don't laugh",
+    #     "don't laugh"
+    # )
 
 ])
 def test_simple_congruent_violation_comparison_monologue_gpt(

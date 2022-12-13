@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-01 03:19:04
+# @Last Modified time: 2022-12-11 17:51:43
 
 
 import sys
@@ -90,7 +90,7 @@ def generate_probabilities(
         save_path = os.path.join(save_dir,
                 "{}_conditional_probs.csv".format(conversation_df["convName"].iloc[0]))
         # columns = ["conversation_name"] + list(res[0].keys())
-        df = pd.DataFrame(data=res, columns=list(res[0].keys()))
+        df = pd.DataFrame(data=res, columns=list(res.raw_output()[0].keys()))
         df["conversation_name"] = conversation_df["convName"].iloc[0]
         df["conversation_number"] = i
         # Set the order of the columns
@@ -143,8 +143,8 @@ def run_inference(cfg : DictConfig, run : wandb.run):
         )
 
     # Load the model
-    logger.info(f"Loading model of type: {model}")
     model.load(**OmegaConf.to_object(cfg.experiment.load))
+    logger.info(f"Loading model of type: {model}")
 
     # Load the pipeline, the dataset, and execute the task
     pipe = ConditionalProbabilityPipeline(

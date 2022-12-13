@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-10 13:47:53
+# @Last Modified time: 2022-12-11 17:47:32
 
 from distutils import text_file
 from email import message
@@ -47,6 +47,9 @@ class CPPipeOutput:
     def __iter__(self):
         for item in self.pipe_output:
             yield item
+
+    def raw_output(self) -> Dict:
+        return self.pipe_output
 
     def number_of_turns(self) -> int:
         return len(self.turns)
@@ -94,6 +97,7 @@ class CPPipeOutput:
     def probability_of_matched_string(self, match_string : str) -> float:
         word_probs = self.word_probabilities_of_matched_string(match_string)
         return self._multiply_probabilities(word_probs)
+
 
     def _multiply_probabilities(self, probs) -> float:
         """

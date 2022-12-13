@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J turn_gpt_conditional_inference_28_train_14_test_speaker_identity_stims_no_labels
+#SBATCH -J monologue_gpt_conditional_inference_speaker_identity_stims_special_labels
 #SBATCH --time=07-00:00:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-11-27 11:39:52
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-11-27 16:22:02
+# @Last Modified time: 2022-12-11 21:05:48
 
 import sys
 import os
@@ -12,7 +12,8 @@ import shutil
 from typing import Dict
 
 # GLOBALS
-CONFIG_TOML_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/tests/configs.toml"
+ROOT_PATH = "/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue"
+CONFIG_TOML_PATH = os.path.join(ROOT_PATH,"tests/configs.toml")
 
 def reset_dir(dir_path : str):
     if os.path.isdir(dir_path) and dir_path != ".":

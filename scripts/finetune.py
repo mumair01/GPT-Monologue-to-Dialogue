@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-10 18:49:06
+# @Last Modified time: 2022-12-10 18:50:36
 
 import sys
 import os
@@ -45,7 +45,7 @@ def generate_wandb_run_name(cfg):
     logger=logger,
     wandb_project=WANDB_PROJECT,
     wandb_entity=WANDB_ENTITY,
-    wandb_init_mode="disabled",
+    wandb_init_mode=None,
     run_name_func=generate_wandb_run_name
 )
 def run_finetuning(cfg : DictConfig, run : wandb.run):
