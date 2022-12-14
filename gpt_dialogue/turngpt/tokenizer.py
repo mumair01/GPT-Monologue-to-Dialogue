@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-14 15:01:45
+# @Last Modified time: 2022-12-14 17:45:33
 
 ############################
 # This module is a re-implementation of the TurnGPT tokenizer as a comparison to the
@@ -223,8 +223,19 @@ class SpokenTokenizer:
                 end of the string.
             return_token_type_ids (bool): If True, return the ids of this specific
                 tokenizer, which includes the 'speaker_ids'
+            split_speaker_by_inline_eos (bool):
+                If True, for every string, changes the speaker token assigned
+                when an EOS token is encountered. If False, then the speaker
+                is not changed after the EOS token. This is useful if we
+                want to indicate multiple turns by the same speaker.
+            start_speaker (int):
+                The number of the speaker that should be assigned first. Must
+                be greater than 0.
         """
-        # print(f"Call with text: {text}")
+
+        assert 0 < start_speaker <= self.num_speakers, \
+            f"ERROR: Start speaker should be in range [0, {self.num_speakers}]"
+
         if self._is_list_of_lists(text):
             ret = defaultdict(lambda : list())
             for t_list in text:
@@ -264,11 +275,9 @@ class SpokenTokenizer:
             for t in text:
                 # The start speaker is the one after the previous speaker
                 if len(ret["speaker_ids"]) > 0:
-                    # print(ret["speaker_ids"])
                     start_speaker = (self.tokens_speaker_map[self.convert_ids_to_tokens(
                         ret["speaker_ids"][-1]
                     )] % self.num_speakers) + 1
-                    # print(f"Start speaker: {start_speaker}")
                 output = self.__call__(
                     t,
                     add_prefix_space=add_prefix_space,
@@ -302,11 +311,7 @@ class SpokenTokenizer:
                     split_speaker_by_inline_eos=split_speaker_by_inline_eos,
                     start_speaker=start_speaker
                 )
-            # print(text)
-            # print("Encoding in string ", encoding)
             return encoding
-
-            # print(self.decode(encoding['input_ids']))
         else:
             raise  ValueError(
                 "text input must of type `str` (single example), `List[str]` (batch or single pretokenized example) "
@@ -323,10 +328,6 @@ class SpokenTokenizer:
         """
         For the given input ids, extracts the speaker ids for the corresponding
         input id.
-        Assumptions:
-            1. There are only two speaker.
-            2. Each speaker turn ends with an end of sequence token.
-            3. Speaker 1 appears before speaker 2.
         """
         assert 0 < start_speaker <= self.num_speakers, \
             f"ERROR: Start speaker should be in range [0, {self.num_speakers}]"
@@ -348,14 +349,12 @@ class SpokenTokenizer:
             batch = torch.tensor([0])
             eos_idx = torch.tensor([input_ids.size()[1]])
 
-        # print(f"Start speaker {start_speaker}")
         # TODO: Eventually test this more but I think this generalizes to any number of speakers.
         for b in batch.unique():
             tmp_eos = eos_idx[batch == b]
             start = 0
             for i, eos in enumerate(tmp_eos):
                 speaker_map_key = ((i + start_speaker -1)  % self.num_speakers) + 1
-                # print(f"speaker map key: {speaker_map_key}", i, start_speaker)
                 speaker_ids[b,start+1:eos+1] = \
                         self._tokenizer.convert_tokens_to_ids(self.speaker_tokens_map[speaker_map_key])
                 start = eos
@@ -447,20 +446,46 @@ class SpokenDialogueTokenizer(SpokenTokenizer):
     def sp2_token_id(self):
         return self._tokenizer.convert_tokens_to_ids(self.sp2_token)
 
-    def decode_speaker(self, toks, speaker, *args, **kwargs):
+    def decode_speaker(self, toks, speaker, *args, **kwargs) -> List:
+        """
+        Decode the turns by the specified speaker.
+        Note that this only works if toks contains lists, not tensors.
+        """
+
+        if len(np.asarray(toks["speaker_ids"]).shape) == 2:
+            decoded = []
+            for input_ids, speaker_ids, attention_mask in zip(
+                toks["input_ids"], toks["speaker_ids"], toks["attention_mask"]
+            ):
+                decoded.append(
+                    self._decode_speaker_toks({
+                        "input_ids" : input_ids,
+                        "speaker_ids" : speaker_ids,
+                        "attention_mask" : attention_mask
+                    }, speaker)
+                )
+            return decoded
+        else:
+            return [self._decode_speaker_toks(toks, speaker)]
+
+    def _decode_speaker_toks(self, toks, speaker):
         sp_token_id = self.sp1_token_id if speaker == 1 else self.sp2_token_id
         sp_idx = np.where(np.asarray(toks['speaker_ids']) == sp_token_id)
         sp_input_ids = np.take(toks['input_ids'], sp_idx)
         return self.decode(*sp_input_ids)
 
+
 if __name__ == "__main__":
 
-    string = "i tripped in front of my boss at work today<ts> don't laugh"
+    # NOTE: In this case, ts is the string that is used as the EOS token
+    # in the tokenizer.
+    # conv = ["i tripped in front of my boss at work today<ts> don't laugh"]
     conv =  [
         [
             "i tripped in front of my boss at work today<ts> don't laugh",
             "that is really funny",
-            "i don't think that was funny<ts> did you"
+            "i don't think that was funny<ts> did you",
+            "hello one two three"
         ],
         [
             "the cat is on the<ts> the mat",
@@ -473,15 +498,16 @@ if __name__ == "__main__":
     output = tokenizer(
         text=conv,
         split_speaker_by_inline_eos=False,
-        start_speaker = 2
+        start_speaker = 1
     )
-    for i, string in enumerate(conv):
-        print(f"Conversation: {string}")
-        toks = {
-            "input_ids" : output["input_ids"][i],
-            "speaker_ids" : output["speaker_ids"][i],
-            "attention_mask" : output["attention_mask"][i]
-        }
-        for speaker in (1, 2):
-            sp_decoded = tokenizer.decode_speaker(toks,speaker)
-            print(f"Turns by speaker {speaker}: {sp_decoded}")
+    sp1_decoded = tokenizer.decode_speaker(output, 1)
+    sp2_decoded = tokenizer.decode_speaker(output, 2)
+
+    print(f"Decoded for speaker 1:")
+    for item in sp1_decoded:
+        print(item)
+
+    print(f"Decoded for speaker 2:")
+    for item in sp2_decoded:
+        print(item)
+
