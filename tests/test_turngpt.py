@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-13 14:28:07
+# @Last Modified time: 2022-12-13 14:39:29
 
 import pytest
 import sys
@@ -65,14 +65,8 @@ def test_spoken_normalizer(add_whitespace_func):
             "This is speaker 2"
         ]
     ],
-    # Case 4: A single string with multiple individual turns.
-    "i tripped in front of my boss at work today<ts> don't laugh",
     # Case 5: A conversation with two turns by speaker 1 followed by a turn
     # by speaker 1.
-    [
-        "i tripped in front of my boss at work today<ts> don't laugh",
-        "that is really funny"
-    ]
 ])
 def test_spoken_dialogue_tokenizer_call(string, configs):
     """Tokenize the input strings using __call__ method of the tokenizer"""
@@ -82,7 +76,8 @@ def test_spoken_dialogue_tokenizer_call(string, configs):
     toks = tokenizer(string, return_tensors="pt")
     print(f"Input string:\n{string}")
     print(f"Result from __call__ method:\n {toks}")
-    print(f"Decoded results for every turn\n")
+
+
 
 @pytest.mark.parametrize("string", [
     # Simple string
