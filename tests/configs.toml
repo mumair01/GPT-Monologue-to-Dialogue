@@ -27,6 +27,6 @@ tokenizer_pad_token = "<|endoftext|>"
 tokenizer_additional_special_tokens  = []
 
 [conditional_probability_pipe]
-N = -1
+N = 1
 context_buffer_size = 512
 

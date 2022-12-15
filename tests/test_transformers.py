@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-11-27 15:42:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-11-27 16:50:34
+# @Last Modified time: 2022-12-15 15:56:21
 
 import pytest
 import sys
@@ -18,14 +18,19 @@ from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
 
 @pytest.mark.parametrize("string", [
+    "Hello",
     # List of strings
-    ["Hello, how are you doing?"]
+    # ["Hello, how are you doing?"]
 ])
 def test_huggingface_tokenizer(string):
     """Various test for transformers"""
     print("Huggingface GPT")
     tokenizer = AutoTokenizer.from_pretrained("gpt2")
-    toks = tokenizer(string, return_tensors="pt")
+    toks = tokenizer(
+        string,
+        return_tensors="pt"
+    )
+    print(toks)
     print("Tokenizer input_ids shape ", toks['input_ids'].shape)
     print("Tokenizer input ids ", toks['input_ids'])
     print(tokenizer.decode(toks['input_ids'][0]))

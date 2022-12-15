@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-14 17:45:33
+# @Last Modified time: 2022-12-15 16:45:42
 
 ############################
 # This module is a re-implementation of the TurnGPT tokenizer as a comparison to the
@@ -34,6 +34,7 @@ from tokenizers.normalizers import (
     Strip,
     Sequence,
 )
+
 
 
 import logging
@@ -245,7 +246,8 @@ class SpokenTokenizer:
                     add_eos_token=add_eos_token,
                     return_token_type_ids=return_token_type_ids,
                     split_speaker_by_inline_eos=split_speaker_by_inline_eos,
-                    start_speaker=start_speaker
+                    start_speaker=start_speaker,
+                    **kwargs
                 )
                 for k,v in output.items():
                     # ret[k].append(torch.tensor(v))
@@ -275,8 +277,12 @@ class SpokenTokenizer:
             for t in text:
                 # The start speaker is the one after the previous speaker
                 if len(ret["speaker_ids"]) > 0:
+                    if type(ret["speaker_ids"][-1]) == torch.Tensor:
+                        prev_speaker = ret["speaker_ids"][-1][-1].item()
+                    else:
+                        prev_speaker = ret["speaker_ids"][-1]
                     start_speaker = (self.tokens_speaker_map[self.convert_ids_to_tokens(
-                        ret["speaker_ids"][-1]
+                        prev_speaker
                     )] % self.num_speakers) + 1
                 output = self.__call__(
                     t,
@@ -284,17 +290,19 @@ class SpokenTokenizer:
                     add_eos_token=add_eos_token,
                     return_token_type_ids=return_token_type_ids,
                     split_speaker_by_inline_eos=split_speaker_by_inline_eos,
-                    start_speaker=start_speaker
+                    start_speaker=start_speaker,
+                    **kwargs
                 )
                 for k,v in output.items():
                     if type(v) == torch.Tensor:
-                        torch.cat(torch.as_tensor(ret[k]),v)
+                        ret[k] = torch.cat((torch.as_tensor(ret[k],dtype=torch.int64),v),dim=-1)
                     elif type(v) == list:
                         ret[k].extend(v)
                     else:
                         raise NotImplementedError(
                             f"ERROR: Cannot merge types: {type(k[v])} and {type(v)}"
                         )
+            ret = BatchEncoding(ret)
             return ret
 
         elif isinstance(text, str):

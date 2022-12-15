@@ -2,10 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-10 18:50:36
+# @Last Modified time: 2022-12-15 13:18:48
 
 import sys
 import os
+from functools import partial
 from typing import Callable
 
 from omegaconf import DictConfig, OmegaConf
@@ -58,6 +59,19 @@ def run_finetuning(cfg : DictConfig, run : wandb.run):
         model = MonologueGPT()
     elif cfg.experiment.name == "finetune_turngpt":
         model = TurnGPT()
+        # NOTE: Augmenting the native tokenizer so that the correct Args
+        # are used for the model tokenizer.
+        def _turngpt_encode_wrapper(**kwargs):
+            return partial(model.tokenizer(
+                add_prefix_space=True,
+                add_eos_token=True,
+                return_token_type_ids=True,
+                # NOTE: This is important - for our experiments with TurnGPT,
+                # we do not want to split speaker by the inline eos token.
+                split_speaker_by_inline_eos=False,
+                **kwargs
+            ))
+        model.encode = _turngpt_encode_wrapper
     else:
         raise NotImplementedError(
             f"Experiment {cfg.experiment.name} not defined"

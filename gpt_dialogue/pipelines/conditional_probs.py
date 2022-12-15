@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-11 17:47:32
+# @Last Modified time: 2022-12-15 16:15:20
 
 from distutils import text_file
 from email import message
@@ -237,22 +237,37 @@ class ConditionalProbabilityPipeline:
 
         # NOTE: We need to make sure there are no empty strings that go to the
         # tokenizer.
+        print("text so far: ",text_so_far)
         turns_so_far = [" ".join(turn_words).strip()
                         for turn_words in text_so_far]
+        print("turns so far: ", turns_so_far)
         turns_so_far = [item for item in turns_so_far if len(item) > 0]
         context = [" ".join(turn_words).strip() for turn_words in context]
         context = [item for item in context if len(item) > 0]
+        print("context: ", context)
+        # print(model.encode(context, split_speaker_by_inline_eos=True))
+        # sys.exit(-1)
 
+        # split = False
         context_encoding = model.encode(
-            context, return_tensors="pt"
+            context, return_tensors="pt",
+            # split_speaker_by_inline_eos=split
         )
         whole_text_encoding = model.encode(
-            turns_so_far, return_tensors="pt"
+            turns_so_far, return_tensors="pt",
+            # split_speaker_by_inline_eos=split
         )
+
+        print("WTE: ", whole_text_encoding)
+
         cw_encoding = {
             k: v[:, context_encoding["input_ids"].shape[1]:]
             for k, v in whole_text_encoding.items()
         }
+
+        print(f"cw encoding: {cw_encoding}")
+        cw_decoded = model.decode(*cw_encoding["input_ids"])
+        print(f"cw decoding: {cw_decoded}")
         # NOTE: We assume that each additional work MUST add tokens to the encoding.
         whole_text_encoding_shape = whole_text_encoding["input_ids"].shape[1]
         context_encoding_shape = context_encoding["input_ids"].shape[1]

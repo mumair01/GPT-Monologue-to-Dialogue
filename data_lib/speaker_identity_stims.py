@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 12:50:18
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-10 14:07:48
+# @Last Modified time: 2022-12-15 17:05:41
 
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
@@ -118,11 +118,15 @@ class SpeakerIdentityStimuliDataset:
             for toks in re.split(r"\. |\?|\t+|:", line) ]
         conv = [line for line in conv if len(line) > 0]
 
-        # Assumption: There are only two turns in the conversation.
+        # Assumption: There are only two turns in the conversation
+        assert len(conv) == 4 # 4 here since we split the speakers.
+        # NOTE: IMPORTANT: Using the <ts> label to merge but this
+        # should be the same as the label that is used by the tokenizer
+        # later.
         if conv[0] == conv[2]:
-            conv = [f"{conv[1].strip()} {conv[3].strip()}"]
+            conv = [f"{conv[1].strip()}<ts> {conv[3].strip()}<ts>"]
         else:
-            conv = [f"{conv[1].strip()}",  f"{conv[3].strip()}"]
+            conv = [f"{conv[1].strip()}<ts>",  f"{conv[3].strip()}<ts>"]
 
         # Add the conversation name to each item in list
         conv = [[conv_name, turn_no, item] for turn_no,item in enumerate(conv)]
@@ -185,7 +189,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--path", type=str, required=True,
-        help="ICC .cha file path or directory containing .cha files")
+        help=".cha file path or directory containing .cha files")
     parser.add_argument(
         "--variant", type=str, help="Variant of the ICC to generate")
     parser.add_argument(

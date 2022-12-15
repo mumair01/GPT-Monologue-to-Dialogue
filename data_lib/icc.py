@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 10:46:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-10 14:07:44
+# @Last Modified time: 2022-12-15 13:01:04
 
 import sys
 import os
@@ -34,7 +34,7 @@ from data_lib.core import (
 # speaker? We should be able to indicate this in TurnGPT since the turns
 # may be syntactically incoherent, but might make sense as individual subsequent
 # turns by the same speaker.
-# Should this really matter since there is no temporal embeddings. It might
+# Should this really matter since there are no temporal embeddings. It might
 # because subsequent sequences by speakers may matter.
 # I might want to change the no labels dataset to include a speaker tag
 # that may be used by turngpt - but I'm not sure how to even approach this
@@ -127,7 +127,6 @@ class ICCDataset:
         """
         conv_name = get_filename(cha_path)
         conv = read_text(cha_path)
-
         normalizer_seq = create_normalizer_sequence(
             remove_words=["start", "end"],
             custom_regex= "(\*)"
@@ -141,8 +140,13 @@ class ICCDataset:
             split_toks = [normalizer_seq(tok) for tok in split_toks[:-1]]
             split_toks = [tok for tok in split_toks if len(tok) > 0]
             if len(split_toks) > 0:
+                # Merging with the previous turn if the speaker labels are the
+                # Same
+                # NOTE: IMPORTANT: Using the <ts> label to merge but this
+                # should be the same as the label that is used by the tokenizer
+                # later.
                 if len(data) > 0 and data[-1][-1][0] == split_toks[0]:
-                    data[-1][-1][-1] += " " +  " ".join(split_toks[1:])
+                    data[-1][-1][-1] += "<ts>  " +  " ".join(split_toks[1:])
                 elif len(split_toks) == 2:
                     data.append([conv_name, split_toks])
         # Removing the speaker labels

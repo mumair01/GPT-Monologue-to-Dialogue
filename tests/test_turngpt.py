@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-15 12:37:35
+# @Last Modified time: 2022-12-15 15:52:55
 
 import pytest
 import sys
@@ -84,28 +84,29 @@ def test_spoken_dialogue_tokenizer_call(string, configs):
 @pytest.mark.parametrize("string", [
     # Case 1: A single string with multiple individual turns.
     "i tripped in front of my boss at work today<ts> don't laugh",
-    # Case 2: A conversation with two turns by speaker 1 followed by a turn
-    # by speaker 1.
-    [
-        "i tripped in front of my boss at work today<ts> don't laugh",
-        "that is really funny"
-    ],
-    # Case 3: Multiple conversations
-    [
-        [
-            "i tripped in front of my boss at work today<ts> don't laugh",
-            "that is really funny",
-            "i don't think that was funny<ts> did you",
-            "hello one two three"
-        ],
-        [
-            "the cat is on the<ts> the mat",
-            "no it is not"
-        ]
-    ]
+    # # Case 2: A conversation with two turns by speaker 1 followed by a turn
+    # # by speaker 1.
+    # [
+    #     "i tripped in front of my boss at work today<ts> don't laugh",
+    #     "that is really funny"
+    # ],
+    # # Case 3: Multiple conversations
+    # [
+    #     [
+    #         "i tripped in front of my boss at work today<ts> don't laugh",
+    #         "that is really funny",
+    #         "i don't think that was funny<ts> did you",
+    #         "hello one two three"
+    #     ],
+    #     [
+    #         "the cat is on the<ts> the mat",
+    #         "no it is not"
+    #     ]
+    # ]
 ])
 @pytest.mark.parametrize("split_speaker_by_inline_eos", [
-    True, False
+    True,
+    # False
 ])
 def test_spoken_dialogue_tokenizer_encode_decode_multi_turn_speaker(
     string, split_speaker_by_inline_eos, configs
@@ -115,12 +116,14 @@ def test_spoken_dialogue_tokenizer_encode_decode_multi_turn_speaker(
     turns to confirm that the correct speaker identities are assigned per turn.
     """
     tokenizer = SpokenDialogueTokenizer(
-        **configs["spoken_dialogue_tokenizer"]
+        **configs["spoken_dialogue_tokenizer"],
     )
     toks = tokenizer(
         string,
-        split_speaker_by_inline_eos=split_speaker_by_inline_eos
+        split_speaker_by_inline_eos=split_speaker_by_inline_eos,
+        # return_tensors="pt"
     )
+    print(toks)
     print(f"Input string: {string}")
     print(f"split_speaker_by_inline_eos: {split_speaker_by_inline_eos}")
     for speaker in (1, 2):

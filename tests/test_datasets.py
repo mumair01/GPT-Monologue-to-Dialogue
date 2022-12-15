@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-12-01 02:32:17
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-03 01:25:02
+# @Last Modified time: 2022-12-15 13:04:26
 
 import sys
 import os
@@ -28,19 +28,29 @@ SPEAKER_IDENTITY_SIMTS_PATH = "data/raw/speaker_identity_stims"
 ############################### TESTING METHODS ##############################
 
 
-@pytest.mark.parametrize("variant, output_dir, data_dir", [
-   ("special_labels", OUTPUT_DIR, FIVE_TRAIN_THIRTY_SEVEN_TEST_DIR_PATH),
-   ("no_labels", OUTPUT_DIR, FIVE_TRAIN_THIRTY_SEVEN_TEST_DIR_PATH)
+@pytest.mark.parametrize("variant",[
+   # "special_labels",
+   "no_labels"
 ])
-def test_icc_dataset_call(variant, output_dir, data_dir):
+@pytest.mark.parametrize("data_dir", [
+   # FIVE_TRAIN_THIRTY_SEVEN_TEST_DIR_PATH,
+   FIVE_TRAIN_THIRTY_SEVEN_TRAIN_DIR_PATH,
+   # TWENTY_EIGHT_TRAIN_FOURTEEN_TEST_PATH,
+   # TWENTY_EIGHT_TRAIN_FOURTEEN_TRAIN_PATH
+])
+def test_icc_dataset_call(variant, data_dir):
     dataset = ICCDataset(data_dir)
-    dataset(variant, output_dir, os.path.basename(data_dir))
+    dataset(variant, OUTPUT_DIR, os.path.basename(data_dir))
 
 
-@pytest.mark.parametrize("variant, output_dir, data_dir", [
-   ("special_labels", OUTPUT_DIR, SPEAKER_IDENTITY_SIMTS_PATH),
-#    ("no_labels", OUTPUT_DIR, SPEAKER_IDENTITY_SIMTS_PATH)
+@pytest.mark.parametrize("variant", [
+   # "special_labels",
+   "no_labels"
 ])
-def test_speaker_identity_dataset_call(variant, output_dir, data_dir):
+@pytest.mark.parametrize("data_dir", [
+   SPEAKER_IDENTITY_SIMTS_PATH
+])
+
+def test_speaker_identity_dataset_call(variant, data_dir):
     dataset = SpeakerIdentityStimuliDataset(data_dir)
-    dataset(variant,output_dir)
+    dataset(variant,OUTPUT_DIR)

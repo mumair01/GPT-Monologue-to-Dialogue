@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-14 18:03:25
+# @Last Modified time: 2022-12-15 16:46:18
 
 
 import sys
@@ -126,7 +126,7 @@ def generate_wandb_run_name(cfg):
     logger=logger,
     wandb_project=WANDB_PROJECT,
     wandb_entity=WANDB_ENTITY,
-    wandb_init_mode=None,
+    wandb_init_mode="disabled",
     run_name_func=generate_wandb_run_name
 )
 def run_inference(cfg : DictConfig, run : wandb.run):
@@ -140,16 +140,19 @@ def run_inference(cfg : DictConfig, run : wandb.run):
         model = TurnGPT()
         # NOTE: Augmenting the native tokenizer so that the correct Args
         # are used for the model tokenizer.
-        model.encode = (
-            lambda : partial(model.tokenizer(
+        def _turngpt_encode_wrapper(text, *args,**kwargs):
+            return model.tokenizer(
+                text,
+                *args,
                 add_prefix_space=True,
-                add_eos_token=True,
+                add_eos_token=False,
                 return_token_type_ids=True,
                 # NOTE: This is important - for our experiments with TurnGPT,
                 # we do not want to split speaker by the inline eos token.
                 split_speaker_by_inline_eos=False,
-            ))
-        )
+                **kwargs
+            )
+        model.encode = _turngpt_encode_wrapper
     else:
         raise NotImplementedError(
             f"Experiment {cfg.experiment.name} not defined"

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:54:22
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-14 18:04:05
+# @Last Modified time: 2022-12-15 15:57:41
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -150,15 +150,15 @@ class TurnGPT(LanguageModel):
         Encode text as required for inference by this model.
         NOTE: Ensure that the args passed to the tokenizer are correct.
         """
-
-
         return self.tokenizer(
             text,
-            # add_prefix_space=True,
-            # add_eos_token=True,
-            # return_token_type_ids=True,
-            # split_speaker_by_inline_eos=False,
+            add_eos_token=False
             *args, **kwargs
+        )
+
+    def decode(self, input_ids, *args, **kwargs):
+        return self.tokenizer.decode(
+            input_ids, *args, **kwargs
         )
 
 

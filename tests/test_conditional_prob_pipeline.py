@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-11 21:05:04
+# @Last Modified time: 2022-12-15 16:03:06
 
 import pytest
 
@@ -69,15 +69,15 @@ def test_initialize_conditional_prob_pipe(model_class):
 
 @pytest.mark.parametrize("model_class, string_list", [
     # Case 1: Monologue gpt different speakers
-    (MonologueGPT, ["<START>", "<SP1>  i haven't seen the keys anywhere  <SP1>",
-     "<SP2> have you <SP2>", "<END>"]),
-    # Case 2: Monologue gpt same speaker
-    (MonologueGPT, [
-     "<START>", "<SP1> i haven't seen the keys anywhere have you <SP1>", "<END>"]),
+    # (MonologueGPT, ["<START>", "<SP1>  i haven't seen the keys anywhere  <SP1>",
+    #  "<SP2> have you <SP2>", "<END>"]),
+    # # Case 2: Monologue gpt same speaker
+    # (MonologueGPT, [
+    #  "<START>", "<SP1> i haven't seen the keys anywhere have you <SP1>", "<END>"]),
     # Case 3: TurnGPT different speakers
-    (TurnGPT, ["sage told me you're going skiing over break", "go on"]),
+    # (TurnGPT, ["sage told me you're going skiing over break", "go on"]),
     # Case 4: TurnGPT same speaker
-    (TurnGPT, ["sage told me you're going skiing over break go on"]),
+    (TurnGPT, ["sage told me you're going skiing over break<ts> go on", "that was weird"]),
     # NOTE: The tests below may take a long time to run.
     # (MonologueGPT, load_inference_text_from_file()),
     # (TurnGPT, load_inference_text_from_file())
@@ -138,26 +138,7 @@ def test_conditional_prob_pipe_call(model_class, string_list, configs):
         "<SP2> don't laugh <SP2>", "<END>"],
         "<SP1> don't laugh <SP1>",
         "<SP2> don't laugh <SP2>"
-    ),
-    # NOTE: These have been moved to the turngpt tests.
-    # (
-    #     # Different congruent - no special tokens / speaker identities.
-    #     ["do you have any experience filing taxes", "a bit"],
-    #     # Same violation - no special tokens / speaker identities.
-    #     ["i found the perfect shelf for our living room on craigslist",
-    #     "a bit"],
-    #     "a bit",
-    #     "a bit",
-    # ),
-    # (
-    #     # Same congruent - no special tokens / speaker identities.
-    #     ["i tripped in front of my boss at work today", "don't laugh"],
-    #     # Same Violation -  no special tokens / speaker identities.
-    #     ["why haven't you paid our rent yet","don't laugh"],
-    #     "don't laugh",
-    #     "don't laugh"
-    # )
-
+    )
 ])
 def test_simple_congruent_violation_comparison_monologue_gpt(
     congruent, violation, congruent_match_turn, violation_match_turn, configs
