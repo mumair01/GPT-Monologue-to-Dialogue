@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-13 14:39:29
+# @Last Modified time: 2022-12-15 12:37:35
 
 import pytest
 import sys
@@ -78,6 +78,56 @@ def test_spoken_dialogue_tokenizer_call(string, configs):
     print(f"Result from __call__ method:\n {toks}")
 
 
+# NOTE: This test shows that the speaker states are split by <ts> tokens.
+# An effect of syntactic incoherence might be there since that is the main
+# thing the model is learning during pre-training.
+@pytest.mark.parametrize("string", [
+    # Case 1: A single string with multiple individual turns.
+    "i tripped in front of my boss at work today<ts> don't laugh",
+    # Case 2: A conversation with two turns by speaker 1 followed by a turn
+    # by speaker 1.
+    [
+        "i tripped in front of my boss at work today<ts> don't laugh",
+        "that is really funny"
+    ],
+    # Case 3: Multiple conversations
+    [
+        [
+            "i tripped in front of my boss at work today<ts> don't laugh",
+            "that is really funny",
+            "i don't think that was funny<ts> did you",
+            "hello one two three"
+        ],
+        [
+            "the cat is on the<ts> the mat",
+            "no it is not"
+        ]
+    ]
+])
+@pytest.mark.parametrize("split_speaker_by_inline_eos", [
+    True, False
+])
+def test_spoken_dialogue_tokenizer_encode_decode_multi_turn_speaker(
+    string, split_speaker_by_inline_eos, configs
+):
+    """
+    In this test, we encode and decode strings where a speaker may have multiple
+    turns to confirm that the correct speaker identities are assigned per turn.
+    """
+    tokenizer = SpokenDialogueTokenizer(
+        **configs["spoken_dialogue_tokenizer"]
+    )
+    toks = tokenizer(
+        string,
+        split_speaker_by_inline_eos=split_speaker_by_inline_eos
+    )
+    print(f"Input string: {string}")
+    print(f"split_speaker_by_inline_eos: {split_speaker_by_inline_eos}")
+    for speaker in (1, 2):
+        sp_decoded = tokenizer.decode_speaker(toks, speaker)
+        print(f"Turns by speaker {speaker}")
+        print(sp_decoded)
+
 
 @pytest.mark.parametrize("string", [
     # Simple string
@@ -133,49 +183,16 @@ def test_spoken_dialogue_tokenizer_decode_speaker_ids(string, speaker, configs):
         **configs["spoken_dialogue_tokenizer"]
     )
     toks = tokenizer(string)
-    sp_token_id = tokenizer.sp1_token_id if speaker == 1 else tokenizer.sp2_token_id
-    sp_idx = np.where(np.asarray(toks['speaker_ids']) == sp_token_id)
-    sp_input_ids = np.take(toks['input_ids'], sp_idx)
-    decoded = tokenizer.decode(*sp_input_ids)
+    decoded = tokenizer.decode_speaker(toks, speaker)
     print(f"Input string: {string}")
     print(f"Decoded string for {speaker}: {decoded}")
-
-
-# NOTE: This test shows that the speaker states are split by <ts> tokens.
-# An effect of syntactic incoherence might be there since that is the main
-# thing the model is learning during pre-training.
-@pytest.mark.parametrize("string", [
-    # Case 1: A single string with multiple individual turns.
-    "i tripped in front of my boss at work today<ts> don't laugh",
-    # Case 2: A conversation with two turns by speaker 1 followed by a turn
-    # by speaker 1.
-    [
-        "i tripped in front of my boss at work today<ts> don't laugh",
-        "that is really funny"
-    ]
-])
-def test_spoken_dialogue_tokenizer_encode_decode_multi_turn_speaker(
-    string, configs
-):
-    """
-    In this test, we encode and decode strings where a speaker may have multiple
-    turns to confirm that the correct speaker identities are assigned per turn.
-    """
-    tokenizer = SpokenDialogueTokenizer(
-        **configs["spoken_dialogue_tokenizer"]
-    )
-    toks = tokenizer(string)
-    print(f"Input string:\n{string}")
-    for speaker in (1, 2):
-        sp_decoded = tokenizer.decode_speaker(toks,speaker)
-        print(f"Turns by speaker {speaker}")
-        print(sp_decoded)
 
 
 def test_load_default():
     """Load the model with default values """
     model = TurnGPT()
     model.load()
+
 
 def test_load_custom(configs):
     """Load the model with the specified arguments"""
