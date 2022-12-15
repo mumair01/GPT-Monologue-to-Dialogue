@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-11 17:51:43
+# @Last Modified time: 2022-12-14 18:03:25
 
 
 import sys
@@ -16,6 +16,7 @@ import wandb
 from omegaconf import DictConfig, OmegaConf
 import hydra
 import logging
+from functools import partial
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
 
@@ -137,6 +138,18 @@ def run_inference(cfg : DictConfig, run : wandb.run):
         model = MonologueGPT()
     elif cfg.experiment.name == "inference_turngpt":
         model = TurnGPT()
+        # NOTE: Augmenting the native tokenizer so that the correct Args
+        # are used for the model tokenizer.
+        model.encode = (
+            lambda : partial(model.tokenizer(
+                add_prefix_space=True,
+                add_eos_token=True,
+                return_token_type_ids=True,
+                # NOTE: This is important - for our experiments with TurnGPT,
+                # we do not want to split speaker by the inline eos token.
+                split_speaker_by_inline_eos=False,
+            ))
+        )
     else:
         raise NotImplementedError(
             f"Experiment {cfg.experiment.name} not defined"
