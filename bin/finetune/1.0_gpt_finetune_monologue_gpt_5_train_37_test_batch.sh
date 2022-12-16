@@ -24,7 +24,7 @@ PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 ENV="hpc"
 DATASET="finetune/icc_5_train_37_test_special_labels"
 EXPERIMENT="finetune_monologue_gpt"
-HYDRA_OVERWRITES=""
+HYDRA_OVERWRITES="hydra.verbose=True"
 HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 
 #load anaconda module

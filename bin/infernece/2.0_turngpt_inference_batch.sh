@@ -24,7 +24,7 @@ PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 ENV="hpc"
 DATASET="inference/speaker_identity_stims_no_labels"
 EXPERIMENT="inference_turn_gpt"
-HYDRA_OVERWRITES=""
+HYDRA_OVERWRITES="hydra.verbose=True"
 HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 
 

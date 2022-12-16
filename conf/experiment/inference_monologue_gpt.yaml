@@ -6,6 +6,7 @@ load:
   tokenizer_checkpoint : gpt2
 
   ## NOTE: Uncomment to run trained model. These should be the same in finetuning.
+  # There should be commented out for the null model.
   tokenizer_eos_token : <|endoftext|>
   tokenizer_pad_token : <PAD>
   tokenizer_additional_special_tokens :

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-10 18:47:50
+# @Last Modified time: 2022-12-16 11:02:01
 
 import sys
 import os
@@ -190,3 +190,6 @@ class MonologueGPT(LanguageModel):
             return self.tokenizer(text, *args, **kwargs)
         else:
             raise NotImplementedError()
+
+    def decode(self, input_ids, *args, **kwargs):
+        return self._tokenizer.decode(input_ids,*args,**kwargs)
