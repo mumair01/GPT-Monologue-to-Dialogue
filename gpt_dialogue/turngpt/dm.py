@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-16 10:08:31
+# @Last Modified time: 2022-12-16 12:46:22
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT.
@@ -86,6 +86,7 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
         )
 
         # Group the data based on conversations
+        # NOTE: This ensures that separate conversations are treated separately.
         for split in ('train', 'validation'):
             dataset[split] = self._group_by(
                 dataset[split],self.conversation_id_key,self._join)
@@ -159,7 +160,6 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
 
     def _chunk_tokenized_samples(self, tokenized_samples):
         """Chunk the given tokenized samples based on the size. """
-        print(self.max_length)
         if self.chunk_size > self.max_length:
             print(f"WARNING: Chunk size {self.chunk_size} greater than max length "
                f"{self.max_length} may lead to data loss")
