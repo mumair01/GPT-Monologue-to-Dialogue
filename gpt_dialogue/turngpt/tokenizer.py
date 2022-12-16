@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-15 16:45:42
+# @Last Modified time: 2022-12-16 10:01:06
 
 ############################
 # This module is a re-implementation of the TurnGPT tokenizer as a comparison to the
@@ -322,7 +322,8 @@ class SpokenTokenizer:
             return encoding
         else:
             raise  ValueError(
-                "text input must of type `str` (single example), `List[str]` (batch or single pretokenized example) "
+                "text input must of type `str` (single example), `List[str]` "
+                "(batch or single pretokenized example) "
                 "or `List[List[str]]` (batch of pretokenized examples)."
             )
 

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 16:52:18
+# @Last Modified time: 2022-12-16 10:08:31
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT.
@@ -72,6 +72,8 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
 
     ######################## OVERRIDDEN METHODS ##############################
 
+    # TODO: Potentially add a method to be able to pass kwargs to the
+    # tokenizer encode method.
     def prepare_data(self):
         """
         Load, group by conversation, tokenizer, chunk, and save the dataset.
