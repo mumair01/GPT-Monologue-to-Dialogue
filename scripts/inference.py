@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-16 11:51:28
+# @Last Modified time: 2022-12-16 12:54:06
 
 
 import sys
@@ -145,6 +145,9 @@ def run_inference(cfg : DictConfig, run : wandb.run):
         model = TurnGPT()
         # NOTE: Augmenting the native tokenizer so that the correct Args
         # are used for the model tokenizer.
+        # IMPORTANT: This is based on the assumption that the input
+        # data contains <ts> / EOS tokens both for speaker continuations and
+        # at the end of turns.
         def _turngpt_encode_wrapper(text, *args,**kwargs):
             return model.tokenizer(
                 text,

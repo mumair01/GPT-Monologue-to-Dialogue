@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-15 13:18:48
+# @Last Modified time: 2022-12-16 12:55:49
 
 import sys
 import os
@@ -61,6 +61,8 @@ def run_finetuning(cfg : DictConfig, run : wandb.run):
         model = TurnGPT()
         # NOTE: Augmenting the native tokenizer so that the correct Args
         # are used for the model tokenizer.
+        # IMPORTANT: This is based off the assumption that the training data
+        # has <ts> / EOS tokens ONLY at turn continuations, NOT at turn ends.
         def _turngpt_encode_wrapper(**kwargs):
             return partial(model.tokenizer(
                 add_prefix_space=True,
