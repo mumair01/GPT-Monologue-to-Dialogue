@@ -16,7 +16,9 @@ from functools import partial
 
 import shutil
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
+sys.path.insert(
+    0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
+)
 
 from data_lib.core import (
     read_text,
@@ -27,8 +29,9 @@ from data_lib.core import (
     remove_words_from_string,
     process_files_in_dir,
     create_dir,
-    remove_file
+    remove_file,
 )
+
 
 # TODO: For the no labels dataset, how do we indicate separate turns by the same
 # speaker? We should be able to indicate this in TurnGPT since the turns
@@ -47,45 +50,44 @@ class ICCDataset:
     _VARIANTS = ("no_labels", "special_labels")
     _EXT = "cha"
 
-    _CSV_HEADERS = ["convName","convID", "Utterance"]
+    _CSV_HEADERS = ["convName", "convID", "Utterance"]
 
-
-    def __init__(self, dir_path : str):
-        assert os.path.isdir(dir_path), \
-            f"ERROR: Specified directory {dir_path} does not exist"
+    def __init__(self, dir_path: str):
+        assert os.path.isdir(
+            dir_path
+        ), f"ERROR: Specified directory {dir_path} does not exist"
         self.dir_path = dir_path
 
-    def __call__(self, variant : str, save_dir : str, outfile : str):
-        assert variant in self._VARIANTS, \
-            f"ERROR: Specified variant not defined: {variant}"
+    def __call__(self, variant: str, save_dir: str, outfile: str):
+        assert (
+            variant in self._VARIANTS
+        ), f"ERROR: Specified variant not defined: {variant}"
 
         res = process_files_in_dir(
             dir_path=self.dir_path,
             file_ext=self._EXT,
-            process_fn=partial(self._process_file,variant=variant),
-            recursive=False
+            process_fn=partial(self._process_file, variant=variant),
+            recursive=False,
         )
 
         # Add conversation number to each conv.
         combined = []
         for conv_no, conv_data in enumerate(res):
             for item in conv_data:
-                item.insert(1,conv_no)
+                item.insert(1, conv_no)
                 combined.append(item)
 
         # Generate the save path and save
         create_dir(save_dir)
-        partial_save_path = os.path.join(
-            save_dir,f"{outfile}_{variant}")
+        partial_save_path = os.path.join(save_dir, f"{outfile}_{variant}")
         csv_path = f"{partial_save_path}.csv"
         self._save_dataset_as_csv(csv_path, combined)
 
-
     def read_dataset_csv(
         self,
-        csv_path : str,
-        start_conv_no : int = 0,
-        end_conv_no : int = -1,
+        csv_path: str,
+        start_conv_no: int = 0,
+        end_conv_no: int = -1,
     ) -> List[pd.DataFrame]:
         """
         Read a csv file prepared by this Dataset and obtain conversations b/w
@@ -101,13 +103,9 @@ class ICCDataset:
 
     @property
     def special_labels_variant_labels(self):
-        return {
-            "speaker_base" : "<SP{}>",
-            "start" : "<START>",
-            "end" : "<END>"
-        }
+        return {"speaker_base": "<SP{}>", "start": "<START>", "end": "<END>"}
 
-    def _process_file(self, cha_path : str, variant : str):
+    def _process_file(self, cha_path: str, variant: str):
         assert os.path.isfile(cha_path), f"ERROR: {cha_path} does not exist"
 
         if variant == "no_labels":
@@ -119,7 +117,6 @@ class ICCDataset:
                 f"ERROR: Variant is not defined: {variant}"
             )
 
-
     def _process_no_labels_variant(self, cha_path):
         """
         Here, we want to remove all explicit speaker labels and make the assumption
@@ -128,8 +125,7 @@ class ICCDataset:
         conv_name = get_filename(cha_path)
         conv = read_text(cha_path)
         normalizer_seq = create_normalizer_sequence(
-            remove_words=["start", "end"],
-            custom_regex= "(\*)"
+            remove_words=["start", "end"], custom_regex="(\*)"
         )
 
         data = []
@@ -146,7 +142,7 @@ class ICCDataset:
                 # should be the same as the label that is used by the tokenizer
                 # later.
                 if len(data) > 0 and data[-1][-1][0] == split_toks[0]:
-                    data[-1][-1][-1] += "<ts>  " +  " ".join(split_toks[1:])
+                    data[-1][-1][-1] += "<ts>  " + " ".join(split_toks[1:])
                 elif len(split_toks) == 2:
                     data.append([conv_name, split_toks])
         # Removing the speaker labels
@@ -169,13 +165,17 @@ class ICCDataset:
         # start, end, and speaker labels.
         text_normalizer_seq = create_normalizer_sequence()
         labels_normalizer_seq = create_normalizer_sequence(
-            replace_words= {
-                "sp1" : self.special_labels_variant_labels["speaker_base"].format("1"),
-                "sp2" : self.special_labels_variant_labels["speaker_base"].format("2"),
-                "start" : self.special_labels_variant_labels["start"],
-                "end" : self.special_labels_variant_labels["end"]
+            replace_words={
+                "sp1": self.special_labels_variant_labels[
+                    "speaker_base"
+                ].format("1"),
+                "sp2": self.special_labels_variant_labels[
+                    "speaker_base"
+                ].format("2"),
+                "start": self.special_labels_variant_labels["start"],
+                "end": self.special_labels_variant_labels["end"],
             },
-            custom_regex= "\*"
+            custom_regex="\*",
         )
 
         data = []
@@ -197,7 +197,7 @@ class ICCDataset:
             split_toks = [tok for tok in split_toks if len(tok) > 0]
             if len(split_toks) > 0:
                 split_toks = " ".join(split_toks)
-                data.append([conv_name,split_toks])
+                data.append([conv_name, split_toks])
 
         return data
 
@@ -208,26 +208,26 @@ class ICCDataset:
         dataset_df.to_csv(csv_path)
 
     def _load_dataset_from_csv(self, csv_path):
-        return pd.read_csv(csv_path,names=self._CSV_HEADERS, index_col=0)
+        return pd.read_csv(csv_path, names=self._CSV_HEADERS, index_col=0)
+
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--path", type=str, required=True,
-        help="ICC .cha file path or directory containing .cha files")
+        "--path",
+        type=str,
+        required=True,
+        help="ICC .cha file path or directory containing .cha files",
+    )
     parser.add_argument(
-        "--variant", type=str, help="Variant of the ICC to generate")
+        "--variant", type=str, help="Variant of the ICC to generate"
+    )
     parser.add_argument(
-        "--outdir", type=str, default="./", help="Output directory")
-    parser.add_argument(
-        "--outfile", type=str,  help="Name of the output file")
+        "--outdir", type=str, default="./", help="Output directory"
+    )
+    parser.add_argument("--outfile", type=str, help="Name of the output file")
 
     args = parser.parse_args()
 
     dataset = ICCDataset(dir_path=args.path)
-    dataset(
-        variant=args.variant,
-        save_dir=args.outdir,
-        outfile=args.outfile
-    )
+    dataset(variant=args.variant, save_dir=args.outdir, outfile=args.outfile)

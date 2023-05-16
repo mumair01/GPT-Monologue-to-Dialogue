@@ -1,3 +1,0 @@
-name : icc_28_train_14_test_special_labels
-train_csv_path : data/processed/ICC/28_train_14_test/train_special_labels.csv
-validation_csv_path : data/processed/ICC/28_train_14_test/test_special_labels.csv

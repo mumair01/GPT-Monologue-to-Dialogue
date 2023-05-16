@@ -1,0 +1,5 @@
+
+name : tufts_hpc
+seed : null
+paths:
+  root : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue

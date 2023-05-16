@@ -1,12 +1,15 @@
+#!/bin/bash
+# @Author: Muhammad Umair
+# @Date:   2022-08-22 12:36:11
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2023-05-16 13:58:24
 #  Bash script to generate all processed data from raw data using the data
 # library
 # NOTE: Conda env must be active before running.
-
-PROJECT_PATH=/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/
+# PROJECT_PATH must be set. 
 
 ICC_SCRIPT_PATH=${PROJECT_PATH}data_lib/icc.py
 SPEAKER_IDENTITY_SCRIPT_PATH=${PROJECT_PATH}data_lib/speaker_identity_stims.py
-
 
 
 declare -a variants=(no_labels special_labels)

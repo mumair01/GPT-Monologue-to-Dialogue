@@ -19,11 +19,7 @@ human-written articles.
 
 All of this is to say GPT and other language models have made huge progress in modeling and simulating written language.
 However, there has been relatively little progress in creating language models that can accurately simulate spoken language.
-There would be many benefits to doing so. Conversational AI agents with more naturalistic speech will be easier to use, understand and trust. Language models could also help psycholinguists with stimulus norming, the process of ensuring that a stimulus
-is predictable or surprising. Language models could even help psycholinguists create stimuli, a process that typically requires
-extensive time and creativity. These are only some of the ways that language models capable of replicating human dialog would
-be useful. However, there is no evidence that the state-of-the-art language models, currently trained on written language scraped
-from websites like Reddit, can quickly learn to use language in dialog.
+There would be many benefits to doing so. Conversational AI agents with more naturalistic speech will be easier to use, understand and trust. Language models could also help psycholinguists with stimulus norming, the process of ensuring that a stimulus is predictable or surprising. Language models could even help psycholinguists create stimuli, a process that typically requires extensive time and creativity. These are only some of the ways that language models capable of replicating human dialog would be useful. However, there is no evidence that the state-of-the-art language models, currently trained on written language scraped from websites like Reddit, can quickly learn to use language in dialog.
 
 In this project, we implement twp versions of GPT-2 - one sensitive to speaker identity and the other ignorant of speaker identity. We finetune these models on high quality internally recorded spoken language data and generate conditional probabilities of specially recorded stimuli. These stimuli are designed to make sense when spoken by a certain speaker and have congurent and incongruent conditions. If the model captures dialogue structure, then we expect its output probabilities to match the stimuli conditions.
 
@@ -94,7 +90,15 @@ Here is a description of what each directory contains:
 | scripts   | Scripts for finetuning and inference        |
 | tests   | Pytest testing folder        |
 
-### Usage
+
+### Dataset 
+
+In our experiments, we use two datasets - the In Conversation Corpus (ICC) and Speaker Identity Stimuli - that we do not publicly share. Therefore, to replicate our experiments, use the data_lib scripts icc.py and speaker_identity_stims.py along with conf to set up the expected datasets.
+
+### Finetuning 
+
+
+### Inference
 
 The first step is to clone this repository using:
 
@@ -108,7 +112,7 @@ Next, use [conda](https://docs.conda.io/en/latest/) to install all required libr
 conda env create -f environment.yml
 ```
 
-In our experiments, we use two datasets - the In Conversation Corpus (ICC) and Speaker Identity Stimuli - that we do not publicly share. Therefore, to replicate our experiments, use the data_lib scripts icc.py and speaker_identity_stims.py along with conf to set up the expected datasets.
+
 
 Once the finetuning and inference datasets have been created, use finetune.py and inference.py in the scripts directory to finetune and generate conditional probabilities. Both these scripts can be run as [hydra apps](https://hydra.cc/docs/intro/) as follows:
 

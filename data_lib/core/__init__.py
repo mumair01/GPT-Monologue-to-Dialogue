@@ -9,7 +9,7 @@ from .normalize import (
     add_whitespace_after_punctuation,
     remove_words_from_string,
     replace_word_from_string,
-    create_normalizer_sequence
+    create_normalizer_sequence,
 )
 
 from .utils import (
@@ -21,5 +21,5 @@ from .utils import (
     create_dir,
     remove_file,
     process_file,
-    process_files_in_dir
+    process_files_in_dir,
 )
