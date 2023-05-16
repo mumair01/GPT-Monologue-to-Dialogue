@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-16 12:54:06
+# @Last Modified time: 2022-12-16 14:39:54
 
 
 import sys
@@ -131,7 +131,7 @@ def generate_wandb_run_name(cfg):
     logger=logger,
     wandb_project=WANDB_PROJECT,
     wandb_entity=WANDB_ENTITY,
-    wandb_init_mode="disabled",
+    wandb_init_mode=None,
     run_name_func=generate_wandb_run_name
 )
 def run_inference(cfg : DictConfig, run : wandb.run):

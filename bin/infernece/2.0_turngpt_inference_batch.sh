@@ -4,7 +4,7 @@
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
 #SBATCH -n 32   #30 number of cores (number of threads)
-#SBATCH --gres=gpu:t4:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
+#SBATCH --gres=gpu:p100:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
 #SBATCH --mem=20g #requesting 60GB of RAM total
@@ -23,7 +23,7 @@ PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 # Requires the finetuning dataset and env to be specified.
 ENV="hpc"
 DATASET="inference/speaker_identity_stims_no_labels"
-EXPERIMENT="inference_turn_gpt"
+EXPERIMENT="inference_turngpt"
 HYDRA_OVERWRITES="hydra.verbose=True"
 HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 

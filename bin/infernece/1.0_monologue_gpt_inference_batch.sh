@@ -4,7 +4,7 @@
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
 #SBATCH -n 32   #30 number of cores (number of threads)
-#SBATCH --gres=gpu:t4:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
+#SBATCH --gres=gpu:p100:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!
 #SBATCH --mem=20g #requesting 60GB of RAM total
@@ -24,7 +24,7 @@ PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
 ENV="hpc"
 DATASET="inference/speaker_identity_stims_special_labels"
 EXPERIMENT="inference_monologue_gpt"
-HYDRA_OVERWRITES="hydra.verbose=True"
+HYDRA_OVERWRITES="hydra.verbose=False"
 HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 
 

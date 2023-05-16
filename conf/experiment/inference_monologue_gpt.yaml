@@ -1,12 +1,12 @@
 name : inference_monologue_gpt
-model_name : gpt2_null_model
+model_name : gpt_icc_28_train_14_test
 
 load:
-  model_checkpoint : gpt2
+  model_checkpoint : /cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_monologue_gpt/gpt2_icc_28_train_14_test_special_labels/2022-12-20_01-33-01/checkpoint-1160
   tokenizer_checkpoint : gpt2
 
-  ## NOTE: Uncomment to run trained model. These should be the same in finetuning.
-  # There should be commented out for the null model.
+  # NOTE: Uncomment to run trained model. These should be the same in finetuning.
+  # These should be commented out for the null model.
   tokenizer_eos_token : <|endoftext|>
   tokenizer_pad_token : <PAD>
   tokenizer_additional_special_tokens :
