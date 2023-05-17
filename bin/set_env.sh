@@ -19,7 +19,6 @@ echo "set PROJECT_PATH=$PROJECT_PATH"
 echo FINETUNE_SCRIPT_PATH=${FINETUNE_SCRIPT_PATH}
 echo INFERENCE_SCRIPT_PATH=${INFERENCE_SCRIPT_PATH}
 
-
 ## Hydra args 
 export HYDRA_OVERWRITES="hydra.verbose=True"
 
@@ -60,3 +59,5 @@ export WANDB_ENTITY=gpt-monologue-dialogue
 # Link: https://able.bio/rhett/how-to-set-and-get-environment-variables-in-python--274rgt5
 export WANDB_INIT_MODE=disabled
 
+# Provide all files in the local folder with run access
+chmod +x ${PROJECT_PATH}/bin/local/*.sh

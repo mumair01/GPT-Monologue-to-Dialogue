@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-05-17 07:36:10
+# @Last Modified time: 2023-05-17 08:46:15
 
 """ 
 Assumptions
@@ -66,7 +66,7 @@ def run_finetuning(cfg: DictConfig, run: wandb.run):
     print(OmegaConf.to_yaml(cfg))
 
     # Load the appropriate model
-    if cfg.experiment.name == "finetune_monologue_gpt":
+    if cfg.experiment.name == "finetune_gpt2":
         model = MonologueGPT()
     elif cfg.experiment.name == "finetune_turngpt":
         model = TurnGPT()
