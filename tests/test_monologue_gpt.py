@@ -2,11 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:48:46
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-13 11:24:24
+# @Last Modified time: 2023-05-16 14:02:07
 
 
 import pytest
-from gpt_dialogue.monologue_gpt import MonologueGPT
+from gpt_dialogue.gpt2 import MonologueGPT
 from tests.utils import load_configs
 
 

@@ -144,3 +144,5 @@ lightning_logs/
 wandb/
 
 test_models/
+
+output/

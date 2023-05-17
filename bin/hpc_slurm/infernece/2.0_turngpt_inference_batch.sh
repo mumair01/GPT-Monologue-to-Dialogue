@@ -13,26 +13,22 @@
 #SBATCH --mail-type=ALL # email optitions
 #SBATCH --mail-user=muhammad.umair@tufts.edu
 
-# Define paths
-USER_PATH=/cluster/tufts/deruiterlab/mumair01/
-PROJECT_PATH=${USER_PATH}projects/gpt_monologue_dialogue/
-SCRIPT_PATH=${PROJECT_PATH}scripts/inference.py
-
-PYTHON_ENV_PATH=${USER_PATH}condaenv/gpt_prod
+# Path to the set_env script is required
+ENV_SCRIPT_PATH=../set_hpc_env.sh 
+source $ENV_SCRIPT_PATH
 
 # Requires the finetuning dataset and env to be specified.
-ENV="hpc"
-DATASET="inference/speaker_identity_stims_no_labels"
-EXPERIMENT="inference_turngpt"
+DATASET=${ISISNL}
+EXPERIMENT=${EXP_INF_TURNGPT}
 HYDRA_OVERWRITES="hydra.verbose=True"
-HYDRA_ARGS="+experiment=${EXPERIMENT} +env=${ENV} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
+HYDRA_ARGS="+experiment=${EXPERIMENT} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 
 
 #load anaconda module
-module load anaconda/2021.11
+module load ${ANACONDA_MOD}
 
 # NOTE: If not using a100 GPU, load the appropriate cuda version.
-module load cuda/10.2 cudnn/7.1
+module load ${CUDA_MODS}
 
 # module load cuda/11.0 cudnn/8.0.4-11.0
 
@@ -45,6 +41,6 @@ source activate $PYTHON_ENV_PATH
 # Add the project directory to the pythonpath before running script
 export PYTHONPATH=$PROJECT_PATH
 
-python $SCRIPT_PATH ${HYDRA_ARGS}
+python $INFERENCE_SCRIPT_PATH ${HYDRA_ARGS}
 
 conda deactivate

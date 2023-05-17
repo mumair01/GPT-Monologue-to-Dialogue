@@ -5,5 +5,5 @@
 # @Last Modified time: 2022-08-12 17:23:33
 
 from gpt_dialogue.pipelines.conditional_probs import (
-    ConditionalProbabilityPipeline
+    ConditionalProbabilityPipeline,
 )

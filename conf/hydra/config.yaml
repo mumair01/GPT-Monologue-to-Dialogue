@@ -5,11 +5,10 @@ hydra:
   job:
     chdir: True
 
+# Assumption:  PROJECT_PATH var. will be set in the environment. 
+env:
+  name : sourced
+  seed : 42 
+  paths:
+    root:  ${oc.env:PROJECT_PATH}
 
-# # Composing nested config with default
-# defaults:
-#   - env : local
-#   - dataset : null
-
-#   - override hydra/job_logging: colorlog
-#   - override hydra/hydra_logging: colorlog

@@ -6,8 +6,9 @@
 
 import torch
 
+
 class LanguageModel:
-    """Abstract class the describes the methods required by a model """
+    """Abstract class the describes the methods required by a model"""
 
     @property
     def tokenizer():
@@ -22,7 +23,7 @@ class LanguageModel:
     def __call__(self, *args, **kwargs):
         raise NotImplementedError()
 
-    def to(self, device : torch.device):
+    def to(self, device: torch.device):
         raise NotImplementedError()
 
     def eval(self):
