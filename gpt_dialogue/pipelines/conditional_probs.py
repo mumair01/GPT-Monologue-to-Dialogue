@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-16 11:46:35
+# @Last Modified time: 2023-05-17 16:32:50
 
 from distutils import text_file
 from email import message
@@ -247,15 +247,9 @@ class ConditionalProbabilityPipeline:
         turns_so_far = [item for item in turns_so_far if len(item) > 0]
         context = [" ".join(turn_words).strip() for turn_words in context]
         context = [item for item in context if len(item) > 0]
-        # print("context: ", context)
-        # print(model.encode(context, split_speaker_by_inline_eos=True))
-        # sys.exit(-1)
 
-        # split = False
         context_encoding = model.encode(context, return_tensors="pt")
         whole_text_encoding = model.encode(turns_so_far, return_tensors="pt")
-
-        # print("WTE: ", whole_text_encoding)
 
         cw_encoding = {
             k: v[:, context_encoding["input_ids"].shape[1] :]

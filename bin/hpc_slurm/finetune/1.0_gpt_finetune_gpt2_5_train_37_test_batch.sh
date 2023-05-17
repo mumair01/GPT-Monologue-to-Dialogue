@@ -36,6 +36,8 @@ nvidia-smi
 #activate conda environment
 source activate $PYTHON_ENV_PATH
 
+echo $FINETUNE_SCRIPT_PATH
+
 python $FINETUNE_SCRIPT_PATH ${HYDRA_ARGS}
 
 conda deactivate
