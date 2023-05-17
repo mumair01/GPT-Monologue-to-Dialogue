@@ -41,7 +41,9 @@ export F_GPT2="finetune_gpt2"
 
 # Model Checkpoints for inference
 # NOTE: These are loaded in the experiment.yaml files from the env. 
-# since they are likely to change at a high frequency. 
+# since they are likely to change at a high frequency.
+# TODO: Add the path to the finetuned models here, or use gpt2 versions from 
+# https://huggingface.co/docs/transformers/model_doc/gpt2#:~:text=Write%20With%20Transformer%20is%20a,small%20checkpoint%3A%20distilgpt%2D2.
 export INF_GPT2_CKPT=gpt2
 export INF_TURNGPT_CKPT=gpt2
 
