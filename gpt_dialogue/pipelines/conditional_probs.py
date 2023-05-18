@@ -2,7 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 15:30:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-05-17 16:32:50
+# @Last Modified time: 2023-05-18 08:55:37
+
+"""
+Contains the implementation of the conditional probability pipeline that 
+can be used to make inferences given a model and inference data
+"""
 
 from distutils import text_file
 from email import message
@@ -38,22 +43,45 @@ class Param:
 
 class CPPipeOutput:
     """
-    Output for the ConditionalProbabilityPipeline which includes convenience
-    methods.
+    Wrapper on top of the ConditionalProbabilityPipeline output which
+    provided convenience methods for interacting with the output.
     """
 
     def __init__(self, pipe_output: Dict):
+        """
+        Parameters
+        ----------
+        pipe_output : Dict
+            Output of the conditional probability pipeline
+        """
         self.pipe_output = pipe_output
         self.turns = self.collect_turns()
 
     def __iter__(self):
+        """Internal iterator for each element in the output"""
         for item in self.pipe_output:
             yield item
 
     def raw_output(self) -> Dict:
+        """
+        Obtain the complete underlying output from the ConditionalProbabilityPipeline
+
+        Returns
+        -------
+        Dict
+           Complete ConditionalProbabilityPipeline output
+        """
         return self.pipe_output
 
     def number_of_turns(self) -> int:
+        """
+        Obtain the number of turns in the underlying output
+
+        Returns
+        -------
+        int
+            Number of turns in the output
+        """
         return len(self.turns)
 
     def collect_turns(self) -> Dict:
@@ -71,19 +99,58 @@ class CPPipeOutput:
     def probability_of_turn_no(self, turn_no: int) -> torch.Tensor:
         """
         Assuming that pipe_output contains the output of the ConditionalProbabilityPipe
-        with N = -1, obtain the combined probability of the given turn no iff it exists.
+        with N = -1, obtain the word probabilities for each word in the turn.
+
+        Parameters
+        ----------
+        turn_no : int
+            Turn number, starting from 0
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor containing word probabilities for each word in the specified
+            turn.
         """
         return torch.tensor(
             [item["last_word_prob"] for item in self.turns[turn_no]]
         )
 
     def turn_text(self, turn_no: int) -> str:
-        """Get the complete text of the given turn"""
+        """
+        "Get the complete text of the given turn"
+
+        Parameters
+        ----------
+        turn_no : int
+            Turn number, starting from 0
+
+        Returns
+        -------
+        str
+            Text of the specified turn
+        """
         return " ".join([item["word"] for item in self.turns[turn_no]])
 
     def word_probabilities_of_matched_string(self, match_string: str) -> float:
         """
-        Return the probabilities of words in a turn if it matches the given strings
+        Return the probabilities of words in a turn if it matches the given string
+
+        Parameters
+        ----------
+        match_string : str
+            The text of a potential turn in the output.
+
+        Returns
+        -------
+        float
+            The probability of each word in a turn in the output if it matches the
+            given match_string
+
+        Raises
+        ------
+        Exception
+            Raised if the specified match_string is not found in the output
         """
         # Collect all the turns and the corresponding text.
         turns_text = {
@@ -98,6 +165,19 @@ class CPPipeOutput:
         )
 
     def probability_of_matched_string(self, match_string: str) -> float:
+        """
+        Obtain the total probability of a given match_string
+
+        Parameters
+        ----------
+        match_string : str
+            The text of a potential turn in the output.
+
+        Returns
+        -------
+        float
+            Total output probability of the provided turn.
+        """
         word_probs = self.word_probabilities_of_matched_string(match_string)
         return self._multiply_probabilities(word_probs)
 
@@ -108,14 +188,20 @@ class CPPipeOutput:
         return float(torch.exp(torch.sum(torch.log(torch.tensor(probs)))))
 
 
+# Pipeline that loads a causal language Model with a __call__ method and
+#     tokenizer and uses it to generate conditional probabilities.
+#     Each __call__ assumes that it is processing a single `conversation` -
+#     represented by a list of utterances at a time.
+
+
 class ConditionalProbabilityPipeline:
     """
-    Pipeline that loads a causal language Model with a __call__ method and
-    tokenizer and uses it to generate conditional probabilities.
-    Each __call__ assumes that it is processing a single `conversation` -
-    represented by a list of utterances at a time.
+    Pipeline that consumes a given causal language model i.e, model that
+    generates P(word | context), and uses it to generate conditional probabilities
+    for each word in a given input, conditioned on the previous context.
     """
 
+    # Parameters that are required by the pipeline
     _PARAMS = {
         "model": Param(required=True),
         "N": Param(required=True),
@@ -123,6 +209,10 @@ class ConditionalProbabilityPipeline:
     }
 
     def __init__(self, **kwargs):
+        """
+        Initialize the pipeline using kwargs, which must follow the template
+        defined by _PARAMS
+        """
         # Sanitize all parameters
         self._sanitize_parameters(**kwargs)
 
@@ -144,7 +234,20 @@ class ConditionalProbabilityPipeline:
             )
 
     def __call__(self, utterances: List[str]) -> CPPipeOutput:
-        """Processes a list of strings containing utterances"""
+        """
+        Generate P(word | context) for each word in the given utterances.
+
+        Parameters
+        ----------
+        utterances : List[str]
+           Represents a number of turns that are part of the same conversation.
+           Each item of the list is a new turn.
+
+        Returns
+        -------
+        CPPipeOutput
+            Output object with convenience methods
+        """
         return CPPipeOutput(
             self._postprocess(self._forward(self._preprocess(utterances)))
         )

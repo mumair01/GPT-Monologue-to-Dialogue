@@ -17,28 +17,27 @@ from transformers import Trainer, TrainingArguments
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
 
-@pytest.mark.parametrize("string", [
-    "Hello",
-    # List of strings
-    # ["Hello, how are you doing?"]
-])
+
+@pytest.mark.parametrize(
+    "string",
+    [
+        "Hello",
+        # List of strings
+        # ["Hello, how are you doing?"]
+    ],
+)
 def test_huggingface_tokenizer(string):
     """Various test for transformers"""
     print("Huggingface GPT")
     tokenizer = AutoTokenizer.from_pretrained("gpt2")
-    toks = tokenizer(
-        string,
-        return_tensors="pt"
-    )
+    toks = tokenizer(string, return_tensors="pt")
     print(toks)
-    print("Tokenizer input_ids shape ", toks['input_ids'].shape)
-    print("Tokenizer input ids ", toks['input_ids'])
-    print(tokenizer.decode(toks['input_ids'][0]))
+    print("Tokenizer input_ids shape ", toks["input_ids"].shape)
+    print("Tokenizer input ids ", toks["input_ids"])
+    print(tokenizer.decode(toks["input_ids"][0]))
     model = GPT2LMHeadModel.from_pretrained("gpt2")
     transformer_outputs = model.__call__(**toks)
     print("Model results shape ", transformer_outputs[0].shape)
-
-
 
 
 def test_gpt():
@@ -52,17 +51,12 @@ def test_gpt():
     context = "i haven't seen the keys"
     turns_so_far = "i haven't seen the keys anywhere"
 
-    context_encoding = tokenizer(
-        context, return_tensors="pt"
-    )
-    whole_text_encoding = tokenizer(
-        turns_so_far, return_tensors="pt"
-    )
-
+    context_encoding = tokenizer(context, return_tensors="pt")
+    whole_text_encoding = tokenizer(turns_so_far, return_tensors="pt")
 
     cw_encoding = {
-        k : v[:, context_encoding["input_ids"].shape[1]:] \
-            for k,v in whole_text_encoding.items()
+        k: v[:, context_encoding["input_ids"].shape[1] :]
+        for k, v in whole_text_encoding.items()
     }
 
     print("Context ", tokenizer.decode(*context_encoding["input_ids"]))
@@ -74,7 +68,9 @@ def test_gpt():
     with torch.no_grad():
         output = model(**whole_text_encoding)
 
-    cw_extracted_logits = output.logits[-1, context_encoding["input_ids"].shape[1]-1:-1, :]
+    cw_extracted_logits = output.logits[
+        -1, context_encoding["input_ids"].shape[1] - 1 : -1, :
+    ]
 
     softmax = torch.nn.Softmax(dim=-1)
     cw_extracted_probs_from_logits = softmax(cw_extracted_logits)
@@ -82,13 +78,18 @@ def test_gpt():
     print("cw_extracted_probs_from_logits ", cw_extracted_probs_from_logits)
 
     cw_extracted_log_probs_from_logits = torch.log(
-            cw_extracted_probs_from_logits)
+        cw_extracted_probs_from_logits
+    )
 
-    print("cw_extracted_log_probs_from_logits ",cw_extracted_log_probs_from_logits)
-
+    print(
+        "cw_extracted_log_probs_from_logits ",
+        cw_extracted_log_probs_from_logits,
+    )
 
     cw_tokens_probs = []
-    for cw_subtoken, probs in zip(cw_encoding["input_ids"][0], cw_extracted_log_probs_from_logits):
+    for cw_subtoken, probs in zip(
+        cw_encoding["input_ids"][0], cw_extracted_log_probs_from_logits
+    ):
         cw_tokens_probs.append(probs[cw_subtoken])
 
     print("cw_tokens_probs ", cw_tokens_probs)

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-05-16 14:02:04
+# @Last Modified time: 2023-05-18 09:02:49
 
 import pytest
 
@@ -12,7 +12,7 @@ import os
 from collections import defaultdict
 
 from gpt_dialogue.turngpt import TurnGPT
-from gpt_dialogue.gpt2 import MonologueGPT
+from gpt_dialogue.gpt2 import GPT2
 from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
 
 from transformers import Trainer, TrainingArguments
@@ -54,7 +54,7 @@ def configs():
 ################################ TESTS ######################################
 
 
-@pytest.mark.parametrize("model_class", [MonologueGPT, TurnGPT])
+@pytest.mark.parametrize("model_class", [GPT2, TurnGPT])
 def test_initialize_conditional_prob_pipe(model_class):
     """Initialize the pipe with the given model"""
     model = model_class()
@@ -69,10 +69,10 @@ def test_initialize_conditional_prob_pipe(model_class):
     "model_class, string_list",
     [
         # Case 1: Monologue gpt different speakers
-        # (MonologueGPT, ["<START>", "<SP1>  i haven't seen the keys anywhere  <SP1>",
+        # (GPT2, ["<START>", "<SP1>  i haven't seen the keys anywhere  <SP1>",
         #  "<SP2> have you <SP2>", "<END>"]),
         # # Case 2: Monologue gpt same speaker
-        # (MonologueGPT, [
+        # (GPT2, [
         #  "<START>", "<SP1> i haven't seen the keys anywhere have you <SP1>", "<END>"]),
         # Case 3: TurnGPT different speakers
         # (TurnGPT, ["sage told me you're going skiing over break", "go on"]),
@@ -85,7 +85,7 @@ def test_initialize_conditional_prob_pipe(model_class):
             ],
         ),
         # NOTE: The tests below may take a long time to run.
-        # (MonologueGPT, load_inference_text_from_file()),
+        # (GPT2, load_inference_text_from_file()),
         # (TurnGPT, load_inference_text_from_file())
     ],
 )
@@ -98,8 +98,8 @@ def test_conditional_prob_pipe_call(model_class, string_list, configs):
     print(f"ARGS:\nmodel_class: {model_class}\nstring_list: {string_list}\n")
 
     model = model_class()
-    if model_class == MonologueGPT:
-        model.load(**configs["monologue_gpt"]["load"])
+    if model_class == GPT2:
+        model.load(**configs["gpt2"]["load"])
     elif model_class == TurnGPT:
         model.load(**configs["turngpt"]["load"])
     else:
@@ -162,7 +162,7 @@ def test_conditional_prob_pipe_call(model_class, string_list, configs):
         ),
     ],
 )
-def test_simple_congruent_violation_comparison_monologue_gpt(
+def test_simple_congruent_violation_comparison_gpt2(
     congruent, violation, congruent_match_turn, violation_match_turn, configs
 ):
     """
@@ -181,15 +181,15 @@ def test_simple_congruent_violation_comparison_monologue_gpt(
     # TODO: I need to change the null monologue model so it does not add special
     # tokens.
 
-    print("TEST: test_simple_congruent_violation_comparison_monologue_gpt")
+    print("TEST: test_simple_congruent_violation_comparison_gpt2")
     print(
         f"ARGS:\ncongruent: {congruent}\nviolation: {violation}\n"
         f"congruent_match_turn: {congruent_match_turn}\n"
         f"violation_match_turn: {violation_match_turn}"
     )
 
-    model = MonologueGPT()
-    model.load(**configs["monologue_gpt"]["load"])
+    model = GPT2()
+    model.load(**configs["gpt2"]["load"])
 
     pipe = ConditionalProbabilityPipeline(
         model=model, **configs["conditional_probability_pipe"]
@@ -247,22 +247,22 @@ def test_simple_congruent_violation_comparison_monologue_gpt(
         )
     ],
 )
-def test_congruent_incongruent_comparison_monologue_gpt(
+def test_congruent_incongruent_comparison_gpt2(
     congruent,
     incongruent,
     congruent_match_turn,
     incongruent_match_turn,
     configs,
 ):
-    print("TEST: test_congruent_incongruent_comparison_monologue_gpt")
+    print("TEST: test_congruent_incongruent_comparison_gpt2")
     print(
         f"ARGS:\ncongruent: {congruent}\nincongruent: {incongruent}\n"
         f"congruent_match_turn: {congruent_match_turn}\n"
         f"incongruent_match_turn: {incongruent_match_turn}"
     )
 
-    model = MonologueGPT()
-    model.load(**configs["monologue_gpt"]["load"])
+    model = GPT2()
+    model.load(**configs["gpt2"]["load"])
 
     pipe = ConditionalProbabilityPipeline(
         model=model, **configs["conditional_probability_pipe"]

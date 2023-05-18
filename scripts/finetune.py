@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-05-17 08:46:15
+# @Last Modified time: 2023-05-18 09:11:18
 
 """ 
 Assumptions
@@ -26,7 +26,7 @@ sys.path.insert(
     0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
 )
 
-from gpt_dialogue.gpt2 import MonologueGPT
+from gpt_dialogue.gpt2 import GPT2
 from gpt_dialogue.turngpt import TurnGPT
 
 from scripts.decorators import log_wandb
@@ -67,7 +67,7 @@ def run_finetuning(cfg: DictConfig, run: wandb.run):
 
     # Load the appropriate model
     if cfg.experiment.name == "finetune_gpt2":
-        model = MonologueGPT()
+        model = GPT2()
     elif cfg.experiment.name == "finetune_turngpt":
         model = TurnGPT()
 
@@ -93,7 +93,6 @@ def run_finetuning(cfg: DictConfig, run: wandb.run):
         raise NotImplementedError(
             f"Experiment {cfg.experiment.name} not defined"
         )
-
     # Load the model
     model.load(**OmegaConf.to_object(cfg.experiment.load))
     logger.info(f"Loading model of type: {model}")

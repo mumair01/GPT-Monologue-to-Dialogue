@@ -14,39 +14,46 @@ from typing import Dict
 # GLOBALS
 # ROOT_PATH = "/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue"
 ROOT_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/"
-CONFIG_TOML_PATH = os.path.join(ROOT_PATH,"tests/configs.toml")
+CONFIG_TOML_PATH = os.path.join(ROOT_PATH, "tests/configs.toml")
 
-def reset_dir(dir_path : str):
+
+def reset_dir(dir_path: str):
     if os.path.isdir(dir_path) and dir_path != ".":
         shutil.rmtree(dir_path)
-    os.makedirs(dir_path,exist_ok=True)
+    os.makedirs(dir_path, exist_ok=True)
 
-def get_filename(file_path : str):
+
+def get_filename(file_path: str):
     if not os.path.isfile(file_path):
         raise Exception(f"Not a file: {file_path}")
     return os.path.splitext(file_path)[0]
 
-def get_extension(file_path : str):
+
+def get_extension(file_path: str):
     if not os.path.isfile(file_path):
         raise Exception(f"Not a file: {file_path}")
     return os.path.splitext(file_path)[0][1:]
 
-def get_dir_name(dir_path : str):
+
+def get_dir_name(dir_path: str):
     if not os.path.isfile(dir_path):
         raise Exception(f"Not a directory: {dir_path}")
     return os.path.basename(dir_path)
 
-def load_toml(file_path : str) -> Dict:
+
+def load_toml(file_path: str) -> Dict:
     if not os.path.isfile(file_path) and get_extension(file_path) != "toml":
         raise Exception(f"Unable to read file: {file_path}")
     return toml.load(file_path)
 
-def load_text(file_path : str):
+
+def load_text(file_path: str):
     if not os.path.isfile(file_path) and get_extension(file_path) != "txt":
         raise Exception(f"Unable to read file: {file_path}")
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         lines = f.readlines()
         return lines
+
 
 def load_configs() -> Dict:
     """Get the configs required for various aspects of testing"""

@@ -10,6 +10,4 @@ HYDRA_ARGS="+experiment=${EXPERIMENT} +dataset=${DATASET} ${HYDRA_OVERWRITES}"
 # Add the project directory to the pythonpath before running script
 export PYTHONPATH=$PROJECT_PATH
 
-echo $HYDRA_ARGS
-
 python $INFERENCE_SCRIPT_PATH ${HYDRA_ARGS}

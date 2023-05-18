@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-11 15:55:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-05-16 14:02:09
+# @Last Modified time: 2023-05-18 08:40:19
 
 import sys
 import os
@@ -25,7 +25,7 @@ from transformers import AutoTokenizer
 from datasets import load_dataset
 
 from gpt_dialogue.model import LanguageModel
-from gpt_dialogue.gpt2.dm import MonologueGPTFinetuneDM
+from gpt_dialogue.gpt2.dm import GPT2FinetuneDM
 
 from typing import Dict
 
@@ -34,7 +34,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class MonologueGPT(LanguageModel):
+class GPT2(LanguageModel):
+    """
+    LanguageModel subclass that acts as a standardized wrapper on top of GPT2.
+    Underlying model details: https://huggingface.co/gpt2
+    """
+
     _SUPPORTED_MODELS = ("gpt2", "gpt2-large", "distillgpt2")
 
     def __init__(self):
@@ -55,6 +60,30 @@ class MonologueGPT(LanguageModel):
         tokenizer_kwargs: Dict = {},
         model_kwargs: Dict = {},
     ):
+        """
+        Load the language model with the specified configs.
+
+        Parameters
+        ----------
+        model_checkpoint : str, optional
+            Can be gpt2, gpt2-large, distillgpt2, or a path to a pretrained
+            model, by default "gpt2"
+        tokenizer_checkpoint : str, optional
+            Tokenizer ckpt path or name, by default "gpt2"
+        tokenizer_pad_token : str, optional
+            Pad token to be used. If unspecified, uses default settings,
+            by default None
+        tokenizer_eos_token : str, optional
+            EOS token to be used. If unspecified, uses default, by default None
+        tokenizer_additional_special_tokens : List[str], optional
+            List of additional tokens in the dataset., by default None
+        tokenizer_kwargs : Dict, optional
+            Dictionary of args that can be used by huggingface tokenizers,
+            by default {}
+        model_kwargs : Dict, optional
+            Dictionary of kwargs that can be used by huggingface models,
+            by default {}
+        """
         # Verify that the model is supported or that the path exists
         if (
             not os.path.exists(model_checkpoint)
@@ -123,8 +152,36 @@ class MonologueGPT(LanguageModel):
         warmup_steps: int = 300,
         report_to="wandb",
     ):
+        """
+        Fintune the model on the provided dataset.
+
+        Parameters
+        ----------
+        save_dir : str
+            Output directory where the finetuned models are saved.
+        train_csv_path : str
+            Path to a single csv that contains the training data.
+        val_csv_path : str
+        Path to a single csv that contains the validation data.
+        data_block_size : int, optional
+            Size by which the data is chunked in the finetuned data module,
+            by default 128
+        utterance_key : str, optional
+            Column in the csv file that contains the unique
+            utterance ids, by default "Utterance"
+        num_train_epochs : int, optional
+            Maximum number of training epochs, by default 30
+        per_device_train_batch_size : int, optional
+            Training batch size per device, by default 8
+        per_device_eval_batch_size : int, optional
+            Validation batch size per device, by default 8
+        warmup_steps : int, optional
+            Number of warmup steps for the optimizer, by default 300
+        report_to : str, optional
+            List of integrations to report the results and logs to, by default "wandb"
+        """
         # Load the data modules / apply the data transforms
-        dm = MonologueGPTFinetuneDM(
+        dm = GPT2FinetuneDM(
             tokenizer=self._tokenizer,
             train_csv_path=train_csv_path,
             val_csv_path=val_csv_path,
@@ -164,6 +221,11 @@ class MonologueGPT(LanguageModel):
         trainer.save_model()
 
     def __call__(self, *args, **kwargs):
+        """
+        Apply the __call__ method for the underlying gpt2 model head,
+        which in this case is GPT2LMHeadModel
+        Link: https://huggingface.co/docs/transformers/v4.29.1/en/model_doc/gpt2#transformers.GPT2Model
+        """
         return self.model(*args, **kwargs)
 
     def __repr__(self) -> str:
@@ -171,14 +233,44 @@ class MonologueGPT(LanguageModel):
             f"Base model: {self.model}\n" f"Base tokenizer: {self._tokenizer}"
         )
 
-    def to(self, device):
+    def to(self, device: torch.device):
+        """
+        Set the model to the provided device.
+
+        Parameters
+        ----------
+        device : torch.device
+            Can be one of torch.device('cpu') or torch.device('gpu')
+        """
         self.model.to(device)
 
     def eval(self):
+        """
+        Set the model to eval mode, which is required when using the model
+        to make inferences
+        """
         self.model.eval()
 
-    def encode(self, text, *args, **kwargs):
-        """Encodes the given text for inference with this model"""
+    def encode(self, text: Union[str, List], *args, **kwargs) -> List:
+        """
+        Encodes the given text for inference with this model using the underlying
+        tokenizer.
+
+        Parameters
+        ----------
+        text : Union[str, List]
+            String of lists of strings to be encoded
+
+        Returns
+        -------
+        List
+           List containing the tokenized data.
+
+        Raises
+        ------
+        NotImplementedError
+            Raised if an input type is passed that is not supported.
+        """
         if isinstance(text, list):
             text = " ".join(text)
             return self.tokenizer(text, *args, **kwargs)
@@ -187,5 +279,18 @@ class MonologueGPT(LanguageModel):
         else:
             raise NotImplementedError()
 
-    def decode(self, input_ids, *args, **kwargs):
+    def decode(self, input_ids: List, *args, **kwargs) -> str:
+        """
+        Converts a given list of tokens to a string.
+
+        Parameters
+        ----------
+        input_ids : List
+            ids that were generated using the encode method
+
+        Returns
+        -------
+        str
+            string that is represented by the provided ids.
+        """
         return self._tokenizer.decode(input_ids, *args, **kwargs)

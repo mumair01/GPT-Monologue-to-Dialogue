@@ -2,11 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:48:46
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-05-16 14:02:07
+# @Last Modified time: 2023-05-18 09:04:19
 
 
 import pytest
-from gpt_dialogue.gpt2 import MonologueGPT
+from gpt_dialogue.gpt2 import GPT2
 from tests.utils import load_configs
 
 
@@ -17,14 +17,14 @@ def configs():
 
 def test_load_default():
     """Load the model with default values"""
-    model = MonologueGPT()
+    model = GPT2()
     model.load()
 
 
 def test_load_custom(configs):
     """Load the model with the specified arguments"""
-    model = MonologueGPT()
-    model.load(**configs["monologue_gpt"]["load"])
+    model = GPT2()
+    model.load(**configs["gpt2"]["load"])
 
 
 """
@@ -55,8 +55,8 @@ or, if it is given
 )
 def test_encode_decode(encodable, configs):
     """Given a string, encodes and decodes the model."""
-    model = MonologueGPT()
-    model.load(**configs["monologue_gpt"]["load"])
+    model = GPT2()
+    model.load(**configs["gpt2"]["load"])
     encoded = model.encode(encodable)
     decoded = model.tokenizer.decode(encoded["input_ids"])
     print(f"Encoded: {encoded}")

@@ -2,7 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 10:46:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-15 13:01:04
+# @Last Modified time: 2023-05-17 16:40:31
+
+""" 
+Contains preprocessing pipeline for generating data from the ICC that 
+can be used with this project. 
+"""
 
 import sys
 import os
@@ -33,18 +38,16 @@ from data_lib.core import (
 )
 
 
-# TODO: For the no labels dataset, how do we indicate separate turns by the same
-# speaker? We should be able to indicate this in TurnGPT since the turns
-# may be syntactically incoherent, but might make sense as individual subsequent
-# turns by the same speaker.
-# Should this really matter since there are no temporal embeddings. It might
-# because subsequent sequences by speakers may matter.
-# I might want to change the no labels dataset to include a speaker tag
-# that may be used by turngpt - but I'm not sure how to even approach this
-# problem.
 class ICCDataset:
     """
     Prepares the ICC dataset and can also act as a loader.
+    Can create two variants:
+        1. no_labels:
+            This is the data for TurnGPT that does not include
+            explicit speaker identity labels.
+        2. special_labels:
+            This is the variant for GPT2, which does contain explicit speaker
+            identity labels.
     """
 
     _VARIANTS = ("no_labels", "special_labels")
@@ -53,12 +56,37 @@ class ICCDataset:
     _CSV_HEADERS = ["convName", "convID", "Utterance"]
 
     def __init__(self, dir_path: str):
+        """
+        Parameters
+        ----------
+        dir_path : str
+            Path to the directory containing raw .cha files that should be
+            used as input.
+        """
         assert os.path.isdir(
             dir_path
         ), f"ERROR: Specified directory {dir_path} does not exist"
         self.dir_path = dir_path
 
-    def __call__(self, variant: str, save_dir: str, outfile: str):
+    def __call__(
+        self,
+        variant: str,
+        save_dir: str,
+        outfile: str,
+    ):
+        """
+        Generate the specified variant of the dataset using the underlying
+        input
+
+        Parameters
+        ----------
+        variant : str
+           One of special_labels or no_labels
+        save_dir : str
+            Path to the output directory
+        outfile : str
+            Name of the output file.
+        """
         assert (
             variant in self._VARIANTS
         ), f"ERROR: Specified variant not defined: {variant}"

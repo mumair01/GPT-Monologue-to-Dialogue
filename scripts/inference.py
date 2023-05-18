@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-05-17 08:27:58
+# @Last Modified time: 2023-05-18 08:57:41
 
 
 """ 
@@ -30,7 +30,7 @@ sys.path.insert(
     0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
 )
 
-from gpt_dialogue.gpt2 import MonologueGPT
+from gpt_dialogue.gpt2 import GPT2
 from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
 
@@ -164,7 +164,7 @@ def run_inference(cfg: DictConfig, run: wandb.run):
 
     # Load the appropriate model
     if cfg.experiment.name == "inference_gpt2":
-        model = MonologueGPT()
+        model = GPT2()
     elif cfg.experiment.name == "inference_turngpt":
         model = TurnGPT()
 

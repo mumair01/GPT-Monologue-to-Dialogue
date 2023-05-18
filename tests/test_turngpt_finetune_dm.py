@@ -12,7 +12,10 @@ import transformers
 import pytorch_lightning as pl
 import numpy as np
 
-from gpt_dialogue.turngpt.tokenizer import SpokenNormalizer, SpokenDialogueTokenizer
+from gpt_dialogue.turngpt.tokenizer import (
+    SpokenNormalizer,
+    SpokenDialogueTokenizer,
+)
 from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.turngpt.dm import TurnGPTFinetuneDM
 
@@ -23,17 +26,16 @@ TRAIN_CSV_PATH = "data/processed/ICC/5_train_37_test/train_no_labels.csv"
 VAL_CSV_PATH = "data/processed/ICC/5_train_37_test/test_no_labels.csv"
 OUTPUT_DIR = "./tests/output/test_turngpt_finetune_dm"
 
+
 def test_prepare_data():
-    tokenizer = SpokenDialogueTokenizer(
-        pretrained_model_name_or_path="gpt2"
-    )
+    tokenizer = SpokenDialogueTokenizer(pretrained_model_name_or_path="gpt2")
     dm = TurnGPTFinetuneDM(
         tokenizer=tokenizer,
         train_csv_path=TRAIN_CSV_PATH,
         val_csv_path=VAL_CSV_PATH,
         conversation_id_key="convID",
         utterance_key="Utterance",
-        save_dir=OUTPUT_DIR
+        save_dir=OUTPUT_DIR,
     )
     dm.prepare_data()
     dm.setup(stage="fit")

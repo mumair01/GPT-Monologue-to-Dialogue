@@ -1,6 +1,6 @@
 # Config file groups contain commonly used values but are not exhaustive.
 
-[monologue_gpt.load]
+[gpt2.load]
 # model_checkpoint = "/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_monologue_gpt/gpt2_icc_28_train_14_test_special_labels/2022-12-10_08-53-56/checkpoint-1160"
 model_checkpoint = "gpt2"
 tokenizer_checkpoint = "gpt2"
