@@ -16,7 +16,7 @@ Please find below links to additional/complementary resources for this project:
 
 ## About
 
-Transformer-based Large Language Models (LLMs), including ChatGPT, have recently increased in popularity. While LLMs can produce humanlike writing, no study has investigated the extent to which these models can learn to predict spoken language in natural interaction. This is a non-trivial question, as spoken and written language differ in syntax and pragmatics, and interlocutors in natural dialog follow a number of complex norms. Previous work suggests that LLMs can learn statistical regularities but may not learn subtle underlying patterns in the data. This implies that LLMs may not learn subtle norms in spoken dialog, but may instead model superficial statistical regularities in speech. In this paper, we investigate whether LLMs can learn one unique property of natural conversation: all language is spoken by speakers, and subtle norms influence who can say what, when. 
+Transformer-based Large Language Models (LLMs), including ChatGPT, have recently increased in popularity. While LLMs can produce human-like writing, no study has investigated the extent to which these models can learn to predict spoken language in natural interaction. This is a non-trivial question, as spoken and written language differ in syntax and pragmatics, and interlocutors in natural dialog follow a number of complex norms. Previous work suggests that LLMs can learn statistical regularities but may not learn subtle underlying patterns in the data. This implies that LLMs may not learn subtle norms in spoken dialog, but may instead model superficial statistical regularities in speech. In this paper, we investigate whether LLMs can learn one unique property of natural conversation: all language is spoken by speakers, and subtle norms influence who can say what, when. 
 
 To answer this question, we tested two variants of GPT: one with explicit speaker representations and one without. We finetuned the models on transcripts of natural spoken dialog. Then, we extracted the LLM-produced surprisal values for turns spoken by correct and incorrect speakers. All finetuned models used speaker identity to predict upcoming words, but may have inserted speaker transitions to make some stimuli more plausible. These findings suggest that while LLMs may learn to represent some common norms, they cannot (yet) replicate human behavior in natural spoken dialog. 
 
@@ -168,7 +168,7 @@ Since there are a number of model-dataset finetuning configurations we generate 
 
 In this project, we extracted the LLM-produced surprisal values for turns spoken by correct and incorrect speakers. For a given sequence, The equation below defines turn surprisal where the first turn has K words denoted $w_1^{1}, w_2^{1} ... w_K^{1}$ and the second turn has N words denoted $w_1^{2}, w_2^{2} ... w_N^{2}$, such that the superscript represents the turn number and the subscript represents the position of a word in that turn. The second turn surprisal is then the sum of the negative log probability for each word in the second turn given all previous words in the second turn and the entire first turn. As the second turn in our stimuli can contain at most two words, N $\in$ \{1, 2\}.
 
-$\textit{Second Turn Surprisal} = \sum_{i=1}^{N} - log P(w_i^{2} | w_1^{2}, ... w_{i-1}^{2}, w_1^{1}, ... w_K^{1})$\\
+$\textit{Second Turn Surprisal} = \sum_{i=1}^{N} - log P(w_i^{2} | w_1^{2}, ... w_{i-1}^{2}, w_1^{1}, ... w_K^{1})$
 
 
 To generate surprisal from our finetuned models, we first want to generate the conditional probability of each word for all stimuli in the dataset from Warnke & de Ruiter (2022). This can be done using the scripts/inference.py script as follows:
@@ -185,7 +185,7 @@ Both the finetuning and inference processes can be configured. We use hydra to e
 
 This project was conducted in the [Tufts Human Interaction Lab](https://sites.tufts.edu/hilab/) by the following team:
 
-- Muhammad Umair
+- [Muhammad Umair](https://www.linkedin.com/in/mumair/)
 - [Julia Mertens](https://www.linkedin.com/in/juliamertens/).
 - [Lena Warnke](https://lenawarnke.com/About)
 - [Jan P. de Ruiter](https://engineering.tufts.edu/cs/people/faculty/jp-de-ruiter) 
