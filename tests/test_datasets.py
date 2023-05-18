@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-12-01 02:32:17
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-15 13:04:26
+# @Last Modified time: 2023-05-18 09:45:52
 
 import sys
 import os
@@ -14,23 +14,19 @@ from data_lib.speaker_identity_stims import SpeakerIdentityStimuliDataset
 
 ################################## GLOBALS ###################################
 
-ROOT_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue"
+ROOT_PATH = os.getenv("PROJECT_PATH")
+
 OUTPUT_DIR = "./tests/output/test_datasets_output"
 
-FIVE_TRAIN_THIRTY_SEVEN_TEST_DIR_PATH = (
-    "data/raw/ICC/finetune_experiments_julia/5_train_37_test_set/test"
-)
+
+FIVE_TRAIN_THIRTY_SEVEN_TEST_DIR_PATH = "data/raw/ICC/5_train_37_test_set/test"
 FIVE_TRAIN_THIRTY_SEVEN_TRAIN_DIR_PATH = (
-    "data/raw/ICC/finetune_experiments_julia/5_train_37_test_set/train"
+    "data/raw/ICC/5_train_37_test_set/train"
 )
-
-TWENTY_EIGHT_TRAIN_FOURTEEN_TEST_PATH = (
-    "data/raw/ICC/finetune_experiments_julia/28_train_14_test_set/test"
-)
+TWENTY_EIGHT_TRAIN_FOURTEEN_TEST_PATH = "data/raw/ICC/28_train_14_test_set/test"
 TWENTY_EIGHT_TRAIN_FOURTEEN_TRAIN_PATH = (
-    "data/raw/ICC/finetune_experiments_julia/28_train_14_test_set/train"
+    "data/raw/ICC/28_train_14_test_set/train"
 )
-
 SPEAKER_IDENTITY_SIMTS_PATH = "data/raw/speaker_identity_stims"
 
 ############################### TESTING METHODS ##############################

@@ -2,11 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2022-12-15 17:30:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-16 10:09:50
+# @Last Modified time: 2023-05-18 09:46:52
 
 
 import pytest
 import sys
+import os
 
 import transformers
 import pytorch_lightning as pl
@@ -21,7 +22,7 @@ from gpt_dialogue.turngpt.dm import TurnGPTFinetuneDM
 
 from tests.utils import load_configs
 
-ROOT_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/"
+ROOT_PATH = os.getenv("PROJECT_PATH")
 TRAIN_CSV_PATH = "data/processed/ICC/5_train_37_test/train_no_labels.csv"
 VAL_CSV_PATH = "data/processed/ICC/5_train_37_test/test_no_labels.csv"
 OUTPUT_DIR = "./tests/output/test_turngpt_finetune_dm"

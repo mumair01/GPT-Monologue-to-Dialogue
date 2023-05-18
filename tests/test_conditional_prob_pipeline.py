@@ -2,12 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:30:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-05-18 09:02:49
+# @Last Modified time: 2023-05-18 09:45:02
+
+# NOTE: set_env.sh must be sourced before running this script.
 
 import pytest
-
-import sys
-import torch
 import os
 from collections import defaultdict
 
@@ -15,20 +14,13 @@ from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.gpt2 import GPT2
 from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
 
-from transformers import Trainer, TrainingArguments
-from transformers import AutoModelForCausalLM
-from transformers import AutoTokenizer
-
-import torch
 import numpy as np
 
 from tests.utils import load_configs, load_text
 
 from typing import List
 
-ROOT_PATH = (
-    "/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue"
-)
+ROOT_PATH = os.getenv("PROJECT_PATH")
 INFERENCE_TEXT_PATH = os.path.join(ROOT_PATH, "tests/data/large_text.txt")
 
 
