@@ -2,8 +2,15 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-22 10:05:46
+# @Last Modified time: 2023-05-18 08:57:41
 
+
+""" 
+Assumptions
+-----------
+1. Before this script is run, it assumed that the environment has been 
+    set using set_hpc_env.sh or set_env.sh
+"""
 
 import sys
 import os
@@ -16,71 +23,47 @@ import wandb
 from omegaconf import DictConfig, OmegaConf
 import hydra
 import logging
+from functools import partial
+import datetime
 
+sys.path.insert(
+    0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
+)
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
-from gpt_dialogue.monologue_gpt import MonologueGPT
+from gpt_dialogue.gpt2 import GPT2
 from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
 
+from scripts.decorators import log_wandb
+
+############################### LOGGING SETUP #############################
+
 logger = logging.getLogger(__name__)
+
 
 ########################## GLOBAL VARS. ####################################
 
-HYDRA_CONFIG_RELATIVE_DIR = "../conf"
-HYDRA_CONFIG_NAME = "config"
+# Load Hydra and wandb args from the environment
+HYDRA_CONFIG_RELATIVE_DIR = os.getenv("HYDRA_CONFIG_RELATIVE_DIR")
+HYDRA_CONFIG_NAME = os.getenv("HYDRA_CONFIG_NAME")
 
-
-WANDB_PROJECT = "GPT-Monologue-Dialogue-Inference"
-WANDB_ENTITY = "gpt-monologue-dialogue"
-
+WANDB_PROJECT = os.getenv("WANDB_PROJECT")
+WANDB_ENTITY = os.getenv("WANDB_ENTITY")
+WANDB_INIT_MODE = os.getenv("WANDB_INIT_MODE")
 
 
 ########################### HELPER METHODS ####################################
 
-def log_wandb(func : Callable):
-    """Decorator for setting up and logging experiment using wandb"""
 
-    logger.info("WANDB: Logging inference using Weights and Biases (WANDB)")
-
-    def inner(cfg : DictConfig):
-        # Log the config params using wandb
-        wandb.config = OmegaConf.to_container(
-            cfg, resolve=True, throw_on_missing=True
-        )
-
-        run = wandb.init(
-            project=WANDB_PROJECT,
-            entity=WANDB_ENTITY,
-            config=OmegaConf.to_container(
-            cfg, resolve=True, throw_on_missing=True
-        ))
-        # Change the run name
-        run_id = wandb.run.id
-        wandb.run.name = f"{cfg.experiment.name}_{cfg.experiment.model_name}_{cfg.dataset.name}_{run_id}"
-
-        logger.info(
-            f"WANDB: Running experiment for project {WANDB_PROJECT} entity "
-            f"{WANDB_ENTITY} with id {wandb.run.id}"
-        )
-
-        # Run experiment
-        func(cfg)
-
-        # Finish logging the run
-        logger.info(f"WANDB: Ending logging for experiment: {run_id}")
-        run.finish()
-
-    return inner
-
-
-# NOTE: Assuming that the dataset is in the correct format.
+# NOTE: Assuming that the dataset is in the correct format
+# and contains the columns: ["convName","convID", "Utterance"]
+# TODO: Standardize the loader functions for the datasets.
 def load_inference_dataset(
-        csv_path : str,
-        start_conv_no : int = 0,
-        end_conv_no : int = -1,
-        conv_key : str = "convID"
-    ) -> List[pd.DataFrame]:
+    csv_path: str,
+    start_conv_no: int = 0,
+    end_conv_no: int = -1,
+    conv_key: str = "convID",
+) -> List[pd.DataFrame]:
     """
     Load the inference dataset from a single CSV - assuming that the csv has
     separated the conversations by a unique key and contains all the utterances
@@ -94,9 +77,11 @@ def load_inference_dataset(
             Set to -1 to process all conversations.
         conv_key (str): Key for the conversation unique id in the dataset.
     """
-    df = pd.read_csv(csv_path,index_col=0)
-    conversation_dfs = [df.loc[df[conv_key] == i] for i in range(
-        np.max(df[conv_key].unique()) + 1)]
+    df = pd.read_csv(csv_path, index_col=0)
+    conversation_dfs = [
+        df.loc[df[conv_key] == i]
+        for i in range(np.max(df[conv_key].unique()) + 1)
+    ]
     if end_conv_no > len(conversation_dfs) or end_conv_no == -1:
         end_conv_no = len(conversation_dfs)
     assert len(conversation_dfs) >= end_conv_no
@@ -104,11 +89,13 @@ def load_inference_dataset(
     conversation_dfs = conversation_dfs[start_conv_no:end_conv_no]
     return conversation_dfs
 
+
 def generate_probabilities(
-        conversation_dfs : List[pd.DataFrame],
-        pipe : ConditionalProbabilityPipeline,
-        save_dir : str,
-    ) -> None:
+    conversation_dfs: List[pd.DataFrame],
+    pipe: ConditionalProbabilityPipeline,
+    save_dir: str,
+    run: wandb.run,
+) -> None:
     """
     Use the conditional probability pipeline to generate probabilities for all
     conversations individually i.e., the conversations are treated as independent.
@@ -116,80 +103,130 @@ def generate_probabilities(
     data = []
     for i, conversation_df in enumerate(conversation_dfs):
         utterances = list(conversation_df["Utterance"])
-        res = pipe(
-            utterances=utterances
+        res = pipe(utterances=utterances)
+        save_path = os.path.join(
+            save_dir,
+            "{}_conditional_probs.csv".format(
+                conversation_df["convName"].iloc[0]
+            ),
         )
-        save_path = os.path.join(save_dir,
-                "{}_conditional_probs.csv".format(conversation_df["convName"].iloc[0]))
         # columns = ["conversation_name"] + list(res[0].keys())
-        df = pd.DataFrame(data=res, columns=list(res[0].keys()))
+        df = pd.DataFrame(data=res, columns=list(res.raw_output()[0].keys()))
         df["conversation_name"] = conversation_df["convName"].iloc[0]
         df["conversation_number"] = i
         # Set the order of the columns
-        df = df[[
-            'conversation_number','conversation_name', 'turn_no','word_no',
-            'context','word','last_word_prob' ]]
+        df = df[
+            [
+                "conversation_number",
+                "conversation_name",
+                "turn_no",
+                "word_no",
+                "context",
+                "word",
+                "last_word_prob",
+            ]
+        ]
         df.to_csv(save_path)
         data.append(df.copy())
 
-        wandb.run.log({
-            f"overview/steps" : i,
-            f"overview/turns_at_step" : len(df)
-        })
+        run.log({f"overview/steps": i, f"overview/turns_at_step": len(df)})
 
     results_df = pd.concat(data)
-    results_df.to_csv(
-        os.path.join(save_dir,"conditional_probs_combined.csv"))
+    results_df.to_csv(os.path.join(save_dir, "conditional_probs_combined.csv"))
 
     wandb_table = wandb.Table(data=results_df)
-    wandb.run.log({
-        f"tables/combined_results" :  wandb_table,
-    })
+    run.log(
+        {
+            f"tables/combined_results": wandb_table,
+        }
+    )
 
 
 ########################### MAIN METHODS ####################################
 
 
-@log_wandb
-def run_inference(cfg : DictConfig):
+def generate_wandb_run_name(cfg):
+    return (
+        f"{cfg.experiment.name}_{cfg.experiment.model_name}_{cfg.dataset.name}"
+    )
+
+
+@log_wandb(
+    logger=logger,
+    wandb_project=WANDB_PROJECT,
+    wandb_entity=WANDB_ENTITY,
+    wandb_init_mode=WANDB_INIT_MODE,
+    run_name_func=generate_wandb_run_name,
+)
+def run_inference(cfg: DictConfig, run: wandb.run):
     logger.info("Running inference with configurations:")
     print(OmegaConf.to_yaml(cfg))
+
     # Load the appropriate model
-    if cfg.experiment.name == "inference_monologue_gpt":
-        model = MonologueGPT()
+    if cfg.experiment.name == "inference_gpt2":
+        model = GPT2()
     elif cfg.experiment.name == "inference_turngpt":
         model = TurnGPT()
+
+        # NOTE: Augmenting the native tokenizer so that the correct Args
+        # are used for the model tokenizer.
+        # IMPORTANT: This is based on the assumption that the input
+        # data contains <ts> / EOS tokens both for speaker continuations and
+        # at the end of turns.
+        def _turngpt_encode_wrapper(text, *args, **kwargs):
+            return model.tokenizer(
+                text,
+                *args,
+                add_prefix_space=True,
+                add_eos_token=False,
+                return_token_type_ids=True,
+                # NOTE: This is important - for our experiments with TurnGPT,
+                # we do not want to split speaker by the inline eos token.
+                split_speaker_by_inline_eos=False,
+                **kwargs,
+            )
+
+        model.encode = _turngpt_encode_wrapper
     else:
         raise NotImplementedError(
             f"Experiment {cfg.experiment.name} not defined"
         )
 
     # Load the model
+    model.load(**OmegaConf.to_object(cfg.experiment.load))
     logger.info(f"Loading model of type: {model}")
-    model.load(**cfg.experiment.load)
 
     # Load the pipeline, the dataset, and execute the task
     pipe = ConditionalProbabilityPipeline(
-        model=model,
-        **cfg.experiment.inference
+        model=model, **cfg.experiment.inference
     )
     logger.info(f"Starting inference using pipe: {pipe}")
 
     conversation_dfs = load_inference_dataset(
-        csv_path = os.path.join(cfg.env.paths.root, cfg.dataset.dataset_path),
-        **cfg.experiment.dataset
+        csv_path=os.path.join(cfg.env.paths.root, cfg.dataset.dataset_path),
+        **cfg.experiment.dataset,
     )
-    logger.info(f"Loaded {len(conversation_dfs)} datasets to generate probabilities")
+    logger.info(
+        f"Loaded {len(conversation_dfs)} datasets to generate probabilities"
+    )
 
     generate_probabilities(
         conversation_dfs=conversation_dfs,
         pipe=pipe,
-        save_dir=os.getcwd()
+        save_dir=os.getcwd(),
+        run=run,
     )
     logger.info("Completed inference!")
 
-@hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
-def main(cfg : DictConfig):
+
+@hydra.main(
+    version_base=None,
+    config_path=HYDRA_CONFIG_RELATIVE_DIR,
+    config_name=HYDRA_CONFIG_NAME,
+)
+def main(cfg: DictConfig):
+    print(cfg)
+    # sys.exit(-1)
     run_inference(cfg)
 
 

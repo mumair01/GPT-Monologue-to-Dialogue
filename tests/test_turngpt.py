@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-31 15:39:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-09 16:19:35
+# @Last Modified time: 2022-12-15 15:52:55
 
 import pytest
 import sys
@@ -12,196 +12,212 @@ import transformers
 import pytorch_lightning as pl
 import numpy as np
 
-from gpt_dialogue.turngpt.tokenizer import SpokenNormalizer, SpokenDialogueTokenizer
-from gpt_dialogue.turngpt.model import TurnGPT
-from gpt_dialogue.turngpt.dm import TurnGPTFinetuneDM
+from gpt_dialogue.turngpt.tokenizer import (
+    SpokenNormalizer,
+    SpokenDialogueTokenizer,
+)
+from gpt_dialogue.turngpt import TurnGPT
+
+from tests.utils import load_configs
 
 
-def test_spoken_normalizer():
+@pytest.fixture
+def configs():
+    return load_configs()
+
+
+@pytest.mark.parametrize(
+    "add_whitespace_func",
+    [
+        True,
+        False,
+    ],
+)
+def test_spoken_normalizer(add_whitespace_func):
+    """Tokenize a single string with the tokenizer"""
     normalizer = SpokenNormalizer()
     string = "Hello,how are you?"
-    print(normalizer.normalize_str(string,add_whitespace_punc=True))
-    print(normalizer.normalize_str(string,add_whitespace_punc=False))
+    print(
+        f"normalize_str add_whitespace_punc={add_whitespace_func} : {normalizer.normalize_str(string,add_whitespace_punc=add_whitespace_func)}"
+    )
 
-def test_spoken_tokenizer():
-    tokenizer = SpokenDialogueTokenizer("gpt2")
-    # Case 1: Simple string
-    print("Case 1.1")
-    print(tokenizer.encode("Hello, how are you doing?"))
-    print("Case 1.2")
-    print(tokenizer("Hello, how are you doing?"))
-    # Case 2: List of strings representing multiple turns in a single conversation.
-    print("Case 2.1")
-    print(tokenizer([
+
+@pytest.mark.parametrize(
+    "string",
+    [
+        # Case 1: Simple string case
         "Hello, how are you doing?",
-        "I'm doing great! How about you?",
-        "Good - just chillin"
-    ]))
-    # Case 3: List of lists representing batches (of multiple conversations)
-    # NOTE: Not sure what the max. batch length can be.
-    print("Case 3.1")
-    print(tokenizer([
+        # Case 2: List of strings representing multiple turns in a single conversation.
         [
             "Hello, how are you doing?",
             "I'm doing great! How about you?",
-            "Good - just chillin"
+            "Good - just chillin",
         ],
         [
-            "This is speaker 1",
-            "This is speaker 2"
-        ]
-    ]))
-    # -- Print the ids of tokens
-    print("tokens to ids")
-    # The __call__ method generates the input_ids, attention, and speaker_ids.
-    print(tokenizer("hello"))
-    # The convert ids to tokens take a token (something in the vocab.) and returns
-    # its corresponding id (or position) in the vocab. This needs individual tokens.
-    print(tokenizer.convert_tokens_to_ids(["hello"]))
-    # The encode method converts the text into individual tokens and then returns
-    # the ids.
-    print(tokenizer.encode("hello"))
-
-def test_spoken_dialogue_tokenizer():
-    tokenizer = SpokenDialogueTokenizer("gpt2")
-    msg = [
-        "Hello, how are you doing?",
-        "I'm doing great! How about you?",
-        "Good - just chillin",
-        "That's good",
-        "Just chillin",
-        "Good"
-    ]
-    toks = tokenizer(msg)
-    print(toks)
-    sp1_idx = np.where(np.asarray(toks['speaker_ids']) == 50259)
-    print(sp1_idx)
-    sp1_input_ids = np.take(toks['input_ids'], sp1_idx)
-    print(sp1_input_ids)
-    print(tokenizer.decode(*sp1_input_ids))
-    print(tokenizer.sp1_token_id)
-    print(tokenizer.sp2_token_id)
+            "Hello, how are you doing?",
+            "I'm doing great! How about you?",
+            "Good - just chillin",
+            "That's good",
+            "Just chillin",
+            "Good",
+        ],
+        # Case 3: # Case 3: List of lists representing batches (of multiple conversations)
+        # NOTE: Not sure what the max. batch length can be.
+        [
+            [
+                "Hello, how are you doing?",
+                "I'm doing great! How about you?",
+                "Good - just chillin",
+            ],
+            ["This is speaker 1", "This is speaker 2"],
+        ],
+        # Case 5: A conversation with two turns by speaker 1 followed by a turn
+        # by speaker 1.
+    ],
+)
+def test_spoken_dialogue_tokenizer_call(string, configs):
+    """Tokenize the input strings using __call__ method of the tokenizer"""
+    tokenizer = SpokenDialogueTokenizer(**configs["spoken_dialogue_tokenizer"])
+    toks = tokenizer(string, return_tensors="pt")
+    print(f"Input string:\n{string}")
+    print(f"Result from __call__ method:\n {toks}")
 
 
-def test_model():
-    # Loading model with all default configs
-    model = TurnGPT(
-        pretrained_model_name_or_path="gpt2",
-        load_pretrained_configs=True,
-        learning_rate= 1e-4)
-    tokenizer = SpokenDialogueTokenizer("gpt2")
-
-    # print(model.tokenize([
-    #     [
-    #         "Hello, how are you doing?",
-    #         "I'm doing great! How about you?",
-    #         "Good - just chillin"
-    #     ],
-    #     [
-    #         "Hello, how are you doing?",
-    #         "Good - just chillin"
-    #     ],
-
-    # ]))
-    # print(model.tokenize([
-    #     "Hello, how are you doing?",
-    #     "I'm doing great! How about you?",
-    #     "Good - just chillin"
-    # ]))
-    # print(tokenizer.pad_token_id, tokenizer.pad_token)
-    # print(model.tokenize("Hello"))
-
-    # Tokenize and run through model.
-    tokens = tokenizer(["Hello, how are you doing?"],return_tensors="pt",)
-    print(tokens['input_ids'].shape)
-    print(tokens)
-    print(model._transformer.config)
-    print(model(**tokens))
-
-
-def test_huggingface_tokenizer():
-    print("Huggingface GPT")
-    tokenizer = AutoTokenizer.from_pretrained("gpt2")
+# NOTE: This test shows that the speaker states are split by <ts> tokens.
+# An effect of syntactic incoherence might be there since that is the main
+# thing the model is learning during pre-training.
+@pytest.mark.parametrize(
+    "string",
+    [
+        # Case 1: A single string with multiple individual turns.
+        "i tripped in front of my boss at work today<ts> don't laugh",
+        # # Case 2: A conversation with two turns by speaker 1 followed by a turn
+        # # by speaker 1.
+        # [
+        #     "i tripped in front of my boss at work today<ts> don't laugh",
+        #     "that is really funny"
+        # ],
+        # # Case 3: Multiple conversations
+        # [
+        #     [
+        #         "i tripped in front of my boss at work today<ts> don't laugh",
+        #         "that is really funny",
+        #         "i don't think that was funny<ts> did you",
+        #         "hello one two three"
+        #     ],
+        #     [
+        #         "the cat is on the<ts> the mat",
+        #         "no it is not"
+        #     ]
+        # ]
+    ],
+)
+@pytest.mark.parametrize(
+    "split_speaker_by_inline_eos",
+    [
+        True,
+        # False
+    ],
+)
+def test_spoken_dialogue_tokenizer_encode_decode_multi_turn_speaker(
+    string, split_speaker_by_inline_eos, configs
+):
+    """
+    In this test, we encode and decode strings where a speaker may have multiple
+    turns to confirm that the correct speaker identities are assigned per turn.
+    """
+    tokenizer = SpokenDialogueTokenizer(
+        **configs["spoken_dialogue_tokenizer"],
+    )
     toks = tokenizer(
-        ["Hello, how are you doing?"],return_tensors="pt")
-    print("Tokenizer input_ids shape ",toks['input_ids'].shape)
-    print("Tokenizer input ids ", toks['input_ids'])
-    print(tokenizer.decode(toks['input_ids'][0]))
-    model = GPT2LMHeadModel.from_pretrained("gpt2")
-    transformer_outputs = model.__call__(**toks)
-    print("Model results shape "  ,transformer_outputs[0].shape)
-
-    print("TurnGPT")
-    turngpt = TurnGPT(
-        pretrained_model_name_or_path="gpt2",
-        load_pretrained_configs=True,
-        learning_rate= 1e-4)
-    toks = turngpt.tokenize(["Hello, how are you doing?"],return_tensors="pt")
-    print(toks['input_ids'].shape)
-    print(toks['input_ids'])
-    print(turngpt.decode(toks['input_ids'][0]))
-    out =  turngpt(**toks)
-    print(out['logits'].shape)
-
-
-def test_original():
-    model = TurnGPT()
-    model.init_tokenizer()
-    model.initialize_special_embeddings()
-    toks = model.tokenize_strings(["Hello, how are you doing?"])
+        string,
+        split_speaker_by_inline_eos=split_speaker_by_inline_eos,
+        # return_tensors="pt"
+    )
     print(toks)
-    print(toks['input_ids'].shape)
-    print(model.tokenizer.decode(toks['input_ids'][0]))
-    out = model(**toks)
-
-def clean_speaker_labels(data):
-        """Remove speaker labels from the start and end of an utterance"""
-        if len(data['Utterance'].split()) > 1:
-            data['Utterance'] = " ".join(data['Utterance'].split()[1:-1])
-        return data
-
-def test_dm():
-    model = TurnGPT(
-        # NOTE: All special tokens passed should be lowercase because the normalize
-        # lowercases them anyways.
-        tokenizer_additional_special_tokens=['<START>','<END>']
-    )
-
-    dm = TurnGPTFinetuneDM(
-        tokenizer=model._tokenizer,
-        train_csv_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/train_5_conversations.csv",
-        val_csv_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/datasets/processed/ICC/julia_finetune_experiments/5_train_37_test_set/validation_37_conversations.csv",
-        save_dir="./dm_save_test",
-        # cleanup_fn=clean_speaker_labels
-    )
-    dm.prepare_data()
-    dm.setup(stage="fit")
-
-    batch = next(iter(dm.train_dataloader()))
-    count = 0
-    for batch in iter(dm.train_dataloader()):
-        count +=1
-        for i in range(batch['input_ids'].shape[0]):
-            print(model._tokenizer.decode(batch['input_ids'][i]))
-    # print(tokenizer.decode(batch['input_ids'][0]))
-    # print(tokenizer.decode(batch['input_ids'][1]))
+    print(f"Input string: {string}")
+    print(f"split_speaker_by_inline_eos: {split_speaker_by_inline_eos}")
+    for speaker in (1, 2):
+        sp_decoded = tokenizer.decode_speaker(toks, speaker)
+        print(f"Turns by speaker {speaker}")
+        print(sp_decoded)
 
 
-# def test_finetuning():
-#     model = TurnGPT(
-#         pretrained_model_name_or_path="gpt2",
-#         load_pretrained_configs=True,
-#         learning_rate= 1e-4
-#     )
-#     dm = TurnGPTDM(
-#         tokenizer=model._tokenizer,
-#         dataset="icc",
-#     )
-#     dm.prepare_data()
-#     trainer = pl.Trainer()
-#     print("Starting training...")
-#     trainer.fit(model, datamodule=dm)
+@pytest.mark.parametrize(
+    "string",
+    [
+        # Simple string
+        "hello",
+    ],
+)
+def test_spoken_dialogue_tokenizer_encode(string, configs):
+    """Tokenize the input strings using the encode method of the tokenizer"""
+    tokenizer = SpokenDialogueTokenizer(**configs["spoken_dialogue_tokenizer"])
+    print(f"Input string:\n{string}")
+    print(f"Result from encode method: {tokenizer.encode(string)}")
 
 
-# def test_inference():
-#     surprisal_inference()
+@pytest.mark.parametrize(
+    "string",
+    [
+        # Simple string
+        "hello",
+    ],
+)
+def test_spoken_dialogue_tokenizer_tokens_to_ids(string, configs):
+    """
+    Use the convert_tokens_to_ids method and compare with input_ids from
+    encode method.
+    """
+    tokenizer = SpokenDialogueTokenizer(**configs["spoken_dialogue_tokenizer"])
+    if type(string) == str:
+        toks = tokenizer.convert_tokens_to_ids([string])
+    else:
+        toks = tokenizer.convert_tokens_to_ids(string)
+    assert toks == tokenizer(string)["input_ids"]
+
+
+@pytest.mark.parametrize(
+    "string, speaker",
+    [
+        # Simple string
+        (
+            [
+                "Hello, how are you doing?",
+                "I'm doing great! How about you?",
+                "Good - just chillin",
+            ],
+            1,
+        ),
+        (
+            [
+                "Hello, how are you doing?",
+                "I'm doing great! How about you?",
+                "Good - just chillin",
+            ],
+            2,
+        ),
+    ],
+)
+def test_spoken_dialogue_tokenizer_decode_speaker_ids(string, speaker, configs):
+    """
+    Use the tokenizer __call__ method on string and decode output from a specific
+    speaker only.
+    """
+    tokenizer = SpokenDialogueTokenizer(**configs["spoken_dialogue_tokenizer"])
+    toks = tokenizer(string)
+    decoded = tokenizer.decode_speaker(toks, speaker)
+    print(f"Input string: {string}")
+    print(f"Decoded string for {speaker}: {decoded}")
+
+
+def test_load_default():
+    """Load the model with default values"""
+    model = TurnGPT()
+    model.load()
+
+
+def test_load_custom(configs):
+    """Load the model with the specified arguments"""
+    model = TurnGPT()
+    model.load(**configs["turngpt"]["load"])

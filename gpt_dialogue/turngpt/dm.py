@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-15 16:52:18
+# @Last Modified time: 2022-12-16 12:46:22
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT.
@@ -25,20 +25,21 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
     and conversations have a unique identifier.
     """
 
-    def __init__(self,
+    def __init__(
+        self,
         tokenizer,
-        train_csv_path : str,
-        val_csv_path : str,
-        conversation_id_key : str,
-        utterance_key : str,
-        save_dir : str,
-        batch_size : int = 16,
-        max_length : int = 1024,
-        chunk_size : int = 128,
-        num_workers : int = 1,
-        pin_memory : bool = True,
-        num_proc = None,
-        use_cache=False
+        train_csv_path: str,
+        val_csv_path: str,
+        conversation_id_key: str,
+        utterance_key: str,
+        save_dir: str,
+        batch_size: int = 16,
+        max_length: int = 1024,
+        chunk_size: int = 128,
+        num_workers: int = 1,
+        pin_memory: bool = True,
+        num_proc=None,
+        use_cache=False,
     ):
         """
         Args:
@@ -72,32 +73,37 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
 
     ######################## OVERRIDDEN METHODS ##############################
 
+    # TODO: Potentially add a method to be able to pass kwargs to the
+    # tokenizer encode method.
     def prepare_data(self):
         """
         Load, group by conversation, tokenizer, chunk, and save the dataset.
         """
-        dataset = load_dataset("csv", data_files={
-                "train" : self.train_csv_path,
-                "validation" : self.val_csv_path
+        dataset = load_dataset(
+            "csv",
+            data_files={
+                "train": self.train_csv_path,
+                "validation": self.val_csv_path,
             },
-            download_mode="force_redownload" if not self.use_cache else "reuse_dataset_if_exists"
+            download_mode="force_redownload"
+            if not self.use_cache
+            else "reuse_dataset_if_exists",
         )
 
         # Group the data based on conversations
-        for split in ('train', 'validation'):
+        # NOTE: This ensures that separate conversations are treated separately.
+        for split in ("train", "validation"):
             dataset[split] = self._group_by(
-                dataset[split],self.conversation_id_key,self._join)
+                dataset[split], self.conversation_id_key, self._join
+            )
 
         dataset = dataset.map(
             self._encode,
             batched=True,
             num_proc=self.num_proc,
-            remove_columns=dataset["train"].column_names
+            remove_columns=dataset["train"].column_names,
         )
-        dataset = dataset.map(
-            self._chunk_tokenized_samples,
-            batched=True
-        )
+        dataset = dataset.map(self._chunk_tokenized_samples, batched=True)
         # Save the dataset
         dataset.set_format(type="torch")
         dataset.save_to_disk(self.save_dir)
@@ -106,11 +112,12 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
         """Re-load save dataset and prepare for dataloaders"""
         if stage in (None, "fit"):
             dataset = load_from_disk(self.save_dir)
-            self.train_dataset = dataset['train']
-            self.val_dataset = dataset['validation']
+            self.train_dataset = dataset["train"]
+            self.val_dataset = dataset["validation"]
         else:
             raise NotImplementedError(
-                f"Finetuning data module does not implement stage: {stage}")
+                f"Finetuning data module does not implement stage: {stage}"
+            )
 
     def train_dataloader(self):
         return DataLoader(
@@ -131,6 +138,7 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
             num_workers=self.num_workers,
             shuffle=False,
         )
+
     ######################## ADDITIONAL METHODS ##############################
 
     def _encode(self, examples):
@@ -156,40 +164,50 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
         return ret
 
     def _chunk_tokenized_samples(self, tokenized_samples):
-        """Chunk the given tokenized samples based on the size. """
-        print(self.max_length)
+        """Chunk the given tokenized samples based on the size."""
         if self.chunk_size > self.max_length:
-            print(f"WARNING: Chunk size {self.chunk_size} greater than max length "
-               f"{self.max_length} may lead to data loss")
+            print(
+                f"WARNING: Chunk size {self.chunk_size} greater than max length "
+                f"{self.max_length} may lead to data loss"
+            )
         # Concatenate all the utterances
-        keys =  ('input_ids','attention_mask','speaker_ids')
-        concatenated_examples = {k : sum(tokenized_samples[k],[]) for k in keys}
+        keys = ("input_ids", "attention_mask", "speaker_ids")
+        concatenated_examples = {k: sum(tokenized_samples[k], []) for k in keys}
         total_length = len(concatenated_examples[keys[0]])
         total_length = (total_length // self.chunk_size) * self.chunk_size
         chunks = {
-            k : [concatenated_examples[k][i:i+ self.chunk_size] \
-                for i in range(0, total_length,self.chunk_size)]  for k in keys
+            k: [
+                concatenated_examples[k][i : i + self.chunk_size]
+                for i in range(0, total_length, self.chunk_size)
+            ]
+            for k in keys
         }
         return chunks
 
     def _join(self, batch):
         """Simply return the Utterance values of the joined batch."""
-        return { self.utterance_key: [batch[self.utterance_key]]}
+        return {self.utterance_key: [batch[self.utterance_key]]}
 
-    def _group_by(self,d, col, join):
+    def _group_by(self, d, col, join):
         """from: https://github.com/huggingface/datasets/issues/3644"""
         # Get the indices of each group
         groups = {key: [] for key in d.unique(col)}
+
         def create_groups_indices(key, i):
             groups[key].append(i)
+
         d.map(create_groups_indices, with_indices=True, input_columns=col)
         # Get one dataset object per group
         groups = {key: d.select(indices) for key, indices in groups.items()}
         # Apply join function
         groups = {
-            key: dataset_group.map(join, batched=True, batch_size=len(dataset_group), remove_columns=d.column_names)
+            key: dataset_group.map(
+                join,
+                batched=True,
+                batch_size=len(dataset_group),
+                remove_columns=d.column_names,
+            )
             for key, dataset_group in groups.items()
         }
         # Return concatenation of all the joined groups
         return concatenate_datasets(list(groups.values()))
-

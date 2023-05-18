@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 10:26:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-18 14:31:38
+# @Last Modified time: 2022-10-07 14:55:31
 
 
 ############################
@@ -18,11 +18,12 @@
 
 # NOTE: This script is requires torch 1.12.
 
+import sys
 import os
 import wandb
-from typing import Dict, Any,  List
+from typing import Dict, Any, List
 
-from enum import Enum,unique
+from enum import Enum, unique
 
 from transformers import GPT2LMHeadModel, GPT2Config
 from transformers.models.gpt2.modeling_gpt2 import GPT2DoubleHeadsModelOutput
@@ -38,8 +39,9 @@ from gpt_dialogue.turngpt.tokenizer import SpokenDialogueTokenizer
 
 @unique
 class LOG_GROUP(Enum):
-    TRAIN : str = "train"
-    VALIDATION : str = "eval"
+    TRAIN: str = "train"
+    VALIDATION: str = "eval"
+
 
 # TODO: Investigate how this labeler is working.
 class ProjectionLabeler(nn.Module):
@@ -52,7 +54,10 @@ class ProjectionLabeler(nn.Module):
         self.projection_steps = projection_steps
         self.token_id = token_id
         self.labeler = nn.ConvTranspose1d(
-            in_channels=1, out_channels=1, kernel_size=projection_steps, bias=False
+            in_channels=1,
+            out_channels=1,
+            kernel_size=projection_steps,
+            bias=False,
         )
         self.labeler.weight.data.fill_(1.0)
         self.labeler.requires_grad_(False)
@@ -77,11 +82,7 @@ class TurnGPTModel(pl.LightningModule):
     """
 
     # Base GPT-2 models supported by TurnGPT.
-    _SUPPORTED_PRETRAINED_MODELS = [
-        "gpt2",
-        "gpt2-large",
-        "distilgpt2"
-    ]
+    _SUPPORTED_PRETRAINED_MODELS = ["gpt2", "gpt2-large", "distilgpt2"]
 
     # Parameters of the GPT-2 Config that will be re-trained / updated
     # even if loading pretrained configurations.
@@ -89,17 +90,19 @@ class TurnGPTModel(pl.LightningModule):
     _CONFIG_PRETRAIN_UPDATE_PARAMS = [
         "embed_pdrop",
         "attn_pdrop",
-        "resid_pdrop"
+        "resid_pdrop",
     ]
 
-    def __init__(self,
-            pretrained_model_name_or_path : str,
-            load_pretrained_configs : bool,
-            omit_speaker_ids : bool,
-            no_train_first_n : int,
-            learning_rate : int,
-            tokenizer_additional_special_tokens : List[str],
-            **kwargs):
+    def __init__(
+        self,
+        pretrained_model_name_or_path: str,
+        load_pretrained_configs: bool,
+        omit_speaker_ids: bool,
+        no_train_first_n: int,
+        learning_rate: int,
+        tokenizer_additional_special_tokens: List[str],
+        **kwargs,
+    ):
         """
         Args:
             pretrained_model_name_or_path (str):
@@ -129,25 +132,30 @@ class TurnGPTModel(pl.LightningModule):
         self.learning_rate = learning_rate
 
         # Verify that the model base is supported
-        if not os.path.exists(pretrained_model_name_or_path) and \
-                not pretrained_model_name_or_path in \
-                    self._SUPPORTED_PRETRAINED_MODELS:
-            print(f"ERROR: Provide valid path or select pre-trained model from "
-                    f"{self._SUPPORTED_PRETRAINED_MODELS}")
+        if (
+            not os.path.exists(pretrained_model_name_or_path)
+            and not pretrained_model_name_or_path
+            in self._SUPPORTED_PRETRAINED_MODELS
+        ):
+            print(
+                f"ERROR: Provide valid path or select pre-trained model from "
+                f"{self._SUPPORTED_PRETRAINED_MODELS}"
+            )
 
         # ---Load the pretrained model
         config = GPT2Config.from_pretrained(pretrained_model_name_or_path)
         if load_pretrained_configs:
-            for k,v in kwargs.items():
+            for k, v in kwargs.items():
                 if k in self._CONFIG_PRETRAIN_UPDATE_PARAMS and v is not None:
-                    config.update({k : v})
+                    config.update({k: v})
             self._transformer = GPT2LMHeadModel.from_pretrained(
                 pretrained_model_name_or_path=pretrained_model_name_or_path,
-                config=config)
+                config=config,
+            )
         else:
             for k, v in kwargs.items():
                 if v is not None:
-                    config.update({k : v})
+                    config.update({k: v})
             self._transformer = GPT2LMHeadModel(config=config)
 
         # Initialize the tokenizer and resize model embeddings
@@ -175,21 +183,22 @@ class TurnGPTModel(pl.LightningModule):
         NOTE: It is unusual to call this method generally - but we make an
         exception since lightning will not save the tokenizer.
         """
-        checkpoint['tokenizer'] = self._tokenizer
+        checkpoint["tokenizer"] = self._tokenizer
 
     def on_load_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
         """Restore any additional pickleable object saved during a checkpoint"""
         if "tokenizer" in checkpoint:
-            self._tokenizer = checkpoint['tokenizer']
+            self._tokenizer = checkpoint["tokenizer"]
             self._transformer.resize_token_embeddings(
-                new_num_tokens=len(self.tokenizer))
+                new_num_tokens=len(self.tokenizer)
+            )
 
     ##################### ADDITIONAL PUBLIC METHODS ##########################
 
     # --- Tokenizer Utility methods
     # These methods are built on top of the tokenizer
 
-    def tokenize(self, text ,*args, **kwargs):
+    def tokenize(self, text, *args, **kwargs):
         """
         Tokenize the given text 'after' applying padding.
         Moves the tokens to the available device.
@@ -199,8 +208,8 @@ class TurnGPTModel(pl.LightningModule):
         """
         tokens = self._tokenizer(text, *args, **kwargs)
         # NOTE: Device is a property of the lightning module.
-        for k,v in tokens.items():
-             tokens[k] = v.to(self.device)
+        for k, v in tokens.items():
+            tokens[k] = v.to(self.device)
         return tokens
 
     def decode(self, input_ids):
@@ -208,13 +217,19 @@ class TurnGPTModel(pl.LightningModule):
 
     ######################### PRIVATE METHODS ################################
 
-    def _initialize_tokenizer(self, tokenizer_additional_special_tokens : List[str] = []):
+    def _initialize_tokenizer(
+        self, tokenizer_additional_special_tokens: List[str] = []
+    ):
         """Create the tokenizer and resize the model embeddings"""
         self._tokenizer = SpokenDialogueTokenizer(
             self.pretrained_model_name_or_path,
-            tokenizer_additional_special_tokens=list(tokenizer_additional_special_tokens)
-            )
-        self._transformer.resize_token_embeddings(new_num_tokens=len(self._tokenizer))
+            tokenizer_additional_special_tokens=list(
+                tokenizer_additional_special_tokens
+            ),
+        )
+        self._transformer.resize_token_embeddings(
+            new_num_tokens=len(self._tokenizer)
+        )
 
     def _initialize_special_embeddings(self, tokens=["!", "?", "."]):
         """
@@ -232,10 +247,14 @@ class TurnGPTModel(pl.LightningModule):
             avg_embedding = self._transformer.transformer.wte(ids).mean(0)
             # Assign the average as the embedding for the eos special token.
             self._transformer.transformer.wte.weight.data[
-                self._tokenizer.eos_token_id] = avg_embedding
-        print(f"Initialized special wte for {self._tokenizer.eos_token} to average of {tokens}")
-        print(f"This will make the {self._tokenizer.eos_token} semantically closer to {tokens}")
-
+                self._tokenizer.eos_token_id
+            ] = avg_embedding
+        print(
+            f"Initialized special wte for {self._tokenizer.eos_token} to average of {tokens}"
+        )
+        print(
+            f"This will make the {self._tokenizer.eos_token} semantically closer to {tokens}"
+        )
 
     def _extract_labels(self, input_ids, mask, value=-100):
         """
@@ -248,9 +267,8 @@ class TurnGPTModel(pl.LightningModule):
             labels[:, : self.no_train_first_n] = value
         return labels
 
-    def _log_to_group(self, group : LOG_GROUP, k : str, v : float):
-        self.log(f"{group.value}/{k}",v)
-
+    def _log_to_group(self, group: LOG_GROUP, k: str, v: float):
+        self.log(f"{group.value}/{k}", v)
 
 
 class TurnGPTDoubleHeadsModel(TurnGPTModel):
@@ -260,16 +278,17 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
     """
 
     def __init__(
-            self,
-            pretrained_model_name_or_path : str = "gpt2",
-            load_pretrained_configs : bool = True,
-            trp_projection_steps : int =-1,
-            trp_projection_type : str = "linear",
-            omit_speaker_ids : bool = False,
-            no_train_first_n : int = 5,
-            learning_rate=1e-4,
-            tokenizer_additional_special_tokens : List[str] = [],
-            **kwargs):
+        self,
+        pretrained_model_name_or_path: str = "gpt2",
+        load_pretrained_configs: bool = True,
+        trp_projection_steps: int = -1,
+        trp_projection_type: str = "linear",
+        omit_speaker_ids: bool = False,
+        no_train_first_n: int = 5,
+        learning_rate=1e-4,
+        tokenizer_additional_special_tokens: List[str] = [],
+        **kwargs,
+    ):
         super().__init__(
             pretrained_model_name_or_path=pretrained_model_name_or_path,
             load_pretrained_configs=load_pretrained_configs,
@@ -277,7 +296,7 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
             no_train_first_n=no_train_first_n,
             learning_rate=learning_rate,
             tokenizer_additional_special_tokens=tokenizer_additional_special_tokens,
-            **kwargs
+            **kwargs,
         )
         self.trp_projection_steps = trp_projection_steps
         self.trp_projection_type = trp_projection_type
@@ -293,7 +312,7 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
     def forward(
         self,
         input_ids=None,
-         # NOTE: Custom argument for speaker ids.
+        # NOTE: Custom argument for speaker ids.
         speaker_ids=None,
         labels=None,
         mc_labels=None,
@@ -316,7 +335,11 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
         , which is the forward method for GPT2DoubleHeadsModel.
         The unique computation here is the custom TRP projection.
         """
-        return_dict = return_dict if return_dict is not None else self._transformer.config.use_return_dict
+        return_dict = (
+            return_dict
+            if return_dict is not None
+            else self._transformer.config.use_return_dict
+        )
 
         transformer_outputs = self._transformer.transformer(
             input_ids,
@@ -333,16 +356,20 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
         )
         hidden_states = transformer_outputs[0]
 
-         # Set device for model parallelism
+        # Set device for model parallelism
         if self._transformer.model_parallel:
             torch.cuda.set_device(self._transformer.first_device)
-            hidden_states = hidden_states.to(self._transformer.lm_head.weight.device)
+            hidden_states = hidden_states.to(
+                self._transformer.lm_head.weight.device
+            )
 
         # ---------- This part is the modification to this function.
         lm_logits = self._transformer.lm_head(hidden_states)
-        mc_logits = self.trp_projection_head(hidden_states) \
-            if self.trp_projection_steps > 1 else None
-
+        mc_logits = (
+            self.trp_projection_head(hidden_states)
+            if self.trp_projection_steps > 1
+            else None
+        )
 
         # Calculate the lm task loss.
         lm_loss = None
@@ -352,7 +379,10 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
             shift_logits = lm_logits[..., :-1, :].contiguous()
             shift_labels = labels[..., 1:].contiguous()
             loss_fct = CrossEntropyLoss()
-            lm_loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
+            lm_loss = loss_fct(
+                shift_logits.view(-1, shift_logits.size(-1)),
+                shift_labels.view(-1),
+            )
 
         # Calculate the TRP projection task loss
         mc_loss = None
@@ -383,67 +413,75 @@ class TurnGPTDoubleHeadsModel(TurnGPTModel):
         logs = {}
         # Extract the task labels
         lm_labels = self._extract_labels(
-            input_ids=batch['input_ids'],mask=batch['attention_mask'])
+            input_ids=batch["input_ids"], mask=batch["attention_mask"]
+        )
 
         trp_labels = None
         if self.trp_projection_steps > 0:
             trp_labels = self._extract_mc_labels(
-                input_ids=batch['input_ids'],mask=batch['attention_mask'])
+                input_ids=batch["input_ids"], mask=batch["attention_mask"]
+            )
 
         if self.omit_speaker_ids:
-            batch['speaker_ids'] = None
+            batch["speaker_ids"] = None
 
         # Do one forward pass to obtain the task losses
         out = self.forward(
-            input_ids=batch['input_ids'],
-            speaker_ids=batch['speaker_ids'],
+            input_ids=batch["input_ids"],
+            speaker_ids=batch["speaker_ids"],
             labels=lm_labels,
-            mc_labels=trp_labels
+            mc_labels=trp_labels,
         )
         # Calculate and return the total loss
         if self.trp_projection_steps > 0:
-            self._log_to_group(LOG_GROUP.TRAIN,"loss_lm",out["loss"])
-            self._log_to_group(LOG_GROUP.TRAIN,"loss_projection", out["mc_loss"])
+            self._log_to_group(LOG_GROUP.TRAIN, "loss_lm", out["loss"])
+            self._log_to_group(
+                LOG_GROUP.TRAIN, "loss_projection", out["mc_loss"]
+            )
             # self.log("loss_lm", out["loss"])
             # self.log("loss_projection", out["mc_loss"])
             total_loss = out["loss"] + out["mc_loss"]
         else:
-            self._log_to_group(LOG_GROUP.TRAIN,"loss", out["loss"])
+            self._log_to_group(LOG_GROUP.TRAIN, "loss", out["loss"])
             # self.log("loss", out["loss"])
             total_loss = out["loss"]
         return {"loss": total_loss}
 
     def validation_step(self, batch, batch_idx):
         """This step is for calculating and logging interesting metrics for validation"""
-         # Extract the task labels
+        # Extract the task labels
         lm_labels = self._extract_labels(
-            input_ids=batch['input_ids'],mask=batch['attention_mask'])
+            input_ids=batch["input_ids"], mask=batch["attention_mask"]
+        )
 
         trp_labels = None
         if self.trp_projection_steps > 0:
             trp_labels = self._extract_mc_labels(
-                input_ids=batch['input_ids'],mask=batch['attention_mask'])
+                input_ids=batch["input_ids"], mask=batch["attention_mask"]
+            )
 
         if self.omit_speaker_ids:
-            batch['speaker_ids'] = None
+            batch["speaker_ids"] = None
 
         # Do one forward pass to obtain the task losses
         out = self.forward(
-            input_ids=batch['input_ids'],
-            speaker_ids=batch['speaker_ids'],
+            input_ids=batch["input_ids"],
+            speaker_ids=batch["speaker_ids"],
             labels=lm_labels,
-            mc_labels=trp_labels
+            mc_labels=trp_labels,
         )
         # Calculate and log te validation loss.
         if self.trp_projection_steps > 0:
-            self._log_to_group(LOG_GROUP.VALIDATION,"loss_lm", out["loss"])
-            self._log_to_group(LOG_GROUP.VALIDATION,"loss_projection", out["mc_loss"])
+            self._log_to_group(LOG_GROUP.VALIDATION, "loss_lm", out["loss"])
+            self._log_to_group(
+                LOG_GROUP.VALIDATION, "loss_projection", out["mc_loss"]
+            )
             # self.log("val_loss_lm", out["loss"])
             # self.log("val_loss_projection", out["mc_loss"])
             total_loss = out["loss"] + out["mc_loss"]
         else:
             total_loss = out["loss"]
-        self._log_to_group(LOG_GROUP.VALIDATION,"loss", total_loss)
+        self._log_to_group(LOG_GROUP.VALIDATION, "loss", total_loss)
         # self.log("val_loss", total_loss)
 
     ######################### PRIVATE METHODS ################################
@@ -500,14 +538,15 @@ class TurnGPTLMHeadModel(TurnGPTModel):
     """
 
     def __init__(
-            self,
-            pretrained_model_name_or_path : str = "gpt2",
-            load_pretrained_configs : bool = True,
-            omit_speaker_ids : bool = False,
-            no_train_first_n : int = 5,
-            learning_rate=1e-4,
-            tokenizer_additional_special_tokens : List[str] = [],
-            **kwargs):
+        self,
+        pretrained_model_name_or_path: str = "gpt2",
+        load_pretrained_configs: bool = True,
+        omit_speaker_ids: bool = False,
+        no_train_first_n: int = 5,
+        learning_rate=1e-4,
+        tokenizer_additional_special_tokens: List[str] = [],
+        **kwargs,
+    ):
         super().__init__(
             pretrained_model_name_or_path=pretrained_model_name_or_path,
             load_pretrained_configs=load_pretrained_configs,
@@ -515,11 +554,10 @@ class TurnGPTLMHeadModel(TurnGPTModel):
             no_train_first_n=no_train_first_n,
             learning_rate=learning_rate,
             tokenizer_additional_special_tokens=tokenizer_additional_special_tokens,
-            **kwargs
+            **kwargs,
         )
         # save all the hyper-params passed to the model - accessible using model.hparams.
         self.save_hyperparameters()
-
 
     def forward(
         self,
@@ -545,14 +583,18 @@ class TurnGPTLMHeadModel(TurnGPTModel):
         , which is the forward method for GPT2DoubleHeadsModel.
         The unique component here is that speaker_ids are passed as the token_type_ids
         """
-        return_dict = return_dict if return_dict is not None else self._transformer.config.use_return_dict
+        return_dict = (
+            return_dict
+            if return_dict is not None
+            else self._transformer.config.use_return_dict
+        )
 
         transformer_outputs = self._transformer.transformer(
             input_ids,
             past_key_values=past_key_values,
             attention_mask=attention_mask,
             # NOTE: The speaker ids are passed as the token_type_ids here.
-            #Link: https://huggingface.co/docs/transformers/v4.21.0/en/model_doc/gpt2#transformers.GPT2Model.forward.token_type_ids
+            # Link: https://huggingface.co/docs/transformers/v4.21.0/en/model_doc/gpt2#transformers.GPT2Model.forward.token_type_ids
             token_type_ids=speaker_ids,
             position_ids=position_ids,
             head_mask=head_mask,
@@ -567,7 +609,9 @@ class TurnGPTLMHeadModel(TurnGPTModel):
         # Set device for model parallelism
         if self._transformer.model_parallel:
             torch.cuda.set_device(self._transformer.first_device)
-            hidden_states = hidden_states.to(self._transformer.lm_head.weight.device)
+            hidden_states = hidden_states.to(
+                self._transformer.lm_head.weight.device
+            )
 
         # LMHead only uses lm logits
         lm_logits = self._transformer.lm_head(hidden_states)
@@ -578,7 +622,10 @@ class TurnGPTLMHeadModel(TurnGPTModel):
             shift_logits = lm_logits[..., :-1, :].contiguous()
             shift_labels = labels[..., 1:].contiguous()
             loss_fct = CrossEntropyLoss()
-            loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
+            loss = loss_fct(
+                shift_logits.view(-1, shift_logits.size(-1)),
+                shift_labels.view(-1),
+            )
 
         if not return_dict:
             output = (lm_logits,) + transformer_outputs[1:]
@@ -601,34 +648,33 @@ class TurnGPTLMHeadModel(TurnGPTModel):
         generate the combined loss, and return the values.
         """
         out = self._step(batch, batch_idx)
-        self._log_to_group(LOG_GROUP.TRAIN,"loss",out["loss"])
+        self._log_to_group(LOG_GROUP.TRAIN, "loss", out["loss"])
         # self.log("loss", out["loss"])
-        return {"loss" : out["loss"]}
-
+        return {"loss": out["loss"]}
 
     def validation_step(self, batch, batch_idx):
         """
         This step is for calculating and logging interesting metrics for
         validation"""
         out = self._step(batch, batch_idx)
-        self._log_to_group(LOG_GROUP.VALIDATION,"loss",out["loss"])
+        self._log_to_group(LOG_GROUP.VALIDATION, "loss", out["loss"])
         # self.log("val_loss", out["loss"])
-
 
     ######################### PRIVATE METHODS ################################
 
     def _step(self, batch, batch_idx):
-        """Common step method for both the tain and validation step. """
-         # Extract the task labels
+        """Common step method for both the tain and validation step."""
+        # Extract the task labels
         lm_labels = self._extract_labels(
-            input_ids=batch['input_ids'],mask=batch['attention_mask'])
+            input_ids=batch["input_ids"], mask=batch["attention_mask"]
+        )
 
         if self.omit_speaker_ids:
-            batch['speaker_ids'] = None
+            batch["speaker_ids"] = None
 
         # Do one forward pass to obtain the task losses
         return self.forward(
-            input_ids=batch['input_ids'],
-            speaker_ids=batch['speaker_ids'],
+            input_ids=batch["input_ids"],
+            speaker_ids=batch["speaker_ids"],
             labels=lm_labels,
         )

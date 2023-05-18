@@ -136,9 +136,15 @@ docs/
 outputs/
 # NOTE: Bin is changed a lot to run on slurm - so ignoring this for now.
 # General template was pushed to git.
-bin/
+
 
 # Lightning ignores
 lightning_logs/
 
 wandb/
+
+test_models/
+
+output/
+
+.vscode/

@@ -1,0 +1,26 @@
+name : inference_gpt2
+model_name : gpt_icc_28_train_14_test
+
+load:
+  # model_checkpoint :/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_monologue_gpt/gpt2_icc_28_train_14_test_special_labels/2022-12-20_01-33-01/checkpoint-1160 
+  model_checkpoint : ${oc.env:INF_GPT2_CKPT}
+  tokenizer_checkpoint : gpt2
+
+  # NOTE: Uncomment to run trained model. These should be the same in finetuning.
+  # These should be commented out for the null model.
+  tokenizer_eos_token : <|endoftext|>
+  tokenizer_pad_token : <PAD>
+  tokenizer_additional_special_tokens :
+    - <SP1>   # Speaker 1 token
+    - <SP2>   # Speaker 2 token
+    - <START> # Conversation start token
+    - <END>   # Conversation end token
+
+dataset:
+  start_conv_no : 0
+  end_conv_no : -1
+
+inference:
+  N : -1
+  context_buffer_size : 512
+

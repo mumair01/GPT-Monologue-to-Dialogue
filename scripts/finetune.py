@@ -2,10 +2,18 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-12 12:19:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-22 09:26:10
+# @Last Modified time: 2023-05-18 09:11:18
+
+""" 
+Assumptions
+-----------
+1. Before this script is run, it assumed that the environment has been 
+    set using set_hpc_env.sh or set_env.sh
+"""
 
 import sys
 import os
+from functools import partial
 from typing import Callable
 
 from omegaconf import DictConfig, OmegaConf
@@ -14,93 +22,103 @@ import hydra
 import wandb
 import logging
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
-from gpt_dialogue.monologue_gpt import MonologueGPT
+sys.path.insert(
+    0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
+)
+
+from gpt_dialogue.gpt2 import GPT2
 from gpt_dialogue.turngpt import TurnGPT
+
+from scripts.decorators import log_wandb
 
 logger = logging.getLogger(__name__)
 
 ########################## GLOBAL VARS. ####################################
 
-HYDRA_CONFIG_RELATIVE_DIR = "../conf"
-HYDRA_CONFIG_NAME = "config"
+# Load Hydra and wandb args from the environment
+HYDRA_CONFIG_RELATIVE_DIR = os.getenv("HYDRA_CONFIG_RELATIVE_DIR")
+HYDRA_CONFIG_NAME = os.getenv("HYDRA_CONFIG_NAME")
 
-WANDB_PROJECT = "GPT-Monologue-Dialogue-Finetune"
-WANDB_ENTITY = "gpt-monologue-dialogue"
+WANDB_PROJECT = os.getenv("WANDB_PROJECT")
+WANDB_ENTITY = os.getenv("WANDB_ENTITY")
+WANDB_INIT_MODE = os.getenv("WANDB_INIT_MODE")
 
 
 ########################### MAIN METHODS ####################################
 
 
-def log_wandb(func : Callable):
-    """Decorator for setting up and logging experiment using wandb"""
+def generate_wandb_run_name(cfg):
+    try:
+        return f"{cfg.experiment.name}_{cfg.experiment.load.model_head}_{cfg.dataset.name}"
+    except:
+        return f"{cfg.experiment.name}_{cfg.dataset.name}"
 
-    logger.info("WANDB: Logging finetuning using Weights and Biases (WANDB)")
 
-    def inner(cfg : DictConfig):
-        # Log the config params using wandb
-        wandb.config = OmegaConf.to_container(
-            cfg, resolve=True, throw_on_missing=True
-        )
-
-        run = wandb.init(
-            project=WANDB_PROJECT,
-            entity=WANDB_ENTITY,
-            config=OmegaConf.to_container(
-            cfg, resolve=True, throw_on_missing=True
-        ))
-        # Change the run name
-        run_id = wandb.run.id
-        try:
-            wandb.run.name = f"{cfg.experiment.name}_{cfg.experiment.load.model_head}_{cfg.dataset.name}_{run_id}"
-        except:
-            wandb.run.name = f"{cfg.experiment.name}_{cfg.dataset.name}_{run_id}"
-
-        logger.info(
-            f"WANDB: Running experiment for project {WANDB_PROJECT} entity "
-            f"{WANDB_ENTITY} with id {wandb.run.id}"
-        )
-
-        # Run experiment
-        func(cfg)
-
-        # Finish logging the run
-        logger.info(f"WANDB: Ending logging for experiment: {run_id}")
-        run.finish()
-
-    return inner
-
-@log_wandb
-def run_finetuning(cfg : DictConfig):
+@log_wandb(
+    logger=logger,
+    wandb_project=WANDB_PROJECT,
+    wandb_entity=WANDB_ENTITY,
+    wandb_init_mode=WANDB_INIT_MODE,
+    run_name_func=generate_wandb_run_name,
+)
+def run_finetuning(cfg: DictConfig, run: wandb.run):
     logger.info("Starting finetuning experiment with configurations:")
     print(OmegaConf.to_yaml(cfg))
+
     # Load the appropriate model
-    if cfg.experiment.name == "finetune_monologue_gpt":
-        model = MonologueGPT()
+    if cfg.experiment.name == "finetune_gpt2":
+        model = GPT2()
     elif cfg.experiment.name == "finetune_turngpt":
         model = TurnGPT()
+
+        # NOTE: Augmenting the native tokenizer so that the correct Args
+        # are used for the model tokenizer.
+        # IMPORTANT: This is based off the assumption that the training data
+        # has <ts> / EOS tokens ONLY at turn continuations, NOT at turn ends.
+        def _turngpt_encode_wrapper(**kwargs):
+            return partial(
+                model.tokenizer(
+                    add_prefix_space=True,
+                    add_eos_token=True,
+                    return_token_type_ids=True,
+                    # NOTE: This is important - for our experiments with TurnGPT,
+                    # we do not want to split speaker by the inline eos token.
+                    split_speaker_by_inline_eos=False,
+                    **kwargs,
+                )
+            )
+
+        model.encode = _turngpt_encode_wrapper
     else:
         raise NotImplementedError(
             f"Experiment {cfg.experiment.name} not defined"
         )
-
     # Load the model
+    model.load(**OmegaConf.to_object(cfg.experiment.load))
     logger.info(f"Loading model of type: {model}")
-    model.load(**cfg.experiment.load)
-
     # Finetune
+    logger.info("Starting finetuning...")
     model.finetune(
-        train_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.train_csv_path),
-        val_csv_path=os.path.join(cfg.env.paths.root,cfg.dataset.validation_csv_path),
-        save_dir = os.getcwd(),
-        **cfg.experiment.finetune
+        train_csv_path=os.path.join(
+            cfg.env.paths.root, cfg.dataset.train_csv_path
+        ),
+        val_csv_path=os.path.join(
+            cfg.env.paths.root, cfg.dataset.validation_csv_path
+        ),
+        save_dir=os.getcwd(),
+        **OmegaConf.to_object(cfg.experiment.finetune),
     )
     logger.info("Finetuning completed!")
 
 
-@hydra.main(version_base=None, config_path=HYDRA_CONFIG_RELATIVE_DIR, config_name=HYDRA_CONFIG_NAME)
-def main(cfg : DictConfig):
+@hydra.main(
+    version_base=None,
+    config_path=HYDRA_CONFIG_RELATIVE_DIR,
+    config_name=HYDRA_CONFIG_NAME,
+)
+def main(cfg: DictConfig):
     run_finetuning(cfg)
+
 
 if __name__ == "__main__":
     main()

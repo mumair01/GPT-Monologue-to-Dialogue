@@ -1,0 +1,32 @@
+# Config file groups contain commonly used values but are not exhaustive.
+
+[gpt2.load]
+# model_checkpoint = "/cluster/tufts/deruiterlab/mumair01/projects/gpt_monologue_dialogue/outputs/finetune_monologue_gpt/gpt2_icc_28_train_14_test_special_labels/2022-12-10_08-53-56/checkpoint-1160"
+model_checkpoint = "gpt2"
+tokenizer_checkpoint = "gpt2"
+# NOTE: Comment following args to load the null model.
+# tokenizer_eos_token = "<|endoftext|>"
+# tokenizer_pad_token = "<PAD>"
+# tokenizer_additional_special_tokens = [
+#     "<SP1>", # Speaker 1 token
+#     "<SP2>", # Speaker 2 token
+#     "<START>", # Conversation start token
+#     "<END>" # Conversation end token
+# ]
+
+[turngpt.load]
+pretrained_model_name_or_path = "gpt2"
+model_head  = "LMHead"
+
+
+[spoken_dialogue_tokenizer]
+pretrained_model_name_or_path = "gpt2"
+base_speaker_token = "<SP{}>"
+tokenizer_eos_token = "<ts>"
+tokenizer_pad_token = "<|endoftext|>"
+tokenizer_additional_special_tokens  = []
+
+[conditional_probability_pipe]
+N = -1
+context_buffer_size = 512
+

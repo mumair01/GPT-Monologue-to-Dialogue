@@ -1,0 +1,19 @@
+name : finetune_turngpt
+model_name : TurnGPT_LMHead
+
+load:
+  pretrained_model_name_or_path : gpt2
+  model_head : LMHead
+
+finetune:
+  conversation_id_key : convID
+  utterance_key : Utterance
+  batch_size : 16
+  max_length : 1024
+  chunk_size : 128
+  num_workers : 0 # NOTE: This should be set to 0 if using locally and gpu unavilable
+  pin_memory : False
+  use_cache : False
+  # Training Args
+  max_epochs :  30
+  log_every_n_steps : 1

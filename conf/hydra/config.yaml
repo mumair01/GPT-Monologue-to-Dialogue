@@ -1,0 +1,14 @@
+hydra:
+  run:
+    # Ex output dir: .../outputs/finetune/turngpt_icc_5_train_37_test/2022-08-10_141516
+    dir: ${env.paths.root}/outputs/${experiment.name}/${experiment.model_name}_${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}/
+  job:
+    chdir: True
+
+# Assumption:  PROJECT_PATH var. will be set in the environment. 
+env:
+  name : sourced
+  seed : 42 
+  paths:
+    root:  ${oc.env:PROJECT_PATH}
+
