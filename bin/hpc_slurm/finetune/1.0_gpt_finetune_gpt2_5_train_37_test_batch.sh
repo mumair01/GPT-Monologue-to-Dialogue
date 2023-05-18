@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH -J gpt_finetune_monologue_gpt_5_train_37_test #job name
-#SBATCH --time=07-00:00:00 # maximum duration is 7 days
+#SBATCH --time=00-00:30:00 # maximum duration is 7 days
 #SBATCH -p preempt #in 'preempt'
 #SBATCH -N 1  #1 nodes
-#SBATCH -n 32   #30 number of cores (number of threads)
+#SBATCH -n 16   #30 number of cores (number of threads)
 #SBATCH --gres=gpu:p100:1 # one P100 GPU, can request up to 6 on one node, total of 10, a100
 #SBATCH --exclude=c1cmp[025-026]
 #SBATCH -c 1 #1 cpu per task - leave this!

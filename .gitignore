@@ -146,5 +146,3 @@ wandb/
 test_models/
 
 output/
-
-.vscode/
