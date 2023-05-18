@@ -1,29 +1,28 @@
 # GPT-Monologue-to-Dialogue
 
-## Content
+## Overview
+
+This document has the following sections:
 
 - [About](#about)
 - [Built With](#built-with)
 - [Getting Started](#getting-started)
-- [Models](#models)
+- [Environment Setup](#environment-setup)
 - [Acknowledgements](#acknowledgements)
 - [Research Notice](#research-notice)
 
+Please find below links to additional/complementary resources for this project:
+- [Project OSF](https://osf.io/fxn8y/)
+
 ## About
 
-Over the past few years, Generate Pre-trained Transformer (GPT) has made the news for producing eerily human-like written language. One blog post was the top Hacker News blog post before the author announced that it was written by GPT-3
-(https://adolos.substack.com/p/feeling-unproductive-maybe-you-should). These successes have lead many to voice fears that
-GPT-3 will be used to mass-produce misinformation. A recent study found that readers were unable to distinguish between
-human-written news articles and those written by GPT-21. In fact, readers found some GPT-2 articles more credible than
-human-written articles.
+Transformer-based Large Language Models (LLMs), including ChatGPT, have recently increased in popularity. While LLMs can produce humanlike writing, no study has investigated the extent to which these models can learn to predict spoken language in natural interaction. This is a non-trivial question, as spoken and written language differ in syntax and pragmatics, and interlocutors in natural dialog follow a number of complex norms. Previous work suggests that LLMs can learn statistical regularities but may not learn subtle underlying patterns in the data. This implies that LLMs may not learn subtle norms in spoken dialog, but may instead model superficial statistical regularities in speech. In this paper, we investigate whether LLMs can learn one unique property of natural conversation: all language is spoken by speakers, and subtle norms influence who can say what, when. 
 
-All of this is to say GPT and other language models have made huge progress in modeling and simulating written language.
-However, there has been relatively little progress in creating language models that can accurately simulate spoken language.
-There would be many benefits to doing so. Conversational AI agents with more naturalistic speech will be easier to use, understand and trust. Language models could also help psycholinguists with stimulus norming, the process of ensuring that a stimulus is predictable or surprising. Language models could even help psycholinguists create stimuli, a process that typically requires extensive time and creativity. These are only some of the ways that language models capable of replicating human dialog would be useful. However, there is no evidence that the state-of-the-art language models, currently trained on written language scraped from websites like Reddit, can quickly learn to use language in dialog.
+To answer this question, we tested two variants of GPT: one with explicit speaker representations and one without. We finetuned the models on transcripts of natural spoken dialog. Then, we extracted the LLM-produced surprisal values for turns spoken by correct and incorrect speakers. All finetuned models used speaker identity to predict upcoming words, but may have inserted speaker transitions to make some stimuli more plausible. These findings suggest that while LLMs may learn to represent some common norms, they cannot (yet) replicate human behavior in natural spoken dialog. 
 
 In this project, we implement twp versions of GPT-2 - one sensitive to speaker identity and the other ignorant of speaker identity. We finetune these models on high quality internally recorded spoken language data and generate conditional probabilities of specially recorded stimuli. These stimuli are designed to make sense when spoken by a certain speaker and have congurent and incongruent conditions. If the model captures dialogue structure, then we expect its output probabilities to match the stimuli conditions.
 
-### Monologue GPT
+### GPT2
 
 GPT-2 is a transformers model pretrained on a very large corpus of English data in a self-supervised fashion. This means it was pretrained on the raw texts only, with no humans labelling them in any way (which is why it can use lots of publicly available data) with an automatic process to generate inputs and labels from those texts. More precisely, it was trained to guess the next word in sentences. More precisely, inputs are sequences of continuous text of a certain length and the targets are the same sequence, shifted one token (word or piece of word) to the right. The model uses internally a mask-mechanism to make sure the predictions for the token i only uses the inputs from 1 to i but not the future tokens.This way, the model learns an inner representation of the English language that can then be used to extract features useful for downstream tasks. The model is best at what it was pretrained for however, which is generating texts from a prompt.
 
@@ -45,6 +44,13 @@ Here are some of the popular frameworks this project uses:
 
 ## Getting Started
 
+
+The first step is to clone this repository:
+
+```bash
+git clone https://github.com/mumair01/GPT-Monologue-to-Dialogue.git
+```
+
 ### Structure
 
 In this section, we provide an overview of the structure of this project and the various components.
@@ -57,17 +63,14 @@ gpt_monologue_dialogue
     |-- *.sh
 |-- conf/
     |-- dataset/
-    |--env/
-    |--experiment/
+    |-- experiment/
     |-- config.yaml
 |-- data_lib/
-    |-- data_lib/
-    |-- *.py
 |-- gpt_dialogue/
-    |-- monologue_gpt/
+    |-- gpt2/
+    |-- pipelines/
     |-- turngpt/
     |-- *.py
-|-- notebooks/
 |-- scripts/
 |-- tests/
 |-- .gitignore
@@ -75,6 +78,7 @@ gpt_monologue_dialogue
 |-- LICENSE
 |-- pyproject.toml
 |-- README.md
+|-- requirements.txt
 |-- setup.py
 
 ```
@@ -82,63 +86,111 @@ gpt_monologue_dialogue
 Here is a description of what each directory contains:
 | Directory      | Description |
 | ----------- | ----------- |
-| bin      | Contains various shell scripts      |
-| conf   | Hydra configurations for using custom datasets, environments, and experiments.        |
-| data_lib   | Data preprocessing package       |
-| gpt_dialogue   | Main modeling package containing Monologue and Turn GPT          |
-| notebooks   | Proof of concept notebooks       |
-| scripts   | Scripts for finetuning and inference        |
-| tests   | Pytest testing folder        |
+| bin      | Shell scripts tp configure the project environment.     |
+| conf   | Hydra configurations for using custom datasets and experiments.        |
+| data_lib   | Data preprocessing package.       |
+| gpt_dialogue   | Main modeling package containing GPT2 and TurnGPT.          |
+| scripts   | Main scripts for finetuning and inference.        |
+| tests   | Pytest based testing folder. |
 
 
-### Dataset 
+## Environment Setup 
 
-In our experiments, we use two datasets - the In Conversation Corpus (ICC) and Speaker Identity Stimuli - that we do not publicly share. Therefore, to replicate our experiments, use the data_lib scripts icc.py and speaker_identity_stims.py along with conf to set up the expected datasets.
+### Python environment
 
-### Finetuning 
-
-
-### Inference
-
-The first step is to clone this repository using:
-
-```bash
-https://github.com/mumair01/GPT-Monologue-to-Dialogue.git
-```
-
-Next, use [conda](https://docs.conda.io/en/latest/) to install all required libraries using:
+First, set up the [conda](https://docs.conda.io/en/latest/) environment for this project, which installs all the required libraries:
 
 ```bash
 conda env create -f environment.yml
 ```
 
-
-
-Once the finetuning and inference datasets have been created, use finetune.py and inference.py in the scripts directory to finetune and generate conditional probabilities. Both these scripts can be run as [hydra apps](https://hydra.cc/docs/intro/) as follows:
-
+If using conda is not a preferred option, install all dependencies for the currently selected python environment using:
 ```bash
-python finetune.py +experiment <EXPERIMENT_CONFIG> +dataset <DATASET_CONFIG> +env <ENV_CONFIG>
-
-python inference.py +experiment <EXPERIMENT_CONFIG> +dataset <DATASET_CONFIG> +env <ENV_CONFIG>
+pip install -r requirements.txt
 ```
 
-Both these scripts expect a conf folder to be present in the root directory - similar to the structure of this project.
+### Project environment
 
-The finetune.py script is responsible for loading the specified model, loading the specified dataset, and finetuning the model on that specific dataset. Similarly, the inference script uses finetuned models to generate the conditional probability of words i.e., P(word | context) using the specified model and dataset. Both scripts use wandb to log results - for which an [account](https://wandb.ai/site) is required.
+To ensure that this project runs smoothly across devices, a number of environment variables for the project **must** be sourced before any scripts can be run. 
 
+We provide a number of shell scripts in the bin/ directory for this process:
+
+| Script      | Description |
+| ----------- | ----------- |
+| set_env     | Sets the local environment.     |
+| hpc_slurm/set_hpc_env   | Set the project environment for a high performance cluster.        |
+| set_configs   | Sets variables that are commonly changed across environments.       |
+
+To run this project locally, set the project environment using the following:
+
+```bash
+source set_env.sh
+```
+
+To run this project on a high performance cluster (HPC), use the following. Note that the paths in this script may need to be changed based on the type of HPC. 
+```bash
+source bin/set_hpc_env.sh
+```
+
+The set_configs.sh script contains variables that are used across scripts in this project, but may commonly need to be changed. For example, the path to the model used for inference may need to be changed across experiments. The aim of this script is to provide a single point of change for the project. 
+
+**IMPORTANT:** The project environment must be sourced every time there are changes made to set_configs.sh.
+
+
+### Dataset 
+
+We use two datasets as part of this experiment: the In Conversation Corpus (ICC) and stimuli from [Warnke & de Ruiter (2022)](https://www.nature.com/articles/s41598-023-30435-z). The ICC is sub-divided into two additional datasets: one containing five conversations and one containing 28 conversations. 
+
+The processed datasets required for finetuning and inference are available in the exact directory structure required to work with project scripts through the [OSF page](https://osf.io/fxn8y/) for this project. Simply download the data directory to the project root for use.
+
+Note that we do not currently provide our raw datasets. However, in case we publicly release the raw datasets in the future, the bin/generate_datasets.sh script can be used to generate all processed datasets required for finetuning and inference. 
+
+## Experiments 
+
+To replicate our experiments, the first step is to finetune various configurations of GPT2 and TurnGPT. Next, these finetuned models can be used to generate conditional probability values for stimuli from Warnke & de Ruiter (2022). Finally, conditional probabilities can be converted into surprisal, which we analyze in our paper. 
+
+Note that we log both finetuning and inference runs using wandb, for which a [wandb account](https://wandb.ai/site) is required. 
+
+### Finetuning 
+
+Transformer-based models show high performance when learning new tasks due to their capacity for transfer learning. Under this paradigm, models are first pretrained using large datasets on data-rich tasks (e.g, next-word prediction) in an unsupervised fashion. During the pretraining process, the model learns general-purpose domain knowledge. Next, the model is finetuned on smaller, task-specific datasets. During the finetuning process, models learn task-specific knowledge on top of the existing general-knowledge gained during pretraining. This process of pretraining and finetuning enables a language model to achieve state of the art performance on  a number of language benchmarks. 
+
+
+Once the finetuning and inference datasets have been created, use finetune.py scripts directory to finetune as follows:
+
+```bash
+python finetune.py +experiment <EXPERIMENT_CONFIG> +dataset <DATASET_CONFIG>
+``` 
+
+Since there are a number of model-dataset finetuning configurations we generate as part of our experiments, the bin/local directory contains a number of shell scripts that can automate this process.
+
+### Inference
+
+In this project, we extracted the LLM-produced surprisal values for turns spoken by correct and incorrect speakers. For a given sequence, The equation below defines turn surprisal where the first turn has K words denoted $w_1^{1}, w_2^{1} ... w_K^{1}$ and the second turn has N words denoted $w_1^{2}, w_2^{2} ... w_N^{2}$, such that the superscript represents the turn number and the subscript represents the position of a word in that turn. The second turn surprisal is then the sum of the negative log probability for each word in the second turn given all previous words in the second turn and the entire first turn. As the second turn in our stimuli can contain at most two words, N $\in$ \{1, 2\}.
+
+$\textit{Second Turn Surprisal} = \sum_{i=1}^{N} - log P(w_i^{2} | w_1^{2}, ... w_{i-1}^{2}, w_1^{1}, ... w_K^{1})$\\
+
+
+To generate surprisal from our finetuned models, we first want to generate the conditional probability of each word for all stimuli in the dataset from Warnke & de Ruiter (2022). This can be done using the scripts/inference.py script as follows:
+
+```bash
+python inference.py +experiment <EXPERIMENT_CONFIG> +dataset <DATASET_CONFIG>
+```
+
+### Configurations 
+
+Both the finetuning and inference processes can be configured. We use hydra to ensure that minimum configuration changes are required for all scripts to be run on different systems. Please review all files in the conf/hydra directory (which have detailed comments before running any scripts). 
 
 ## Acknowledgements
 
-This project was conducted in the [Tufts Human Interaction Lab](https://sites.tufts.edu/hilab/). It is part of a research paper with the following members.
+This project was conducted in the [Tufts Human Interaction Lab](https://sites.tufts.edu/hilab/) by the following team:
 
-with the following team members:
+- Muhammad Umair
+- [Julia Mertens](https://www.linkedin.com/in/juliamertens/).
+- [Lena Warnke](https://lenawarnke.com/About)
+- [Jan P. de Ruiter](https://engineering.tufts.edu/cs/people/faculty/jp-de-ruiter) 
 
-- [Muhammad Umair](https://mumair01.github.io/) - Primary developer and second author.
-- [Julia Mertens](https://www.linkedin.com/in/juliamertens/) - First author.
-- [Lena Warnke](https://lenawarnke.com/About) - Third author.
-- [Jan P. de Ruiter](https://engineering.tufts.edu/cs/people/faculty/jp-de-ruiter) - Principal Investigator.
-
-Code sources:
+The following code sources were used as a starting point for our implementation, and we would like to thank the authors for making their projects open-source. 
 
 - [TurnGPT](https://github.com/ErikEkstedt/TurnGPT)
 - [Transformers](https://huggingface.co/docs/transformers/index)
