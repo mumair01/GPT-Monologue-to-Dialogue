@@ -183,12 +183,8 @@ Both the finetuning and inference processes can be configured. We use hydra to e
 
 ## Acknowledgements
 
-This project was conducted in the [Tufts Human Interaction Lab](https://sites.tufts.edu/hilab/) by the following team:
-
-- [Muhammad Umair](https://www.linkedin.com/in/mumair/)
-- [Julia Mertens](https://www.linkedin.com/in/juliamertens/).
-- [Lena Warnke](https://lenawarnke.com/About)
-- [Jan P. de Ruiter](https://engineering.tufts.edu/cs/people/faculty/jp-de-ruiter) 
+**NOTE**: Acknowledgements have been removed for this version to ensure 
+the integrity of the double-blind peer review process. 
 
 The following code sources were used as a starting point for our implementation, and we would like to thank the authors for making their projects open-source. 
 
