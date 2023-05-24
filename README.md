@@ -12,7 +12,7 @@ This document has the following sections:
 - [Research Notice](#research-notice)
 
 Please find below links to additional/complementary resources for this project:
-- [Project OSF](https://osf.io/fxn8y/)
+- [Project OSF](https://osf.io/fxn8y/?view_only=c70f49ab84a149b6b999be606f619eb2)
 
 ## About
 
