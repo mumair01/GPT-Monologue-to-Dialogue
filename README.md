@@ -148,6 +148,8 @@ To run this project locally, set the project environment using the following:
 source set_env.sh
 ```
 
+**NOTE**: The above file must be sources, even for running the test suite. 
+
 To run this project on a high performance cluster (HPC), use the following. 
 
 **Note**: The paths in this script may need to be changed based on the type of HPC. 
