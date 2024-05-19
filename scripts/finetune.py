@@ -22,14 +22,12 @@ import hydra
 import wandb
 import logging
 
-sys.path.insert(
-    0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
-)
+sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
 
 from gpt_dialogue.gpt2 import GPT2
 from gpt_dialogue.turngpt import TurnGPT
 
-from scripts.decorators import log_wandb
+from LLMDialogue.utils.decorators import log_wandb
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +47,9 @@ WANDB_INIT_MODE = os.getenv("WANDB_INIT_MODE")
 
 def generate_wandb_run_name(cfg):
     try:
-        return f"{cfg.experiment.name}_{cfg.experiment.load.model_head}_{cfg.dataset.name}"
+        return (
+            f"{cfg.experiment.name}_{cfg.experiment.load.model_head}_{cfg.dataset.name}"
+        )
     except:
         return f"{cfg.experiment.name}_{cfg.dataset.name}"
 
@@ -90,21 +90,15 @@ def run_finetuning(cfg: DictConfig, run: wandb.run):
 
         model.encode = _turngpt_encode_wrapper
     else:
-        raise NotImplementedError(
-            f"Experiment {cfg.experiment.name} not defined"
-        )
+        raise NotImplementedError(f"Experiment {cfg.experiment.name} not defined")
     # Load the model
     model.load(**OmegaConf.to_object(cfg.experiment.load))
     logger.info(f"Loading model of type: {model}")
     # Finetune
     logger.info("Starting finetuning...")
     model.finetune(
-        train_csv_path=os.path.join(
-            cfg.env.paths.root, cfg.dataset.train_csv_path
-        ),
-        val_csv_path=os.path.join(
-            cfg.env.paths.root, cfg.dataset.validation_csv_path
-        ),
+        train_csv_path=os.path.join(cfg.env.paths.root, cfg.dataset.train_csv_path),
+        val_csv_path=os.path.join(cfg.env.paths.root, cfg.dataset.validation_csv_path),
         save_dir=os.getcwd(),
         **OmegaConf.to_object(cfg.experiment.finetune),
     )

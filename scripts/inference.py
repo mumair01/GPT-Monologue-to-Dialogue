@@ -26,15 +26,13 @@ import logging
 from functools import partial
 import datetime
 
-sys.path.insert(
-    0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
-)
+sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
 
 from gpt_dialogue.gpt2 import GPT2
 from gpt_dialogue.turngpt import TurnGPT
 from gpt_dialogue.pipelines import ConditionalProbabilityPipeline
 
-from scripts.decorators import log_wandb
+from LLMDialogue.utils.decorators import log_wandb
 
 ############################### LOGGING SETUP #############################
 
@@ -79,8 +77,7 @@ def load_inference_dataset(
     """
     df = pd.read_csv(csv_path, index_col=0)
     conversation_dfs = [
-        df.loc[df[conv_key] == i]
-        for i in range(np.max(df[conv_key].unique()) + 1)
+        df.loc[df[conv_key] == i] for i in range(np.max(df[conv_key].unique()) + 1)
     ]
     if end_conv_no > len(conversation_dfs) or end_conv_no == -1:
         end_conv_no = len(conversation_dfs)
@@ -106,9 +103,7 @@ def generate_probabilities(
         res = pipe(utterances=utterances)
         save_path = os.path.join(
             save_dir,
-            "{}_conditional_probs.csv".format(
-                conversation_df["convName"].iloc[0]
-            ),
+            "{}_conditional_probs.csv".format(conversation_df["convName"].iloc[0]),
         )
         # columns = ["conversation_name"] + list(res[0].keys())
         df = pd.DataFrame(data=res, columns=list(res.raw_output()[0].keys()))
@@ -146,9 +141,7 @@ def generate_probabilities(
 
 
 def generate_wandb_run_name(cfg):
-    return (
-        f"{cfg.experiment.name}_{cfg.experiment.model_name}_{cfg.dataset.name}"
-    )
+    return f"{cfg.experiment.name}_{cfg.experiment.model_name}_{cfg.dataset.name}"
 
 
 @log_wandb(
@@ -188,27 +181,21 @@ def run_inference(cfg: DictConfig, run: wandb.run):
 
         model.encode = _turngpt_encode_wrapper
     else:
-        raise NotImplementedError(
-            f"Experiment {cfg.experiment.name} not defined"
-        )
+        raise NotImplementedError(f"Experiment {cfg.experiment.name} not defined")
 
     # Load the model
     model.load(**OmegaConf.to_object(cfg.experiment.load))
     logger.info(f"Loading model of type: {model}")
 
     # Load the pipeline, the dataset, and execute the task
-    pipe = ConditionalProbabilityPipeline(
-        model=model, **cfg.experiment.inference
-    )
+    pipe = ConditionalProbabilityPipeline(model=model, **cfg.experiment.inference)
     logger.info(f"Starting inference using pipe: {pipe}")
 
     conversation_dfs = load_inference_dataset(
         csv_path=os.path.join(cfg.env.paths.root, cfg.dataset.dataset_path),
         **cfg.experiment.dataset,
     )
-    logger.info(
-        f"Loaded {len(conversation_dfs)} datasets to generate probabilities"
-    )
+    logger.info(f"Loaded {len(conversation_dfs)} datasets to generate probabilities")
 
     generate_probabilities(
         conversation_dfs=conversation_dfs,

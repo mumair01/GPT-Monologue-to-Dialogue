@@ -1,13 +1,11 @@
 [project]
 name = "gpt_dialogue"
 version = "0.0.1a"
-authors = [
-  { name="Muhammad Umair", email="muhammad.umair@tufts.edu"},
-]
+authors = [{ name = "Muhammad Umair", email = "muhammad.umair@tufts.edu" }]
 description = "Source code for the GPT: Monologue to Dialogue project"
 readme = "README.md"
-license = { file="LICENSE" }
-requires-python = ">=3.8"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
 
 
 [project.urls]
@@ -18,17 +16,44 @@ requires-python = ">=3.8"
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pytest-cov",
+  "pytest-timeout",
+  "pytest-xdist",
+  "pipdeptree",
+  "ipython",
+]
 
-[tool.setuptools.packages]
-find = {}  # Scanning implicit namespaces is active by default
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 # pyproject.toml
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-rA"
-testpaths = [
-    "tests",
+
+console_output_style = "progress"
+addopts = "-rA --junit-xml=test_reports/sample.xml --log-file=test_reports/logs/tests.log"
+
+testpaths = ["tests"]
+
+markers = [
+  "fast", # Tests that can run very fast 
+  "slow", # Tests that will run very slow
 ]
-filterwarnings = [
-    "ignore::DeprecationWarning"
-]
+
+
+pythonpath = ["src"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+junit_logging = "all"
+
+log_file_level = "DEBUG"
+log_file_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_file_date_format = "%Y-%m-%d %H:%M:%S"
+log_cli = true
+log_cli_level = "DEBUG"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"

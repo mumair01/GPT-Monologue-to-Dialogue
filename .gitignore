@@ -145,4 +145,6 @@ wandb/
 
 test_models/
 
-output/
+tests/output/
+test_output/
+test_reports/

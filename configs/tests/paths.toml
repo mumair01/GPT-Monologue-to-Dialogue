@@ -1,0 +1,12 @@
+
+[paths]
+root = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/"
+results = "test_output"
+
+
+[data_files]
+inferenceText = "data/tests/large_text.txt"
+
+[data_files.icc.5_train_37_test]
+train_csv_path = "data/processed/ICC/5_train_37_test/train_no_labels.csv"
+val_csv_path = "data/processed/ICC/5_train_37_test/test_no_labels.csv"
