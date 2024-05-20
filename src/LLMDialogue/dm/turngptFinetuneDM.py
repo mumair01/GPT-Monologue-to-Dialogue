@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-07-27 14:37:59
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-12-16 12:46:22
+# @Last Modified time: 2024-05-19 19:42:59
 
 ############################
 # This script contains a data module for use with the re-implementation of TurnGPT.
@@ -13,6 +13,7 @@ import os
 import sys
 import numpy as np
 from torch.utils.data import DataLoader
+from LLMDialogue.tokenizers import SpokenDialogueTokenizer
 
 from datasets import concatenate_datasets, load_from_disk, load_dataset
 import pytorch_lightning as pl
@@ -27,7 +28,7 @@ class TurnGPTFinetuneDM(pl.LightningDataModule):
 
     def __init__(
         self,
-        tokenizer,
+        tokenizer: SpokenDialogueTokenizer,
         train_csv_path: str,
         val_csv_path: str,
         conversation_id_key: str,

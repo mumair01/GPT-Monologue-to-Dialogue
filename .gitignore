@@ -148,3 +148,5 @@ test_models/
 tests/output/
 test_output/
 test_reports/
+
+cache/

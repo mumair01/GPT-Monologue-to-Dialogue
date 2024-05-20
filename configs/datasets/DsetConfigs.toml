@@ -1,0 +1,15 @@
+
+cache_dir = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/cache/datasets"
+
+
+[ICC.builderConfigs.default]
+variant_name = "default"
+version = "0.0.1"
+seed = 42
+data_dir = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/raw/speaker_identity_stims"
+
+
+[speakerIdentity.builderConfigs.default]
+version = "0.0.1"
+seed = 42
+data_dir = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/raw/speaker_identity_stims"
