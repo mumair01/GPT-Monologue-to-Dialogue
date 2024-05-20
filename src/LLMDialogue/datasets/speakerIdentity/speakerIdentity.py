@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 19:49:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 11:09:53
+# @Last Modified time: 2024-05-20 14:11:21
 
 
 import sys
@@ -28,6 +28,7 @@ from LLMDialogue.utils import (
     process_files_in_dir,
     create_dir,
     remove_file,
+    get_files_in_dir,
 )
 
 _DSET_NAME = "speakerIdentity"
@@ -36,6 +37,7 @@ _DSET_NAME = "speakerIdentity"
 class SpeakerIdentityDatasetConfig(DatasetConfig):
     def __init__(
         self,
+        additional_special_tokens: Dict,
         **kwargs,
     ):
         assert "data_dir" in kwargs and os.path.isdir(
@@ -44,6 +46,7 @@ class SpeakerIdentityDatasetConfig(DatasetConfig):
         # assert kwargs["variant"] in _VARIANTS, f"Variant must be one of: {_VARIANTS}"
         config_kwargs = {
             "dset_name": _DSET_NAME,
+            "additional_special_tokens": additional_special_tokens,
         }
         # Remove a key if it exists in kwargs.
         config_keys = list(config_kwargs.keys())
@@ -106,4 +109,111 @@ class SpeakerIdentityDataset(DatasetBuilder):
     ###########
 
     def _create_data(self) -> Any:
-        return {}
+
+        # Get all the data files from the data dir
+        data_files = self._get_data_file_fpaths(self.config.data_dir)
+        # Process each data file and store the data that is generated.
+        data = {get_filename(data_fpath): dict() for data_fpath in data_files}
+        for i, data_fpath in enumerate(data_files):
+            fname = get_filename(data_fpath)
+            # Read the data from the file
+            f_data = read_text(data_fpath)
+            # Clean up the data.
+            f_data = self._sanitize_conversation_data(f_data)
+            # Now, process the data differently based on the variant.
+            if (
+                self.config.variant_name == "default"
+                or self.config.variant_name == "no_labels"
+            ):
+                processed_data = self._generate_utterances_no_labels(f_data)
+            elif self.config.variant_name == "labels":
+                processed_data = self._generate_utterances_special_labels(f_data)
+            else:
+                raise NotImplementedError()
+
+            # Save this specific utterance for this specific data file.
+            data[fname] = {
+                "id": i,
+                **processed_data,
+            }
+        return data
+
+    def _generate_utterances_no_labels(
+        self,
+        conv: Any,
+    ) -> Dict:
+        # Get the relevant special token
+        assert "eos_token" in self.config.additional_special_tokens
+        eos_token = self.config.additional_special_tokens["eos_token"]
+        # Create and apply normalizer sequence.
+        normalizer_seq = create_normalizer_sequence(
+            remove_words=["start", "end"], custom_regex="(\*)"
+        )
+        conv = [
+            normalizer_seq(toks)
+            for line in conv
+            for toks in re.split(r"\. |\?|\t+|:", line)
+        ]
+        conv = [line for line in conv if len(line) > 0]
+        # Assumption: There are only two turns in the conversation
+        assert len(conv) == 4  # 4 here since we split the speakers.
+        # NOTE: IMPORTANT: Using the <ts> label to merge but this
+        # should be the same as the label that is used by the tokenizer
+        # later.
+        if conv[0] == conv[2]:
+            conv = [f"{conv[1].strip()}{eos_token} {conv[3].strip()}{eos_token}"]
+        else:
+            conv = [
+                f"{conv[1].strip()}{eos_token}",
+                f"{conv[3].strip()}{eos_token}",
+            ]
+
+        # Now return the list of utterances
+        return {
+            "n_utterances": len(conv),
+            "utterances": deepcopy(conv),
+        }
+
+    def _generate_utterances_special_labels(
+        self,
+        conv: Any,
+    ) -> Dict:
+        # Obtain the relevant special tokens
+        sp_start_token = self.config.additional_special_tokens["sp_start_token"]
+        sp_end_token = self.config.additional_special_tokens["sp_end_token"]
+        speaker_base = "<SP{}>"
+
+        # Create and apply normalizer sequence.
+        normalizer_seq = create_normalizer_sequence(custom_regex="(\*)")
+        conv = [
+            normalizer_seq(toks)
+            for line in conv
+            for toks in re.split(r"\. |\?|\t+|:", line)
+        ]
+        conv = [line for line in conv if len(line) > 0]
+
+        speakers = [line for line in conv if re.match(r"(sp)[0-9]", line)]
+        lines = [line for line in conv if not re.match(r"(sp)[0-9]", line)]
+        conv = []
+        for sp, line in zip(speakers, lines):
+            sp = speaker_base.format(sp[-1])
+            conv.append(f"{sp} {line.strip()} {sp}")
+        assert len(conv) == 2
+        conv.insert(0, sp_start_token)
+        conv.append(sp_end_token)
+
+        # Return the relevant data as a dictionary.
+        return {
+            "n_utterances": len(conv),
+            "utterances": deepcopy(conv),
+        }
+
+    def _get_data_file_fpaths(self, data_dir: str) -> List[str]:
+        assert os.path.isdir(data_dir), f"data_dir does not exist: {data_dir}"
+        return get_files_in_dir(data_dir, exts=["cha"], recursive=False)
+
+    def _sanitize_conversation_data(self, f_data: Any) -> Any:
+        # Remove the metadata from the file.
+        # Ignore / Remove all lines that start with comment marker.
+        f_data = [line for line in f_data if line[0] != "@"]
+        return f_data

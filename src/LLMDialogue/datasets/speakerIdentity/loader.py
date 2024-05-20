@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 19:49:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 11:01:24
+# @Last Modified time: 2024-05-20 15:30:17
 
 
 import sys
@@ -24,7 +24,7 @@ _CONFIGS = read_toml(_CONFIG_PATH)
 _BUILDER_CONFIGS = _CONFIGS["speakerIdentity"]["builderConfigs"]
 
 
-_SUPPORTED_CONFIGS = ("default",)
+_SUPPORTED_CONFIGS = ("no_labels", "labels")
 
 assert all([k in _SUPPORTED_CONFIGS for k in _BUILDER_CONFIGS.keys()])
 

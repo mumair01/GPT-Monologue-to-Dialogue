@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 19:48:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 11:09:36
+# @Last Modified time: 2024-05-20 15:34:11
 
 import sys
 import os
@@ -26,6 +26,7 @@ from LLMDialogue.utils import (
     remove_words_from_string,
     process_files_in_dir,
     create_dir,
+    get_files_in_dir,
     remove_file,
 )
 
@@ -37,14 +38,20 @@ _DSET_NAME = "ICC"
 class ICCDatasetConfig(DatasetConfig):
     def __init__(
         self,
+        additional_special_tokens: Dict,
         **kwargs,
     ):
-        assert "data_dir" in kwargs and os.path.isdir(
-            kwargs["data_dir"]
+        # In this case, the data files must be a mapping to train and test
+        # folder paths.
+        assert (
+            "data_files" in kwargs
         ), f"Valid data directory must be specified for this dataset"
+        # The data directory must contain a test and a train sub-folder
+
         # assert kwargs["variant"] in _VARIANTS, f"Variant must be one of: {_VARIANTS}"
         config_kwargs = {
             "dset_name": _DSET_NAME,
+            "additional_special_tokens": additional_special_tokens,
         }
         # Remove a key if it exists in kwargs.
         config_keys = list(config_kwargs.keys())
@@ -107,4 +114,125 @@ class ICCDataset(DatasetBuilder):
     ###########
 
     def _create_data(self) -> Any:
-        return {}
+        # We have to repeat the process for both the test and train dirs
+        dir_data = dict()
+        for dir_type, dir_path in self.config.data_files.items():
+
+            # Get all the data files from the data dir
+            data_files = self._get_data_file_fpaths(dir_path)
+            # Process each data file and store the data that is generated.
+            data = {get_filename(data_fpath): dict() for data_fpath in data_files}
+            for i, data_fpath in enumerate(data_files):
+                fname = get_filename(data_fpath)
+                # Read the data from the file
+                f_data = read_text(data_fpath)
+                # Now, process differently based on the variant that
+                # we want to generate.
+                if (
+                    self.config.variant_name == "default"
+                    or self.config.variant_name == "no_labels"
+                ):
+                    processed_data = self._generate_utterances_no_labels(f_data)
+                elif self.config.variant_name == "labels":
+                    processed_data = self._generate_utterances_special_labels(f_data)
+                else:
+                    raise NotImplementedError()
+                # Save this specific utterance for this specific data file.
+                data[fname] = {
+                    "id": i,
+                    **processed_data,
+                }
+            dir_data[dir_type] = deepcopy(data)
+        return dir_data
+
+    def _generate_utterances_no_labels(
+        self,
+        conv: Any,
+    ) -> Dict:
+
+        eos_token = self.config.additional_special_tokens["eos_token"]
+        normalizer_seq = create_normalizer_sequence(
+            remove_words=["start", "end"], custom_regex="(\*)"
+        )
+        data = []
+        for j in range(len(conv)):
+            target_str = conv[j].strip()
+            # Split on punctuation
+            split_toks = re.split(r"\. |\?|\t+", target_str)
+            split_toks = [normalizer_seq(tok) for tok in split_toks[:-1]]
+            split_toks = [tok for tok in split_toks if len(tok) > 0]
+            if len(split_toks) > 0:
+
+                # Merging with the previous turn if the speaker labels are the
+                # Same
+                # NOTE: IMPORTANT: Using the <ts> label to merge but this
+                # should be the same as the label that is used by the tokenizer
+                # later.
+
+                if len(data) > 0 and data[-1][-1][0] == split_toks[0]:
+                    data[-1][-1][-1] += f"{eos_token} " + " ".join(split_toks[1:])
+                elif len(split_toks) == 2:
+                    data.append([split_toks])
+
+        # Removing the speaker labels
+        for i in range(len(data)):
+            split_toks = data[i][0]
+            data[i] = split_toks[1]
+
+        return {
+            "n_utterances": len(data),
+            "utterances": data,
+        }
+
+    def _generate_utterances_special_labels(
+        self,
+        conv: Any,
+    ) -> Dict:
+        # Set up the special tokens
+        speaker_base = "<SP{}>"
+        sp_start_token = self.config.additional_special_tokens["sp_start_token"]
+        sp_end_token = self.config.additional_special_tokens["sp_end_token"]
+        sp1_token = speaker_base.format("1")
+        sp2_token = speaker_base.format("2")
+
+        # Using default normalizer for the text and replace normalizer for the
+        # start, end, and speaker labels.
+        text_normalizer_seq = create_normalizer_sequence()
+        labels_normalizer_seq = create_normalizer_sequence(
+            replace_words={
+                "sp1": sp1_token,
+                "sp2": sp2_token,
+                "start": sp_start_token,
+                "end": sp_end_token,
+            },
+            custom_regex="\*",
+        )
+
+        data = []
+        for j in range(len(conv)):
+            target_str = conv[j].strip()
+
+            # Split on punctuation
+            split_toks = re.split(r"\. |\?|\t+", target_str)
+
+            # NOTE: split_toks is either len 1 or 3.
+            # We only want to apply the normalizer to the actual text.
+            if len(split_toks) == 3:
+                split_toks[0] = labels_normalizer_seq(split_toks[0])
+                split_toks[1] = text_normalizer_seq(split_toks[1])
+                split_toks[2] = labels_normalizer_seq(split_toks[2])
+            else:
+                split_toks = [labels_normalizer_seq(tok) for tok in split_toks]
+
+            split_toks = [tok for tok in split_toks if len(tok) > 0]
+            if len(split_toks) > 0:
+                split_toks = " ".join(split_toks)
+                data.append(split_toks)
+        return {
+            "n_utterances": len(data),
+            "utterances": data,
+        }
+
+    def _get_data_file_fpaths(self, data_dir: str) -> List[str]:
+        assert os.path.isdir(data_dir), f"data_dir does not exist: {data_dir}"
+        return get_files_in_dir(data_dir, exts=["cha"], recursive=False)

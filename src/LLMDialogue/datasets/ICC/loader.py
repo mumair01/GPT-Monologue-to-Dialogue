@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 19:48:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 10:58:12
+# @Last Modified time: 2024-05-20 15:31:47
 
 
 import sys
@@ -24,7 +24,7 @@ _CONFIGS = read_toml(_CONFIG_PATH)
 _BUILDER_CONFIGS = _CONFIGS["ICC"]["builderConfigs"]
 
 
-_SUPPORTED_CONFIGS = ("default",)
+_SUPPORTED_CONFIGS = ("no_labels", "labels")
 
 assert all([k in _SUPPORTED_CONFIGS for k in _BUILDER_CONFIGS.keys()])
 

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-12-13 16:42:17
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-19 19:47:44
+# @Last Modified time: 2024-05-20 15:36:08
 
 import sys
 import os
@@ -94,8 +94,13 @@ class DatasetConfig:
         # Create a unique string based on the key value pairs and create a
         # unique hash
         s = ",".join([self.dset_name, self.variant_name, self.version])
+        # Include the data dir as a unique identifier.
         if self.data_dir is not None:
             s += f",{get_dirname(self.data_dir)}"
+        # Include the data files as a unique identifier
+        if self.data_files is not None:
+            code = "-".join([v for v in self.data_files.values()])
+            s += f",{code}"
 
         config_kwargs_k = ""
         for k, v in config_kwargs.items():
