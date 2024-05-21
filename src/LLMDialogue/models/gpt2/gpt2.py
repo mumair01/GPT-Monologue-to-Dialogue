@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:19:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-19 15:54:27
+# @Last Modified time: 2024-05-21 15:18:11
 
 
 import sys
@@ -26,9 +26,9 @@ from transformers import AutoTokenizer
 from datasets import load_dataset
 
 from LLMDialogue.models import LanguageModel
-from LLMDialogue.dm import gpt2FinetuneDM
+from LLMDialogue.dm.HFdm import HFLanguageModelingDM
 
-from typing import Dict
+from typing import Dict, Optional, List, Any
 
 import logging
 
@@ -43,20 +43,22 @@ class GPT2(LanguageModel):
 
     _SUPPORTED_MODELS = ("gpt2", "gpt2-large", "distillgpt2")
 
-    def __init__(self):
-        self.model = None
+    def __init__(
+        self,
+        seed: Optional[int] = None,
+    ):
+        super().__init__(seed=seed)
+        self._model = None
         self._tokenizer = None
-
-    @property
-    def tokenizer(self):
-        return self._tokenizer
+        self.model_checkpoint = None
+        self.tokenizer_checkpoint = None
 
     def load(
         self,
         model_checkpoint: str = "gpt2",
         tokenizer_checkpoint: str = "gpt2",
-        tokenizer_pad_token: str = None,
-        tokenizer_eos_token: str = None,
+        tokenizer_pad_token: str = "<PAD>",
+        tokenizer_eos_token: str = "<|endoftext|>",
         tokenizer_additional_special_tokens: List[str] = None,
         tokenizer_kwargs: Dict = {},
         model_kwargs: Dict = {},
@@ -85,7 +87,6 @@ class GPT2(LanguageModel):
             Dictionary of kwargs that can be used by huggingface models,
             by default {}
         """
-        # Verify that the model is supported or that the path exists
         if (
             not os.path.exists(model_checkpoint)
             and not model_checkpoint in self._SUPPORTED_MODELS
@@ -94,10 +95,12 @@ class GPT2(LanguageModel):
                 "ERROR: Provide a valid path or selected pre-trained "
                 f"models from {self._SUPPORTED_MODELS}"
             )
+
+        # Set attributes
         self.model_checkpoint = model_checkpoint
         self.tokenizer_checkpoint = tokenizer_checkpoint
 
-        # Create the tokenizer args
+        # Create the tokenizer args.
         tokenizer_args = {
             "pretrained_model_name_or_path": tokenizer_checkpoint,
             "pad_token": tokenizer_pad_token,
@@ -105,10 +108,12 @@ class GPT2(LanguageModel):
             "additional_special_tokens": tokenizer_additional_special_tokens,
         }
         tokenizer_args.update(tokenizer_kwargs)
+
         # Remove all the None args
         tokenizer_args = {k: v for k, v in tokenizer_args.items() if v != None}
         # Load tokenizer
         self._tokenizer = AutoTokenizer.from_pretrained(**tokenizer_args)
+
         # Create the model args
         model_args = {
             "pretrained_model_name_or_path": model_checkpoint,
@@ -121,8 +126,8 @@ class GPT2(LanguageModel):
         # Remove all the None args
         model_args = {k: v for k, v in model_args.items() if v != None}
         # Load the model
-        self.model = AutoModelForCausalLM.from_pretrained(**model_args)
-        self.model.resize_token_embeddings(len(self._tokenizer))
+        self._model = AutoModelForCausalLM.from_pretrained(**model_args)
+        self._model.resize_token_embeddings(len(self._tokenizer))
 
         # If there is only pretrained_model_name_or_path arg.
         if (
@@ -139,18 +144,16 @@ class GPT2(LanguageModel):
                 f"model and tokenizer directly from the transformers library."
             )
 
+    # TODO: Add wandb logging support.
     def finetune(
         self,
+        dm: HFLanguageModelingDM,
         save_dir: str,
-        train_csv_path: str,
-        val_csv_path: str,
-        data_block_size: int = 128,
-        utterance_key: str = "Utterance",
         num_train_epochs: int = 30,
         per_device_train_batch_size: int = 8,
         per_device_eval_batch_size: int = 8,
         warmup_steps: int = 300,
-        report_to="wandb",
+        report_to: Optional[str] = None,
     ):
         """
         Fintune the model on the provided dataset.
@@ -159,16 +162,8 @@ class GPT2(LanguageModel):
         ----------
         save_dir : str
             Output directory where the finetuned models are saved.
-        train_csv_path : str
-            Path to a single csv that contains the training data.
-        val_csv_path : str
-        Path to a single csv that contains the validation data.
-        data_block_size : int, optional
-            Size by which the data is chunked in the finetuned data module,
-            by default 128
-        utterance_key : str, optional
-            Column in the csv file that contains the unique
-            utterance ids, by default "Utterance"
+        dm : HFLanguageModelingDM
+            Data module that will be used for training.
         num_train_epochs : int, optional
             Maximum number of training epochs, by default 30
         per_device_train_batch_size : int, optional
@@ -180,17 +175,16 @@ class GPT2(LanguageModel):
         report_to : str, optional
             List of integrations to report the results and logs to, by default "wandb"
         """
-        # Load the data modules / apply the data transforms
-        dm = GPT2FinetuneDM(
-            tokenizer=self._tokenizer,
-            train_csv_path=train_csv_path,
-            val_csv_path=val_csv_path,
-            utterance_key=utterance_key,
-            data_block_size=data_block_size,
-        )
-        data_collator, lm_datasets = dm()
+        # Prepare the output directory.
+        os.makedirs(save_dir, exist_ok=True)
 
-        # Defining the Training Arguments
+        # Prepare and setup the dm
+        assert isinstance(dm, HFLanguageModelingDM)
+        dm.prepare_data()
+        dm.setup(stage="fit")
+        assert dm.data_collator is not None
+
+        # Define the training arguments
         training_args = TrainingArguments(
             output_dir=save_dir,
             overwrite_output_dir=True,
@@ -209,45 +203,16 @@ class GPT2(LanguageModel):
 
         # Create the trainer and start training
         trainer = Trainer(
-            model=self.model,
+            model=self._model,
             args=training_args,
-            data_collator=data_collator,
-            train_dataset=lm_datasets["train"],
-            eval_dataset=lm_datasets["validation"],
+            data_collator=dm.data_collator,
+            train_dataset=dm.train_dataloader(),
+            eval_dataset=dm.val_dataloader(),
         )
         torch.cuda.empty_cache()
         gc.collect()
         trainer.train()
         trainer.save_model()
-
-    def __call__(self, *args, **kwargs):
-        """
-        Apply the __call__ method for the underlying gpt2 model head,
-        which in this case is GPT2LMHeadModel
-        Link: https://huggingface.co/docs/transformers/v4.29.1/en/model_doc/gpt2#transformers.GPT2Model
-        """
-        return self.model(*args, **kwargs)
-
-    def __repr__(self) -> str:
-        return f"Base model: {self.model}\n" f"Base tokenizer: {self._tokenizer}"
-
-    def to(self, device: torch.device):
-        """
-        Set the model to the provided device.
-
-        Parameters
-        ----------
-        device : torch.device
-            Can be one of torch.device('cpu') or torch.device('gpu')
-        """
-        self.model.to(device)
-
-    def eval(self):
-        """
-        Set the model to eval mode, which is required when using the model
-        to make inferences
-        """
-        self.model.eval()
 
     def encode(self, text: Union[str, List], *args, **kwargs) -> List:
         """

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 11:20:45
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-21 12:13:45
+# @Last Modified time: 2024-05-21 15:37:13
 
 import torch
 import os
@@ -22,6 +22,7 @@ from LLMDialogue.tokenizers import SpokenDialogueTokenizer
 
 from datasets import concatenate_datasets, load_from_disk, load_dataset
 import pytorch_lightning as pl
+from LLMDialogue.utils.general import get_system_device
 
 
 class SpokenLanguageModelingDM(pl.LightningDataModule):
@@ -39,6 +40,7 @@ class SpokenLanguageModelingDM(pl.LightningDataModule):
         num_proc=None,
         use_cache=False,
         batched: Optional[bool] = True,
+        device: Optional[torch.device] = None,
     ):
         assert isinstance(tokenizer, SpokenDialogueTokenizer)
         super().__init__()
@@ -54,6 +56,10 @@ class SpokenLanguageModelingDM(pl.LightningDataModule):
         self.use_cache = use_cache
         self.batched = batched
         self.utterance_key = "text"
+
+        if device is None:
+            device = get_system_device()
+        self.device = device
 
     # TODO: Potentially add a method to be able to pass kwargs to the
     # tokenizer encode method.
@@ -90,6 +96,9 @@ class SpokenLanguageModelingDM(pl.LightningDataModule):
             collate_fn=self._collate_fn,
             num_workers=self.num_workers,
             shuffle=False,
+            multiprocessing_context=(
+                "fork" if torch.backends.mps.is_available() else None
+            ),
         )
 
     def val_dataloader(self):
@@ -100,6 +109,9 @@ class SpokenLanguageModelingDM(pl.LightningDataModule):
             collate_fn=self._collate_fn,
             num_workers=self.num_workers,
             shuffle=False,
+            multiprocessing_context=(
+                "fork" if torch.backends.mps.is_available() else None
+            ),
         )
 
     def _encode(self, examples):

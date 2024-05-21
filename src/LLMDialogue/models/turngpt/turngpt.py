@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:21:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-19 15:55:39
+# @Last Modified time: 2024-05-21 15:30:18
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -10,17 +10,17 @@
 
 import os
 import sys
-from typing import List
-
 import torch
+from typing import Dict, Optional, List, Any
+
 
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import CSVLogger, WandbLogger
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint, Callback
 
 from .model import TurnGPTDoubleHeadsModel, TurnGPTLMHeadModel
 from LLMDialogue.models import LanguageModel
-from LLMDialogue.dm import TurnGPTFinetuneDM
+from LLMDialogue.dm.spokenLanguageDM import SpokenLanguageModelingDM
 
 
 class TurnGPT(LanguageModel):
@@ -29,12 +29,17 @@ class TurnGPT(LanguageModel):
         "DoubleHeads": TurnGPTDoubleHeadsModel,
     }
 
-    def __init__(self):
-        self.model = None
-
-    @property
-    def tokenizer(self):
-        return self.model._tokenizer
+    def __init__(
+        self,
+        seed: Optional[int] = None,
+    ):
+        super().__init__(seed=seed)
+        # Attributes.
+        self._model = None
+        self._tokenizer = None
+        self.pretrained_model_name_or_path = None
+        self.model_head = None
+        self.device = "auto"
 
     def load(
         self,
@@ -51,95 +56,84 @@ class TurnGPT(LanguageModel):
             )
 
         if os.path.isfile(pretrained_model_name_or_path):
-            self.model = self._MODEL_MAP[model_head].load_from_checkpoint(
+            self._model = self._MODEL_MAP[model_head].load_from_checkpoint(
                 pretrained_model_name_or_path
             )
         else:
-            self.model = self._MODEL_MAP[model_head](
+            self._model = self._MODEL_MAP[model_head](
                 pretrained_model_name_or_path=pretrained_model_name_or_path,
                 **kwargs,
             )
+        # Set the tokenizer
+        self._tokenizer = self._model.tokenizer
 
     def finetune(
         self,
-        # Data Module Args
-        train_csv_path: str,
-        val_csv_path: str,
+        dm: SpokenLanguageModelingDM,
         save_dir: str,
-        conversation_id_key: str = "convID",
-        utterance_key: str = "Utterance",
-        batch_size: int = 16,
-        max_length: int = 1024,
-        chunk_size: int = 128,
-        num_workers: int = 8,
-        pin_memory: int = False,
-        use_cache: bool = False,
-        # Training Args
         max_epochs: int = 30,
         log_every_n_steps: int = 1,
+        report_to: str = None,
         **kwargs,
     ):
+        assert isinstance(dm, SpokenLanguageModelingDM)
+        # Prepare the output directory.
+        os.makedirs(save_dir, exist_ok=True)
+
         # Disable tokenizers parallelism
         os.environ["TOKENIZERS_PARALLELISM"] = "false"
         # Load the data module
-        dm = TurnGPTFinetuneDM(
-            tokenizer=self.model._tokenizer,
-            train_csv_path=train_csv_path,
-            val_csv_path=val_csv_path,
-            conversation_id_key=conversation_id_key,
-            utterance_key=utterance_key,
-            save_dir=save_dir,
-            batch_size=batch_size,
-            max_length=max_length,
-            chunk_size=chunk_size,
-            num_workers=num_workers,
-            pin_memory=pin_memory,
-            use_cache=use_cache,
-        )
-        # Create CSV logger
-        model_name = f"TurnGPT_{self.model_head}"
-        # training_logger = CSVLogger(
-        #     save_dir=os.getcwd(),
-        #     name=model_name)
-        training_logger = WandbLogger(
-            name=model_name, save_dir=os.getcwd(), log_model=True
-        )
+        dm.prepare_data()
+        dm.setup(stage="fit")
 
-        # Create callbacks
-        checkpoint_callback = ModelCheckpoint(
-            # NOTE: We want to save the models at every epoch.
-            save_top_k=-1
-        )
+        # Create the logger
+        training_logger = self._create_training_logger(report_to=report_to)
+
+        # Create the callbacks
+        callbacks = self._create_callbacks()
+
+        # Define the trainer
 
         trainer = pl.Trainer(
             default_root_dir=save_dir,
-            accelerator="gpu" if torch.cuda.is_available() else "cpu",
+            accelerator=self.device.type if self.device is not None else "auto",
             logger=training_logger,
             max_epochs=max_epochs,
             log_every_n_steps=log_every_n_steps,
-            callbacks=[checkpoint_callback],
+            callbacks=callbacks,
             **kwargs,
         )
         trainer.fit(self.model, datamodule=dm)
-
-    def __repr__(self):
-        return f"Base model: {self.model}\n" f"Base tokenizer: {self.tokenizer}"
-
-    def __call__(self, *args, **kwargs):
-        return self.model(*args, **kwargs)
-
-    def to(self, device):
-        self.model.to(device)
-
-    def eval(self):
-        self.model.eval()
 
     def encode(self, text, *args, **kwargs):
         """
         Encode text as required for inference by this model.
         NOTE: Ensure that the args passed to the tokenizer are correct.
         """
-        return self.tokenizer(text, add_eos_token=False * args, **kwargs)
+        return self._tokenizer(text, add_eos_token=False * args, **kwargs)
 
     def decode(self, input_ids, *args, **kwargs):
-        return self.tokenizer.decode(input_ids, *args, **kwargs)
+        return self._tokenizer.decode(input_ids, *args, **kwargs)
+
+    def _create_training_logger(self, report_to: str):
+        # Create CSV logger
+        model_name = f"TurnGPT_{self.model_head}"
+        if report_to is None or report_to == "csv":
+            training_logger = CSVLogger(
+                save_dir=os.getcwd(),
+                name=model_name,
+            )
+        elif report_to == "wandb":
+            training_logger = WandbLogger(
+                name=model_name, save_dir=os.getcwd(), log_model=True
+            )
+        return training_logger
+
+    def _create_callbacks(self) -> List[Callback]:
+        # Create callbacks
+        checkpoint_callback = ModelCheckpoint(
+            # NOTE: We want to save the models at every epoch.
+            save_top_k=-1
+        )
+
+        return [checkpoint_callback]

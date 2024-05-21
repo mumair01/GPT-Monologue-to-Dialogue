@@ -150,3 +150,5 @@ test_output/
 test_reports/
 
 cache/
+
+outputs/

@@ -2,12 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 10:10:51
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-21 11:47:23
+# @Last Modified time: 2024-05-21 15:35:59
 
 import sys
 import os
 from functools import partial
 import pandas as pd
+import torch
 
 # Transformers
 from transformers import (
@@ -36,6 +37,7 @@ class HFLanguageModelingDM:
         save_dir: str,
         data_block_size: Optional[int] = 128,
         batched: Optional[bool] = True,
+        device: Optional[torch.device] = None,
     ):
         super().__init__()
         self.datasets = datasets
@@ -45,6 +47,9 @@ class HFLanguageModelingDM:
         self.save_dir = save_dir
         self.utterance_key = "text"
         self.data_collator = None
+        # NOTE: Huggingface does not need this - does it automatically - adding
+        # as arg for API consistency.
+        self.device = device
 
     def prepare_data(self):
 
