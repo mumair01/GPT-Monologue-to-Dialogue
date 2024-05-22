@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 15:49:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 09:06:35
+# @Last Modified time: 2024-05-22 09:15:30
 
 import sys
 import os
@@ -90,6 +90,7 @@ class PipelineConfig:
         raise NotImplementedError()
 
     def to_dict(self) -> Dict:
+        # NOTE: Should be sanitized by the sub-class!
         return self.__dict__
 
     def create_config_id(self, config_kwargs: Dict) -> str:
