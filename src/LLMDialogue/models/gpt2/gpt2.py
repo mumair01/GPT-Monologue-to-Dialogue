@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:19:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-21 15:18:11
+# @Last Modified time: 2024-05-22 15:10:55
 
 
 import sys
@@ -153,7 +153,9 @@ class GPT2(LanguageModel):
         per_device_train_batch_size: int = 8,
         per_device_eval_batch_size: int = 8,
         warmup_steps: int = 300,
-        report_to: Optional[str] = None,
+        report_to: Optional[str] = "none",
+        run_name: Optional[str] = None,
+        **training_kwargs,
     ):
         """
         Fintune the model on the provided dataset.
@@ -199,6 +201,9 @@ class GPT2(LanguageModel):
             logging_steps=1,
             logging_dir=os.path.join(save_dir, "trainer_logs"),
             report_to=report_to,
+            run_name=run_name,
+            load_best_model_at_end=True,
+            **training_kwargs,
         )
 
         # Create the trainer and start training

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-22 08:12:56
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 09:04:44
+# @Last Modified time: 2024-05-22 13:29:01
 
 
 import sys
@@ -99,12 +99,14 @@ class CPPipeline(PipelineBuilder):
     # REQUIRED PRIVATE METHODS
     ###########
 
-    def load_from_disk(self) -> None:
+    def load_from_disk(self) -> Dict:
         # Load the configs and the actual data form the data file and the
         # info files.
         # TODO: We can't do this yet because we can't serialize the model
         # and the dm to save them.
-        raise NotImplementedError()
+        data = super()._load_data_from_disk(fname=self._DATA_FNAME)
+        configs = super()._load_data_from_disk(fname=self._CONF_FNAME)
+        return {"configs": configs, "data": data}
 
     ###########
     # Pipeline SPECIFIC PRIVATE METHODS

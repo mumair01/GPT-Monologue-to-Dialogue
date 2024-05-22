@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:21:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-21 15:30:18
+# @Last Modified time: 2024-05-22 15:46:41
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -115,10 +115,13 @@ class TurnGPT(LanguageModel):
     def decode(self, input_ids, *args, **kwargs):
         return self._tokenizer.decode(input_ids, *args, **kwargs)
 
-    def _create_training_logger(self, report_to: str):
+    def _create_training_logger(
+        self,
+        report_to: str,
+    ):
         # Create CSV logger
         model_name = f"TurnGPT_{self.model_head}"
-        if report_to is None or report_to == "csv":
+        if report_to == "none" or report_to == "csv":
             training_logger = CSVLogger(
                 save_dir=os.getcwd(),
                 name=model_name,

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-22 09:08:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 09:23:42
+# @Last Modified time: 2024-05-22 15:40:24
 
 import sys
 import os
@@ -46,13 +46,15 @@ class LLMFinetunePipelineConfig(PipelineConfig):
         self,
         model: LanguageModel,
         dm: pl.LightningDataModule | Any,
-        finetune_kwargs: Dict,
+        report_to: str = "none",
+        finetune_kwargs: Dict = dict(),
         **kwargs,
     ):
         config_kwargs = {
             "name": _PIPELINE_NAME,
             "model": model,
             "dm": dm,
+            "report_to": report_to,
             "finetune_kwargs": finetune_kwargs,
         }
         # Remove a key if it exists in kwargs.
@@ -90,17 +92,12 @@ class LLMFinetunePipeline(PipelineBuilder):
     def run(self):
         # Save the data attribute
         self._finetune()
+        # Save the config and the data to disk.
+        self.save_to_disk()
 
     ###########
     # REQUIRED PRIVATE METHODS
     ###########
-
-    def load_from_disk(self) -> None:
-        # Load the configs and the actual data form the data file and the
-        # info files.
-        # TODO: We can't do this yet because we can't serialize the model
-        # and the dm to save them.
-        raise NotImplementedError()
 
     ###########
     # Pipeline SPECIFIC PRIVATE METHODS
@@ -121,5 +118,8 @@ class LLMFinetunePipeline(PipelineBuilder):
         model.finetune(
             # DM must be supplied.
             dm=dm,
+            # NOTE: Assuming that a model finetune MUST have a save_dir param.
+            save_dir=self.config.cache_dir,
+            report_to=self.config.report_to,
             **self.config.finetune_kwargs,
         )

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 15:49:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 09:15:30
+# @Last Modified time: 2024-05-22 14:59:31
 
 import sys
 import os
@@ -131,6 +131,7 @@ class PipelineBuilder:
         self,
         config: PipelineConfig | None,
     ):
+        self.data = {}  # Empty unless changed by sub-class.
         self.config = config
         # Use the config to build the config dir.
         if config is not None:
@@ -151,18 +152,21 @@ class PipelineBuilder:
             data=self.deepcopy(self.data), configs=self.config.to_dict()
         )
 
-    # def load_data_from_disk(
-    #     self,
-    #     cache_dir: str,
-    # ) -> Dict:
-    #     assert os.path.isdir(
-    #         cache_dir
-    #     ), f"Pipeline cache dir does not exist: {self.config.cache_dir}"
-    #     # conf_path = f"{cache_dir}/{self._CONF_FNAME}.json"
-    #     data_path = f"{cache_dir}/{self._DATA_FNAME}.json"
-    #     # config = conf_clazz(**read_json(conf_path))
-    #     data = read_json(data_path)
-    #     return data
+    def load_from_disk(self) -> Any:
+        raise NotImplementedError()
+
+    def _load_data_from_disk(
+        self,
+        fname: str = _DATA_FNAME,
+    ) -> Dict:
+        assert os.path.isdir(
+            self.config.cache_dir
+        ), f"Pipeline cache dir does not exist: {self.config.cache_dir}"
+        # conf_path = f"{cache_dir}/{self._CONF_FNAME}.json"
+        data_path = f"{self.config.cache_dir}/{fname}.json"
+        # config = conf_clazz(**read_json(conf_path))
+        data = read_json(data_path)
+        return data
 
     def __str__(self) -> str:
         return self.config.__str__()
