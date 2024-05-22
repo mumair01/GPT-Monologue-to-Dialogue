@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 10:10:51
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-21 15:35:59
+# @Last Modified time: 2024-05-22 08:30:19
 
 import sys
 import os
@@ -28,7 +28,7 @@ from datasets import (
 import pytorch_lightning as pl
 
 
-class HFLanguageModelingDM:
+class HFLanguageModelingDM(pl.LightningDataModule):
 
     def __init__(
         self,
@@ -82,7 +82,7 @@ class HFLanguageModelingDM:
             self.train_dataset = dataset["train"]
             self.val_dataset = dataset["validation"]
         elif stage == "test":
-            self.val_dataset = dataset["test"]
+            self.test_dataset = dataset["test"]
         else:
             raise NotImplementedError(f"Data module does not implement stage: {stage}")
 
@@ -93,7 +93,7 @@ class HFLanguageModelingDM:
         return self.val_dataset
 
     def test_dataloader(self) -> Dataset:
-        return self.test_dataloader
+        return self.test_dataset
 
     ########################
     # Private methods

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-20 10:58:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 15:45:30
+# @Last Modified time: 2024-05-22 08:07:11
 
 import pytest
 import sys
@@ -15,6 +15,9 @@ from LLMDialogue.datasets.speakerIdentity import (
 
 
 @pytest.mark.parametrize("config_name", ["labels", "no_labels"])
-def test_create(config_name: str):
+@pytest.mark.parametrize("force_regenerate", [True, False])
+def test_create(config_name: str, force_regenerate: bool):
     # NOTE: Data dir is being loaded from the config file implicitly.
-    dset = load_speakerIdentity(config_name=config_name)
+    dset = load_speakerIdentity(
+        config_name=config_name, force_regenerate=force_regenerate
+    )

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-12-13 16:42:17
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 15:36:08
+# @Last Modified time: 2024-05-22 08:50:54
 
 import sys
 import os
@@ -26,7 +26,7 @@ from LLMDialogue.utils import (
     get_subdirs_in_dir,
 )
 from LLMDialogue.utils.logging import log_format
-from LLMDialogue.datasets.paths import PkgPaths
+from LLMDialogue.baseConfigs import BaseConfigs
 from typing import List, Dict, Callable, Any, Optional, Tuple
 
 import logging
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 def reset_cache():
     # Reset the cache dir, which removes all generated datasets.
-    reset_dir(PkgPaths.Core.cachePath)
+    reset_dir(BaseConfigs.datasets.cachePath)
 
 
 class DatasetConfig:
@@ -64,7 +64,7 @@ class DatasetConfig:
         self.force_regenerate = force_regenerate
         self.config_id = self.create_config_id(config_kwargs)
         if cache_dir is None:
-            self.cache_dir = f"{PkgPaths.Core.cachePath}/{self.config_id}"
+            self.cache_dir = f"{BaseConfigs.datasets.cachePath}/{self.config_id}"
         else:
             self.cache_dir = cache_dir
         self.archive_dir = os.path.join(self.cache_dir, "archive")

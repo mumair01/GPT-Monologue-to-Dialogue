@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 08:58:15
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-21 15:19:37
+# @Last Modified time: 2024-05-22 07:46:34
 
 import torch
 import numpy as np
@@ -11,7 +11,11 @@ from typing import List, Dict, Any, Optional
 from LLMDialogue.utils.general import get_system_device
 
 
-class LanguageModel:
+class Model:
+    pass
+
+
+class LanguageModel(Model):
     """Abstract class the describes the methods required by a model"""
 
     def __init__(

@@ -2,12 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:32:07
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 11:04:41
+# @Last Modified time: 2024-05-22 07:44:00
 
 
 from LLMDialogue.datasets.ICC import load_ICC
 from LLMDialogue.datasets.speakerIdentity import load_speakerIdentity
-from LLMDialogue.datasets.dsets import DatasetBuilder
+from LLMDialogue.datasets.dsets import DatasetBuilder, DatasetConfig
 
 
 _DSET_LOADERS = {"ICC": load_ICC, "speakerIdentity": load_speakerIdentity}
