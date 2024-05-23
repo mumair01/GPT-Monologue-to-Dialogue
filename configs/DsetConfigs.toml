@@ -1,5 +1,6 @@
 
-cache_dir = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/cache/datasets"
+cache_dir = "cache/datasets"
+
 
 ##############
 # ICC Dataset Configs
@@ -10,8 +11,8 @@ variant_name = "no_labels"
 version = "0.0.1"
 seed = 42
 [ICC.builderConfigs.no_labels.data_files]
-train = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/raw/ICC/28_train_14_test_set/train"
-test = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/raw/ICC/28_train_14_test_set/test"
+train = "data/raw/ICC/28_train_14_test_set/train"
+test = "data/raw/ICC/28_train_14_test_set/test"
 [ICC.builderConfigs.no_labels.additional_special_tokens]
 eos_token = "<ts>"
 
@@ -21,8 +22,8 @@ variant_name = "labels"
 version = "0.0.1"
 seed = 42
 [ICC.builderConfigs.labels.data_files]
-train = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/raw/ICC/28_train_14_test_set/train"
-test = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/raw/ICC/28_train_14_test_set/test"
+train = "data/raw/ICC/28_train_14_test_set/train"
+test = "data/raw/ICC/28_train_14_test_set/test"
 [ICC.builderConfigs.labels.additional_special_tokens]
 sp_start_token = "<START>"
 sp_end_token = "<END>"
@@ -35,7 +36,7 @@ sp_end_token = "<END>"
 variant_name = "no_labels"
 version = "0.0.1"
 seed = 42
-data_dir = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/raw/speaker_identity_stims"
+data_dir = "data/raw/speaker_identity_stims"
 [speakerIdentity.builderConfigs.no_labels.additional_special_tokens]
 eos_token = "<ts>"
 
@@ -44,7 +45,7 @@ eos_token = "<ts>"
 variant_name = "labels"
 version = "0.0.1"
 seed = 42
-data_dir = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/data/raw/speaker_identity_stims"
+data_dir = "data/raw/speaker_identity_stims"
 [speakerIdentity.builderConfigs.labels.additional_special_tokens]
 sp_start_token = "<START>"
 sp_end_token = "<END>"

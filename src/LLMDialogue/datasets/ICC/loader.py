@@ -2,12 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 19:48:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 08:02:00
+# @Last Modified time: 2024-05-23 14:27:58
 
 
 import sys
 import os
-from LLMDialogue.baseConfigs import BaseConfigs
+from LLMDialogue.baseConfigs import BaseConfigs, prepend_path_if_possible
 from LLMDialogue.utils.general import read_toml
 
 from copy import deepcopy
@@ -17,8 +17,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 _CONFIGS = read_toml(BaseConfigs.datasets.configsFilePath)
 
+_CONFIGS = prepend_path_if_possible(_CONFIGS, BaseConfigs.root_path)
 
 _BUILDER_CONFIGS = _CONFIGS["ICC"]["builderConfigs"]
 
