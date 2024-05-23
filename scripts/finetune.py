@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-23 15:33:54
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 17:27:16
+# @Last Modified time: 2024-05-23 18:55:25
 
 
 import sys
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 configure_logger(
     handlers=[
-        create_stream_handler(logging_level=logging.DEBUG),
+        create_stream_handler(logging_level=logging.INFO),
         # create_file_handler(
         #     outdir=LOGGING_DIR,
         #     logging_level=logging.DEBUG,
@@ -146,7 +146,8 @@ def finetune(cfg: DictConfig):
     logger.info(OmegaConf.to_yaml(cfg))
 
     # Load the model first.
-    model_conf = OmegaConf.to_object(cfg.model.configs.load[0])
+
+    model_conf = OmegaConf.to_object(cfg.model.configs.load)
     model = _MODELS[cfg.model.name](cfg.seed)
     logger.info("Loading model with configurations:")
     logger.info(model_conf)
@@ -194,5 +195,15 @@ def finetune(cfg: DictConfig):
 
 
 if __name__ == "__main__":
-    conf = OmegaConf.create(FINETUNE_GPT2_LABELS_28_TRAIN_14_TEST)
-    finetune(conf)
+
+    # Finetune using all of the configs
+    jobs = [
+        # FINETUNE_GPT2_LABELS_28_TRAIN_14_TEST,
+        # FINETUNE_GPT2_LABELS_5_TRAIN_37_TEST,
+        FINETUNE_TURNGPT_NO_LABELS_28_TRAIN_14_TEST,
+        # FINETUNE_TURNGPT_NO_LABELS_5_TRAIN_37_TEST,
+    ]
+
+    for job in jobs:
+        conf = OmegaConf.create(job)
+        finetune(conf)

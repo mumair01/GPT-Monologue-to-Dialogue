@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:21:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 11:39:30
+# @Last Modified time: 2024-05-23 18:53:27
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -87,7 +87,9 @@ class TurnGPT(LanguageModel):
         dm.setup(stage="fit")
 
         # Create the logger
-        training_logger = self._create_training_logger(report_to=report_to)
+        training_logger = self._create_training_logger(
+            report_to=report_to, save_dir=save_dir
+        )
 
         # Create the callbacks
         callbacks = self._create_callbacks()
@@ -115,20 +117,17 @@ class TurnGPT(LanguageModel):
     def decode(self, input_ids, *args, **kwargs):
         return self._tokenizer.decode(input_ids, *args, **kwargs)
 
-    def _create_training_logger(
-        self,
-        report_to: str,
-    ):
+    def _create_training_logger(self, report_to: str, save_dir: str):
         # Create CSV logger
         model_name = f"TurnGPT_{self.model_head}"
         if report_to == "none" or report_to == "csv":
             training_logger = CSVLogger(
-                save_dir=os.getcwd(),
+                save_dir=save_dir,
                 name=model_name,
             )
         elif report_to == "wandb":
             training_logger = WandbLogger(
-                name=model_name, save_dir=os.getcwd(), log_model=True
+                name=model_name, save_dir=save_dir, log_model=True
             )
         return training_logger
 

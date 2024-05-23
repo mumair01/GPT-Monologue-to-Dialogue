@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-23 15:44:55
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 17:38:44
+# @Last Modified time: 2024-05-23 18:47:08
 
 
 import sys
@@ -102,7 +102,6 @@ ICCDATASET_NO_LABELS_28_TRAIN_14_TEST.update(
 )
 
 SD_DATASET = {
-    "variant_name": "labels",
     "version": "0.0.1",
     "seed": GLOBAL_SEED,
     "data_dir": os.path.join(BaseConfigs.root_path, "data/raw/speaker_identity_stims"),
@@ -110,18 +109,20 @@ SD_DATASET = {
 SD_DATASET_NO_LABELS = deepcopy(SD_DATASET)
 SD_DATASET_NO_LABELS.update(
     {
+        "variant_name": "no_labels",
         "additional_special_tokens": {
             "eos_token": "<ts>",
-        }
+        },
     }
 )
 SD_DATASET_LABELS = deepcopy(SD_DATASET)
 SD_DATASET_LABELS.update(
     {
+        "variant_name": "labels",
         "additional_special_tokens": {
             "sp_start_token": "<START>",
             "sp_end_token": "<END>",
-        }
+        },
     }
 )
 ##################
@@ -170,14 +171,14 @@ ICCSpokenLanguageModelingDM_NO_LABELS_5_TRAIN_37_TEST = deepcopy(
     ICCSpokenLanguageModelingDM_NO_LABELS
 )
 ICCSpokenLanguageModelingDM_NO_LABELS_5_TRAIN_37_TEST.update(
-    deepcopy(ICCSpokenLanguageModelingDM_NO_LABELS_5_TRAIN_37_TEST)
+    deepcopy(ICCDATASET_NO_LABELS_5_TRAIN_37_TEST)
 )
 
 ICCSpokenLanguageModelingDM_NO_LABELS_28_TRAIN_14_TEST = deepcopy(
     ICCSpokenLanguageModelingDM_NO_LABELS
 )
 ICCSpokenLanguageModelingDM_NO_LABELS_28_TRAIN_14_TEST.update(
-    deepcopy(ICCSpokenLanguageModelingDM_NO_LABELS_28_TRAIN_14_TEST)
+    deepcopy(ICCDATASET_NO_LABELS_28_TRAIN_14_TEST)
 )
 
 
@@ -208,15 +209,13 @@ GPT2_CONFIG = {
 
 
 GPT2_CONFIG_LABELS = deepcopy(GPT2_CONFIG)
-GPT2_CONFIG_LABELS["load"] = (
-    {
-        "model_checkpoint": "gpt2",
-        "tokenizer_checkpoint": "gpt2",
-        "tokenizer_pad_token": "<PAD>",
-        "tokenizer_eos_token": "<|endoftext|>",
-        "tokenizer_additional_special_tokens": ["<SP1>", "<SP2>", "<START>", "<END>"],
-    },
-)
+GPT2_CONFIG_LABELS["load"] = {
+    "model_checkpoint": "gpt2",
+    "tokenizer_checkpoint": "gpt2",
+    "tokenizer_pad_token": "<PAD>",
+    "tokenizer_eos_token": "<|endoftext|>",
+    "tokenizer_additional_special_tokens": ["<SP1>", "<SP2>", "<START>", "<END>"],
+}
 
 
 TURNGPT_LMMODEL_CONFIG = {
@@ -234,7 +233,7 @@ TURNGPT_LMMODEL_CONFIG = {
         # "save_dir": MISSING,
         "max_epochs": 1,
         "log_every_n_steps": 1,
-        "report_to": "wandb",
+        # "report_to": "wandb",
     },
 }
 
