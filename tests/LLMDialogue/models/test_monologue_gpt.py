@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-09-23 15:48:46
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-19 19:00:15
+# @Last Modified time: 2024-05-23 13:24:54
 
 
 import pytest
@@ -18,7 +18,7 @@ def test_load_default():
 def test_load_custom(gpt2_load_configs):
     """Load the model with the specified arguments"""
     model = GPT2()
-    model.load(**gpt2_load_configs)
+    model.load()
 
 
 """

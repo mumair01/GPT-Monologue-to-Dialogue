@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:19:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 15:10:55
+# @Last Modified time: 2024-05-23 13:29:50
 
 
 import sys
@@ -57,8 +57,8 @@ class GPT2(LanguageModel):
         self,
         model_checkpoint: str = "gpt2",
         tokenizer_checkpoint: str = "gpt2",
-        tokenizer_pad_token: str = "<PAD>",
-        tokenizer_eos_token: str = "<|endoftext|>",
+        tokenizer_pad_token: str = None,
+        tokenizer_eos_token: str = None,
         tokenizer_additional_special_tokens: List[str] = None,
         tokenizer_kwargs: Dict = {},
         model_kwargs: Dict = {},
