@@ -1,3 +1,7 @@
+# @Author: Muhammad Umair
+# @Date:   2024-05-19 15:10:19
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2024-05-23 09:12:05
 name : icc_5_train_37_special_labels
 train_csv_path : data/processed/ICC/5_train_37_test/train_special_labels.csv
 validation_csv_path : data/processed/ICC/5_train_37_test/test_special_labels.csv

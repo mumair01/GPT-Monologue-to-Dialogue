@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:21:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 15:46:41
+# @Last Modified time: 2024-05-23 11:39:30
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -136,7 +136,8 @@ class TurnGPT(LanguageModel):
         # Create callbacks
         checkpoint_callback = ModelCheckpoint(
             # NOTE: We want to save the models at every epoch.
-            save_top_k=-1
+            save_top_k=-1,
+            save_last=True,
         )
 
         return [checkpoint_callback]

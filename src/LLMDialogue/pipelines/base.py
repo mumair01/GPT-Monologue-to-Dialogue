@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 15:49:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 14:59:31
+# @Last Modified time: 2024-05-23 12:54:23
 
 import sys
 import os
@@ -10,6 +10,7 @@ import numpy as np
 import torch
 import hashlib
 import pytorch_lightning as pl
+from copy import deepcopy
 from datetime import datetime
 from typing import List, Dict, Any, Callable, Optional, Tuple
 
@@ -148,9 +149,7 @@ class PipelineBuilder:
         raise NotImplementedError()
 
     def info(self) -> PipelineInfo:
-        return PipelineInfo(
-            data=self.deepcopy(self.data), configs=self.config.to_dict()
-        )
+        return PipelineInfo(data=deepcopy(self.data), configs=self.config.to_dict())
 
     def load_from_disk(self) -> Any:
         raise NotImplementedError()

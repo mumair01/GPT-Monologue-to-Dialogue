@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 11:43:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-21 12:12:46
+# @Last Modified time: 2024-05-23 12:29:26
 
 
 import sys
@@ -42,20 +42,32 @@ class ICCHFLMDM(HFLanguageModelingDM):
         save_dir: str,
         data_block_size: Optional[int] = 128,
         batched: Optional[bool] = True,
+        **dset_kwargs,
     ):
 
         self.dset_variant = dset_variant
 
         super().__init__(
-            self._create_datasets(), tokenizer, save_dir, data_block_size, batched
+            self._create_datasets(**dset_kwargs),
+            tokenizer,
+            save_dir,
+            data_block_size,
+            batched,
         )
 
     # TODO: This wasn't done in the original experiment but I need to
     # determine if the dataset should be split by conversation - so that
     # each conversation itself is not shuffled.
-    def _create_datasets(self) -> DatasetDict:
+    def _create_datasets(
+        self,
+        **dset_kwargs,
+    ) -> DatasetDict:
         # Load the dataset with the specified configurations.
-        dset = load(dset_name="ICC", config_name=self.dset_variant)
+        dset = load(
+            dset_name="ICC",
+            config_name=self.dset_variant,
+            **dset_kwargs,
+        )
         dset_splits = objectify(dset)
         # Create a dataframe map from the dataset.
         df_map = dict()
@@ -86,10 +98,11 @@ class ICCSpokenLanguageModelingDM(SpokenLanguageModelingDM):
         num_proc=None,
         use_cache=False,
         batched: Optional[bool] = True,
+        **dset_kwargs,
     ):
         self.dset_variant = dset_variant
         super().__init__(
-            self._create_datasets(),
+            self._create_datasets(**dset_kwargs),
             tokenizer,
             save_dir,
             batch_size,
@@ -102,9 +115,16 @@ class ICCSpokenLanguageModelingDM(SpokenLanguageModelingDM):
             batched,
         )
 
-    def _create_datasets(self) -> DatasetDict:
+    def _create_datasets(
+        self,
+        **dset_kwargs,
+    ) -> DatasetDict:
         # Load the dataset with the specified configurations.
-        dset = load(dset_name="ICC", config_name=self.dset_variant)
+        dset = load(
+            dset_name="ICC",
+            config_name=self.dset_variant,
+            **dset_kwargs,
+        )
         dset_splits = objectify(dset)
         # Create a dataframe map from the dataset.
         df_map = dict()

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 18:28:12
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-19 19:18:59
+# @Last Modified time: 2024-05-23 11:52:27
 
 import sys
 import os
@@ -10,7 +10,6 @@ import pytest
 
 from typing import List, Dict, Any, Callable
 from LLMDialogue.models import GPT2, TurnGPT
-from LLMDialogue.pipelines import ConditionalProbabilityPipeline
 from LLMDialogue.tokenizers import SpokenDialogueTokenizer
 
 from tests.test_utils import load_inference_text_from_file, prepend_to_str_dict

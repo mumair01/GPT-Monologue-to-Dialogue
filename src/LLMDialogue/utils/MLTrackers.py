@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-22 13:57:18
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 15:28:53
+# @Last Modified time: 2024-05-23 09:09:39
 
 
 import sys
@@ -12,28 +12,30 @@ import wandb
 from typing import Dict, Any, List, Tuple, Optional, Callable
 
 
-class WANDBTracker:
+class MLTracker:
+
+    def start_run(self, *args, **kwargs) -> Any:
+        raise NotImplementedError()
+
+    def finish_run(self, *args, **kwargs) -> Any:
+        raise NotImplementedError()
+
+
+class WANDBTracker(MLTracker):
     """
     Wrapper class that helps manage a wandb run manually.
     """
 
-    def __init__(
-        self,
-        api_key: Optional[str] = None,
-    ):
-        # Attrs.
-        self.api_key = api_key
-
-        # Log in if needed.
-        if api_key is not None:
-            wandb.login(anonymous="never", key=api_key, verify=True)
+    def __init__(self):
+        super().__init__()
 
     #####################
     # PUBLIC METHODS
     #####################
 
-    def init(
+    def start_run(
         self,
+        api_key: Optional[str] = None,
         project: Optional[str] = None,
         entity: Optional[str] = None,
         mode: Optional[str] = None,
@@ -42,6 +44,11 @@ class WANDBTracker:
         log_model: Optional[str] = "end",
         **wandb_init_kwargs,
     ):
+
+        # Log in if needed.
+        if api_key is not None:
+            wandb.login(anonymous="never", key=api_key, verify=True)
+
         # If the log_model is specified, then set that as a param.
         if log_model is not None:
             os.environ["WANDB_LOG_MODEL"] = log_model
