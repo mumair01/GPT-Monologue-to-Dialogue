@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-23 15:33:54
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-24 12:38:53
+# @Last Modified time: 2024-05-24 15:24:47
 
 
 import sys
@@ -56,7 +56,10 @@ SAVE_DIR = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monol
 
 FINETUNE_GPT2_LABELS_5_TRAIN_37_TEST = {
     "seed": GLOBAL_SEED,
-    "tracker": {"tracker_type": "wandb", "configs": deepcopy(WANDB_CONFIGS)},
+    "tracker": {
+        "tracker_type": "wandb",
+        "configs": deepcopy(WANDB_CONFIGS),
+    },
     "model": {
         "name": "gpt2",
         "configs": GPT2_CONFIG_LABELS,
@@ -103,7 +106,7 @@ FINETUNE_TURNGPT_NO_LABELS_5_TRAIN_37_TEST = {
 FINETUNE_TURNGPT_NO_LABELS_28_TRAIN_14_TEST = {
     "seed": GLOBAL_SEED,
     "tracker": {
-        "tracker_type": "none",
+        "tracker_type": "wandb",
         "configs": deepcopy(WANDB_CONFIGS),
     },
     "model": {
@@ -205,9 +208,9 @@ if __name__ == "__main__":
 
     # Finetune using all of the configs
     jobs = [
-        # FINETUNE_GPT2_LABELS_28_TRAIN_14_TEST,
-        # FINETUNE_GPT2_LABELS_5_TRAIN_37_TEST,
-        FINETUNE_TURNGPT_NO_LABELS_28_TRAIN_14_TEST,
+        FINETUNE_GPT2_LABELS_28_TRAIN_14_TEST,
+        FINETUNE_GPT2_LABELS_5_TRAIN_37_TEST,
+        # FINETUNE_TURNGPT_NO_LABELS_28_TRAIN_14_TEST,
         # FINETUNE_TURNGPT_NO_LABELS_5_TRAIN_37_TEST,
     ]
 

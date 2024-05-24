@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-23 15:44:55
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-24 12:43:47
+# @Last Modified time: 2024-05-24 15:23:30
 
 
 import sys
@@ -136,6 +136,7 @@ ICCHFLMDM_CONFIGS = {
     "save_dir": MISSING,
     "data_block_size": 128,
     "batched": True,
+    "group_by_conversation": False,
 }
 
 # NOTE: Dset variant, tokenizer, and save_dir need to be specified later.
@@ -151,6 +152,7 @@ ICCSpokenLanguageModelingDM_CONFIGS = {
     "num_proc": None,
     "use_cache": False,
     "batched": True,
+    "group_by_conversation": True,
 }
 
 ICCHFLMDM_LABELS = deepcopy(ICCHFLMDM_CONFIGS)
@@ -199,7 +201,7 @@ GPT2_CONFIG = {
     "finetune": {
         # "dm": MISSING,
         # "save_dir": MISSING,
-        "num_train_epochs": 2,
+        "num_train_epochs": 30,
         "per_device_train_batch_size": 8,
         "per_device_eval_batch_size": 8,
         "warmup_steps": 300,
@@ -235,8 +237,9 @@ TURNGPT_LMMODEL_CONFIG = {
     "finetune": {
         # "dm": MISSING,
         # "save_dir": MISSING,
-        "max_epochs": 1,
+        "max_epochs": 30,
         "log_every_n_steps": 1,
+        "save_top_k": 1,
         # "report_to": "wandb",
     },
 }

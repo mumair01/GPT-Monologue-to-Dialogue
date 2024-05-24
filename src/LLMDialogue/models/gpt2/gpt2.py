@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:19:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-24 12:22:56
+# @Last Modified time: 2024-05-24 15:01:31
 
 
 import sys
@@ -275,4 +275,6 @@ class GPT2(LanguageModel):
             training_kwargs["prediction_loss_only"] = True
         if "load_best_model_at_end" not in training_kwargs:
             training_kwargs["load_best_model_at_end"] = True
+        if "save_total_limit" not in training_kwargs:
+            training_kwargs["save_total_limit"] = 2
         return training_kwargs

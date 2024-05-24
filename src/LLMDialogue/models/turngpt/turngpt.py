@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:21:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-24 12:22:22
+# @Last Modified time: 2024-05-24 13:34:42
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -78,6 +78,7 @@ class TurnGPT(LanguageModel):
         max_epochs: int = 30,
         log_every_n_steps: int = 1,
         report_to: str = None,
+        save_top_k: Optional[int] = 1,
         **kwargs,
     ):
         keys = ("dm", "save_dir", "max_epochs", "log_every_n_steps", "report_to")
@@ -99,7 +100,7 @@ class TurnGPT(LanguageModel):
         )
 
         # Create the callbacks
-        callbacks = self._create_callbacks()
+        callbacks = self._create_callbacks(save_top_k=save_top_k)
 
         # Define the trainer
 
@@ -138,11 +139,14 @@ class TurnGPT(LanguageModel):
             )
         return training_logger
 
-    def _create_callbacks(self) -> List[Callback]:
+    def _create_callbacks(
+        self,
+        save_top_k: int,
+    ) -> List[Callback]:
         # Create callbacks
         checkpoint_callback = ModelCheckpoint(
             # NOTE: We want to save the models at every epoch.
-            save_top_k=-1,
+            save_top_k=save_top_k,
             save_last=True,
         )
 
