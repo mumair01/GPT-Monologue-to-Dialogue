@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-23 09:05:51
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 09:10:18
+# @Last Modified time: 2024-05-24 12:18:10
 
 
 import sys
@@ -45,8 +45,8 @@ _TRACKERS = {
 
 
 def run_pipeline_with_tracker(
-    tracker_type: str,
     pipe: PipelineBuilder,
+    tracker_type: Optional[str] = None,
     **tracker_kwargs,
 ) -> MLTracker:
     """
@@ -55,11 +55,14 @@ def run_pipeline_with_tracker(
     """
     # Create the tracker
     assert (
-        tracker_type in _TRACKERS
+        tracker_type in _TRACKERS or tracker_type is "none"
     ), f"Unsupported tracker type, choose from: {list(_TRACKERS.keys())}"
 
-    tracker = _TRACKERS[tracker_type]()
-    tracker.start_run(**tracker_kwargs)
-    pipe.run()
-    tracker.finish_run()
-    return tracker
+    if tracker_type != "none":
+        tracker = _TRACKERS[tracker_type]()
+        tracker.start_run(**tracker_kwargs)
+        pipe.run()
+        tracker.finish_run()
+        return tracker
+    else:
+        pipe.run()

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-22 09:08:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 15:40:24
+# @Last Modified time: 2024-05-24 12:26:36
 
 import sys
 import os
@@ -30,6 +30,7 @@ from LLMDialogue.utils.general import (
     get_subdirs_in_dir,
     read_json,
     get_system_device,
+    remove_keys_from_dict,
 )
 from LLMDialogue.utils.logging import log_format
 
@@ -115,11 +116,17 @@ class LLMFinetunePipeline(PipelineBuilder):
         # Start finetuning!
         # NOTE: The config MUST contain the finetuning params for the specific
         # model that is provided!
+
+        # Before starting to finetune, we need to remove the dm, save_dir,
+        # and report_to keys if they exist in finetune_kwargs
+        finetune_kwargs = remove_keys_from_dict(
+            self.config.finetune_kwargs, ["dm", "save_dir", "report_to"]
+        )
         model.finetune(
             # DM must be supplied.
             dm=dm,
             # NOTE: Assuming that a model finetune MUST have a save_dir param.
-            save_dir=self.config.cache_dir,
+            save_dir=f"{self.config.cache_dir}/finetune",
             report_to=self.config.report_to,
-            **self.config.finetune_kwargs,
+            **finetune_kwargs,
         )

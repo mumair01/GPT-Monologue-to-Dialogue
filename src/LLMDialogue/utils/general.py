@@ -2,11 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 09:12:45
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 10:48:32
+# @Last Modified time: 2024-05-24 11:59:11
 
 
 import sys
 import os
+from copy import deepcopy
 import pandas as pd
 import toml
 import glob
@@ -413,3 +414,13 @@ def generate_random_colors(N) -> List:
         color_hex = "#{:02x}{:02x}{:02x}".format(*color_rgb)
         colors_hex.append(color_hex)
     return colors_hex
+
+
+def remove_keys_from_dict(d: Dict, keys: List[str] | str) -> Dict:
+    d_new = deepcopy(d)
+    if isinstance(keys, str):
+        keys = [keys]
+    for k in keys:
+        if k in d_new:
+            del d_new[k]
+    return d_new

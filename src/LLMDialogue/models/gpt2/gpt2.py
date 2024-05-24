@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:19:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 13:29:50
+# @Last Modified time: 2024-05-24 12:22:56
 
 
 import sys
@@ -23,6 +23,7 @@ import torch
 from transformers import Trainer, TrainingArguments
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
+from copy import deepcopy
 from datasets import load_dataset
 
 from LLMDialogue.models import LanguageModel
@@ -153,6 +154,7 @@ class GPT2(LanguageModel):
         per_device_train_batch_size: int = 8,
         per_device_eval_batch_size: int = 8,
         warmup_steps: int = 300,
+        logging_steps: int = 5,
         report_to: Optional[str] = "none",
         run_name: Optional[str] = None,
         **training_kwargs,
@@ -187,22 +189,18 @@ class GPT2(LanguageModel):
         assert dm.data_collator is not None
 
         # Define the training arguments
+        # NOTE: Making sure that the explicit fields for trainer do not override.
+        training_kwargs = self._sanitize_trainer_kwargs(training_kwargs)
         training_args = TrainingArguments(
             output_dir=save_dir,
-            overwrite_output_dir=True,
             num_train_epochs=num_train_epochs,
             per_device_train_batch_size=per_device_train_batch_size,
             per_device_eval_batch_size=per_device_eval_batch_size,
             warmup_steps=warmup_steps,
-            prediction_loss_only=True,
-            save_strategy="epoch",
-            evaluation_strategy="epoch",
-            logging_strategy="epoch",
-            logging_steps=1,
-            logging_dir=os.path.join(save_dir, "trainer_logs"),
+            logging_steps=logging_steps,
+            logging_dir=save_dir,
             report_to=report_to,
             run_name=run_name,
-            load_best_model_at_end=True,
             **training_kwargs,
         )
 
@@ -262,3 +260,19 @@ class GPT2(LanguageModel):
             string that is represented by the provided ids.
         """
         return self._tokenizer.decode(input_ids, *args, **kwargs)
+
+    def _sanitize_trainer_kwargs(self, training_kwargs: Dict) -> Dict:
+        training_kwargs = deepcopy(training_kwargs)
+        if "save_strategy" not in training_kwargs:
+            training_kwargs["save_strategy"] = "epoch"
+        if "eval_strategy" not in training_kwargs:
+            training_kwargs["eval_strategy"] = "epoch"
+        if "logging_strategy" not in training_kwargs:
+            training_kwargs["logging_strategy"] = "epoch"
+        if "overwrite_output_dir" not in training_kwargs:
+            training_kwargs["overwrite_output_dir"] = True
+        if "prediction_loss_only" not in training_kwargs:
+            training_kwargs["prediction_loss_only"] = True
+        if "load_best_model_at_end" not in training_kwargs:
+            training_kwargs["load_best_model_at_end"] = True
+        return training_kwargs

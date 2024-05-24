@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 15:49:31
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 12:54:23
+# @Last Modified time: 2024-05-24 12:24:23
 
 import sys
 import os
@@ -66,7 +66,12 @@ class PipelineConfig:
         self.clear_cache = clear_cache
         self.config_id = self.create_config_id(config_kwargs)
         if cache_dir is None:
-            self.cache_dir = f"{BaseConfigs.pipeline.cachePath}/{self.config_id}"
+            # NOTE: For the pipelines, we might have the same kwargs but we
+            # might be doing additional runs - so make sure that the time is added
+            # to the cache dir.
+            self.cache_dir = (
+                f"{BaseConfigs.pipeline.cachePath}/{self.config_id}/{self.date_created}"
+            )
         else:
             self.cache_dir = cache_dir
         self.archive_dir = os.path.join(self.cache_dir, "archive")

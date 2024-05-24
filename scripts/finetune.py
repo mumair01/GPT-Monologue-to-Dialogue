@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-23 15:33:54
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 18:55:25
+# @Last Modified time: 2024-05-24 12:38:53
 
 
 import sys
@@ -29,6 +29,7 @@ from LLMDialogue.utils.logging import (
     create_stream_handler,
 )
 
+from LLMDialogue.utils.general import remove_keys_from_dict
 from scripts.configs import *
 
 import logging
@@ -102,7 +103,7 @@ FINETUNE_TURNGPT_NO_LABELS_5_TRAIN_37_TEST = {
 FINETUNE_TURNGPT_NO_LABELS_28_TRAIN_14_TEST = {
     "seed": GLOBAL_SEED,
     "tracker": {
-        "tracker_type": "wandb",
+        "tracker_type": "none",
         "configs": deepcopy(WANDB_CONFIGS),
     },
     "model": {
@@ -130,6 +131,9 @@ _DMS = {
     "ICCHFLMDM": ICCHFLMDM,
     "ICCSpokenLanguageModelingDM": ICCSpokenLanguageModelingDM,
 }
+
+# This needs to be set to avoid deadlocks.
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def finetune(cfg: DictConfig):
@@ -171,6 +175,7 @@ def finetune(cfg: DictConfig):
     pipe_config = LLMFinetunePipelineConfig(
         model=model,
         dm=dm,
+        # NOTE: If we want to disable the tracker, then it needs to be done here as well.
         report_to=cfg.tracker.tracker_type,
         finetune_kwargs=OmegaConf.to_object(cfg.model.configs.finetune),
     )
@@ -178,10 +183,12 @@ def finetune(cfg: DictConfig):
 
     logger.info(f"Using MLTracker of type: {cfg.tracker.tracker_type}")
     tracker_kwargs = OmegaConf.to_object(cfg.tracker.configs)
-    tracker_kwargs.update({"logging_dir": pipe_config.cache_dir})
+    logging_dir = f"{pipe_config.cache_dir}/trainer_logs"
+    os.makedirs(logging_dir, exist_ok=True)
+    tracker_kwargs.update({"logging_dir": logging_dir})
     run_pipeline_with_tracker(
-        tracker_type=cfg.tracker.tracker_type,
         pipe=finetune_pipeline,
+        tracker_type=cfg.tracker.tracker_type,
         **tracker_kwargs,
     )
 

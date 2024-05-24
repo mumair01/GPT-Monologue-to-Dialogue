@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-23 15:44:55
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 18:47:08
+# @Last Modified time: 2024-05-24 12:43:47
 
 
 import sys
@@ -146,7 +146,7 @@ ICCSpokenLanguageModelingDM_CONFIGS = {
     "batch_size": 16,
     "max_length": 1024,
     "chunk_size": 128,
-    "num_workers": 1,
+    "num_workers": 1,  # NOTE: This will cause a slowdown warning, but that's okay!
     "pin_memory": True,
     "num_proc": None,
     "use_cache": False,
@@ -199,10 +199,14 @@ GPT2_CONFIG = {
     "finetune": {
         # "dm": MISSING,
         # "save_dir": MISSING,
-        "num_train_epochs": 1,
+        "num_train_epochs": 2,
         "per_device_train_batch_size": 8,
         "per_device_eval_batch_size": 8,
         "warmup_steps": 300,
+        "logging_steps": 10,
+        "logging_strategy": "epoch",
+        "eval_strategy": "epoch",
+        "save_strategy": "epoch",
         "run_name": None,
     },
 }

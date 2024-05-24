@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 11:20:45
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-21 15:37:13
+# @Last Modified time: 2024-05-24 12:38:35
 
 import torch
 import os
@@ -133,7 +133,8 @@ class SpokenLanguageModelingDM(pl.LightningDataModule):
             {"input_ids": [b["speaker_ids"][: self.max_length] for b in batch]}
         )["input_ids"]
         for k, v in ret.items():
-            ret[k] = torch.tensor(v)
+            # TODO: Make sure that this requires_grad should be True.
+            ret[k] = v.clone().detach().requires_grad_(False)
         return ret
 
     def _chunk_tokenized_samples(self, tokenized_samples):

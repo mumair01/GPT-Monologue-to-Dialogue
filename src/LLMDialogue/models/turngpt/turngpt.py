@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 15:21:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 18:53:27
+# @Last Modified time: 2024-05-24 12:22:22
 
 ##############################
 # This script contains the loader, trainer, and predictor for TurnGPT.
@@ -21,6 +21,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint, Callback
 from .model import TurnGPTDoubleHeadsModel, TurnGPTLMHeadModel
 from LLMDialogue.models import LanguageModel
 from LLMDialogue.dm.spokenLanguageDM import SpokenLanguageModelingDM
+from LLMDialogue.utils.general import remove_keys_from_dict
 
 
 class TurnGPT(LanguageModel):
@@ -47,6 +48,9 @@ class TurnGPT(LanguageModel):
         model_head: str = "LMHead",
         **kwargs,
     ):
+        keys = ("pretrained_model_name_or_path", "model_head")
+        assert all([k not in kwargs for k in keys])
+
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
         self.model_head = model_head
 
@@ -76,6 +80,9 @@ class TurnGPT(LanguageModel):
         report_to: str = None,
         **kwargs,
     ):
+        keys = ("dm", "save_dir", "max_epochs", "log_every_n_steps", "report_to")
+        assert all([k not in kwargs for k in keys])
+
         assert isinstance(dm, SpokenLanguageModelingDM)
         # Prepare the output directory.
         os.makedirs(save_dir, exist_ok=True)
