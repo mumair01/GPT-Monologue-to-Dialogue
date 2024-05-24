@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 11:43:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 12:29:26
+# @Last Modified time: 2024-05-24 12:47:45
 
 
 import sys
@@ -42,11 +42,12 @@ class ICCHFLMDM(HFLanguageModelingDM):
         save_dir: str,
         data_block_size: Optional[int] = 128,
         batched: Optional[bool] = True,
+        group_by_conversation: Optional[str] = False,
         **dset_kwargs,
     ):
 
         self.dset_variant = dset_variant
-
+        self.group_by_conversation = group_by_conversation
         super().__init__(
             self._create_datasets(**dset_kwargs),
             tokenizer,
@@ -80,7 +81,15 @@ class ICCHFLMDM(HFLanguageModelingDM):
                 name = "validation"
             df_map[name] = df
         # Convert the df map to datasets
-        return df_splits_to_datasets(df_map)
+
+        datasets = df_splits_to_datasets(df_map)
+        # Now, group the data by conversation.
+        if self.group_by_conversation:
+            for split in df_map.keys():
+                datasets[split] = group_by(
+                    datasets[split], "conversationID", partial(join, key="text")
+                )
+        return datasets
 
 
 class ICCSpokenLanguageModelingDM(SpokenLanguageModelingDM):
@@ -98,9 +107,11 @@ class ICCSpokenLanguageModelingDM(SpokenLanguageModelingDM):
         num_proc=None,
         use_cache=False,
         batched: Optional[bool] = True,
+        group_by_conversation: Optional[bool] = True,
         **dset_kwargs,
     ):
         self.dset_variant = dset_variant
+        self.group_by_conversation = group_by_conversation
         super().__init__(
             self._create_datasets(**dset_kwargs),
             tokenizer,
@@ -141,8 +152,9 @@ class ICCSpokenLanguageModelingDM(SpokenLanguageModelingDM):
         # Convert the df map to datasets
         datasets = df_splits_to_datasets(df_map)
         # Now, group the data by conversation.
-        for split in df_map.keys():
-            datasets[split] = group_by(
-                datasets[split], "conversationID", partial(join, key="text")
-            )
+        if self.group_by_conversation:
+            for split in df_map.keys():
+                datasets[split] = group_by(
+                    datasets[split], "conversationID", partial(join, key="text")
+                )
         return datasets
