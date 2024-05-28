@@ -2,13 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-22 08:12:56
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 13:29:01
+# @Last Modified time: 2024-05-28 14:27:15
 
 
 import sys
 import os
 import numpy as np
 import torch
+from torch.nn.functional import softmax
 import hashlib
 import pytorch_lightning as pl
 import itertools
@@ -41,6 +42,11 @@ logger = logging.getLogger(__name__)
 
 _PIPELINE_NAME = "ConditionalProbabilityPipeline"
 
+_PROBABILITY_METHODS = (
+    "words",
+    "eos",
+)
+
 
 class CPPipelineConfig(PipelineConfig):
 
@@ -50,6 +56,7 @@ class CPPipelineConfig(PipelineConfig):
         utterances: List[str],
         N: int,
         context_buffer_size: int,
+        probability_method: str,
         **kwargs,
     ):
         config_kwargs = {
@@ -58,6 +65,7 @@ class CPPipelineConfig(PipelineConfig):
             "utterances": utterances,
             "N": N,
             "context_buffer_size": context_buffer_size,
+            "probability_method": probability_method,
         }
         # Remove a key if it exists in kwargs.
         config_keys = list(config_kwargs.keys())
@@ -168,9 +176,13 @@ class CPPipeline(PipelineBuilder):
                 if turn_no == 0 and word_no == 0:
                     continue
 
-                last_word_prob = self._get_last_word_prob(
-                    model=model, text_so_far=text_so_far, context=context
+                # USe the correct prob. method
+                prob_method = (
+                    self._get_last_word_prob_using_words
+                    if self.config.probability_method == "words"
+                    else self._get_last_word_prob_using_eos
                 )
+                last_word_prob = prob_method(model, text_so_far, context)
 
                 # Adding to results
                 results.append(
@@ -188,7 +200,50 @@ class CPPipeline(PipelineBuilder):
 
         return results
 
-    def _get_last_word_prob(
+    def _get_last_word_prob_using_eos(
+        self,
+        model,
+        text_so_far: List[str],
+        context: List[str],
+    ):
+        # Make sure there are no empty tokens.
+        turns_so_far = [" ".join(turn_words).strip() for turn_words in text_so_far]
+        turns_so_far = [item for item in turns_so_far if len(item) > 0]
+        context = [" ".join(turn_words).strip() for turn_words in context]
+        context = [item for item in context if len(item) > 0]
+        # In this strategy, we simply need to get the probability of the EOS
+        # token after the last word.
+        whole_text_encoding = model.encode(turns_so_far, return_tensors="pt")
+        whole_text_decoded = model.decode(*whole_text_encoding["input_ids"])
+
+        # Log this information for debugging later.
+        msg = (
+            f"Text so far: {text_so_far}\n"
+            f"Turns so far: {turns_so_far}\n"
+            f"Context: {context}\n"
+            f"Whole text encoding: {whole_text_encoding}\n"
+            f"whole text decoding: {whole_text_decoded}"
+        )
+        logging.debug(msg)
+
+        # Now, predict using the model
+        whole_text_encoding = whole_text_encoding.to(self.config.device)
+        with torch.no_grad():
+            output = model(**whole_text_encoding)
+
+        # Get the logits for the distribution after the end of the last word
+        # in the whole text encoding.
+        seq_len = whole_text_encoding["input_ids"].shape[1]
+        last_logits = output["logits"][-1, seq_len - 1]
+        # Softmax for the probability distribution.
+        last_probs = softmax(last_logits, dim=-1)
+        # Get the probability of the EOS token (as known by the tokenizer.)
+        # TODO: Potentially add a config argument to specify the token - but
+        # this should likely be the same as the one known by the tokenizer.
+        eos_prob = last_probs[model.tokenizer.eos_token_id]
+        return float(eos_prob)
+
+    def _get_last_word_prob_using_words(
         self,
         model,
         text_so_far,
