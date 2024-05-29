@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 19:48:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 15:34:11
+# @Last Modified time: 2024-05-29 11:16:23
 
 import sys
 import os
@@ -39,6 +39,7 @@ class ICCDatasetConfig(DatasetConfig):
     def __init__(
         self,
         additional_special_tokens: Dict,
+        add_eos_tok_bw_turns: bool = False,
         **kwargs,
     ):
         # In this case, the data files must be a mapping to train and test
@@ -46,12 +47,19 @@ class ICCDatasetConfig(DatasetConfig):
         assert (
             "data_files" in kwargs
         ), f"Valid data directory must be specified for this dataset"
+
+        if add_eos_tok_bw_turns:
+            assert (
+                "eos_token" in additional_special_tokens.keys()
+            ), f"eos token must be specified to be added"
+
         # The data directory must contain a test and a train sub-folder
 
         # assert kwargs["variant"] in _VARIANTS, f"Variant must be one of: {_VARIANTS}"
         config_kwargs = {
             "dset_name": _DSET_NAME,
             "additional_special_tokens": additional_special_tokens,
+            "add_eos_tok_bw_turns": add_eos_tok_bw_turns,
         }
         # Remove a key if it exists in kwargs.
         config_keys = list(config_kwargs.keys())
@@ -163,15 +171,20 @@ class ICCDataset(DatasetBuilder):
             split_toks = [tok for tok in split_toks if len(tok) > 0]
             if len(split_toks) > 0:
 
-                # Merging with the previous turn if the speaker labels are the
-                # Same
-                # NOTE: IMPORTANT: Using the <ts> label to merge but this
-                # should be the same as the label that is used by the tokenizer
-                # later.
+                # If the current and previous speaker are the same,
+                # and an end of turn token automatically ONLY if it was not added
+                # previously.
 
                 if len(data) > 0 and data[-1][-1][0] == split_toks[0]:
-                    data[-1][-1][-1] += f"{eos_token} " + " ".join(split_toks[1:])
+                    curr_words = data[-1][-1][-1].split()
+                    if not eos_token in curr_words[-1]:
+                        data[-1][-1][-1] += f"{eos_token} {' '.join(split_toks[1:])}"
+                    else:
+                        data[-1][-1][-1] += f" {' '.join(split_toks[1:])}"
+                # For any other combination, add an eos token
                 elif len(split_toks) == 2:
+                    if self.config.add_eos_tok_bw_turns:
+                        split_toks[1] = f"{split_toks[1]}{eos_token}"
                     data.append([split_toks])
 
         # Removing the speaker labels
@@ -226,7 +239,13 @@ class ICCDataset(DatasetBuilder):
 
             split_toks = [tok for tok in split_toks if len(tok) > 0]
             if len(split_toks) > 0:
+                # Add eos token after the end of a turn if we need to!
+                if self.config.add_eos_tok_bw_turns and len(split_toks) > 1:
+                    split_toks.append(
+                        self.config.additional_special_tokens["eos_token"]
+                    )
                 split_toks = " ".join(split_toks)
+
                 data.append(split_toks)
         return {
             "n_utterances": len(data),

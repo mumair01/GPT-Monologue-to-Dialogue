@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-20 10:58:43
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-22 08:06:55
+# @Last Modified time: 2024-05-29 11:15:57
 
 import pytest
 import sys
@@ -12,7 +12,10 @@ from typing import Dict
 from LLMDialogue.datasets.ICC import ICC, load_ICC
 
 
-@pytest.mark.parametrize("config_name", ["labels", "no_labels"])
+@pytest.mark.parametrize(
+    "config_name",
+    ["labels", "no_labels"],
+)
 @pytest.mark.parametrize(
     "data_files",
     [
@@ -27,13 +30,16 @@ from LLMDialogue.datasets.ICC import ICC, load_ICC
     ],
 )
 @pytest.mark.parametrize("force_regenerate", [True, False])
+@pytest.mark.parametrize("add_eos_tok_bw_turns", [True, False])
 def test_create(
     config_name: str,
     data_files: Dict,
     force_regenerate: bool,
+    add_eos_tok_bw_turns: bool,
 ):
     dset = load_ICC(
         config_name=config_name,
         data_files=data_files,
         force_regenerate=force_regenerate,
+        add_eos_tok_bw_turns=add_eos_tok_bw_turns,
     )
