@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 19:48:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-29 11:16:23
+# @Last Modified time: 2024-05-29 11:20:20
 
 import sys
 import os
@@ -39,7 +39,7 @@ class ICCDatasetConfig(DatasetConfig):
     def __init__(
         self,
         additional_special_tokens: Dict,
-        add_eos_tok_bw_turns: bool = False,
+        add_eos_tok_bw_turns: Optional[bool] = False,
         **kwargs,
     ):
         # In this case, the data files must be a mapping to train and test

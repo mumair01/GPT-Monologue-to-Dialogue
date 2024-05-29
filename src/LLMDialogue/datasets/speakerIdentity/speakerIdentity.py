@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-19 19:49:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-20 14:11:21
+# @Last Modified time: 2024-05-29 11:32:37
 
 
 import sys
@@ -38,15 +38,21 @@ class SpeakerIdentityDatasetConfig(DatasetConfig):
     def __init__(
         self,
         additional_special_tokens: Dict,
+        add_eos_tok_bw_turns: Optional[bool] = False,
         **kwargs,
     ):
         assert "data_dir" in kwargs and os.path.isdir(
             kwargs["data_dir"]
         ), f"Valid data directory must be specified for this dataset"
+        if add_eos_tok_bw_turns:
+            assert (
+                "eos_token" in additional_special_tokens.keys()
+            ), f"eos token must be specified to be added"
         # assert kwargs["variant"] in _VARIANTS, f"Variant must be one of: {_VARIANTS}"
         config_kwargs = {
             "dset_name": _DSET_NAME,
             "additional_special_tokens": additional_special_tokens,
+            "add_eos_tok_bw_turns": add_eos_tok_bw_turns,
         }
         # Remove a key if it exists in kwargs.
         config_keys = list(config_kwargs.keys())
@@ -160,12 +166,15 @@ class SpeakerIdentityDataset(DatasetBuilder):
         # NOTE: IMPORTANT: Using the <ts> label to merge but this
         # should be the same as the label that is used by the tokenizer
         # later.
+
         if conv[0] == conv[2]:
-            conv = [f"{conv[1].strip()}{eos_token} {conv[3].strip()}{eos_token}"]
+            conv = [
+                f"{conv[1].strip()}{eos_token} {conv[3].strip()}{eos_token if self.config.add_eos_tok_bw_turns else ''}"
+            ]
         else:
             conv = [
-                f"{conv[1].strip()}{eos_token}",
-                f"{conv[3].strip()}{eos_token}",
+                f"{conv[1].strip()}{eos_token if self.config.add_eos_tok_bw_turns else ''}",
+                f"{conv[3].strip()}{eos_token if self.config.add_eos_tok_bw_turns else ''}",
             ]
 
         # Now return the list of utterances
@@ -182,6 +191,7 @@ class SpeakerIdentityDataset(DatasetBuilder):
         sp_start_token = self.config.additional_special_tokens["sp_start_token"]
         sp_end_token = self.config.additional_special_tokens["sp_end_token"]
         speaker_base = "<SP{}>"
+        eos_token = self.config.additional_special_tokens["eos_token"]
 
         # Create and apply normalizer sequence.
         normalizer_seq = create_normalizer_sequence(custom_regex="(\*)")
@@ -197,7 +207,13 @@ class SpeakerIdentityDataset(DatasetBuilder):
         conv = []
         for sp, line in zip(speakers, lines):
             sp = speaker_base.format(sp[-1])
-            conv.append(f"{sp} {line.strip()} {sp}")
+
+            if self.config.add_eos_tok_bw_turns:
+                turn = f"{sp} {line.strip()} {sp} {eos_token}"
+            else:
+                turn = f"{sp} {line.strip()} {sp}"
+            conv.append(turn)
+
         assert len(conv) == 2
         conv.insert(0, sp_start_token)
         conv.append(sp_end_token)

@@ -57,3 +57,4 @@ data_dir = "data/raw/speaker_identity_stims"
 [speakerIdentity.builderConfigs.labels.additional_special_tokens]
 sp_start_token = "<START>"
 sp_end_token = "<END>"
+eos_token = "|<endoftext>|"
