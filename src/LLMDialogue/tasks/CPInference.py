@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-29 16:30:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-30 16:06:37
+# @Last Modified time: 2024-05-30 16:10:54
 
 
 import sys
@@ -31,7 +31,6 @@ from LLMDialogue.utils.logging import (
 )
 from LLMDialogue.utils.general import save_dict_conf
 
-from scripts.configs import *
 
 import logging
 

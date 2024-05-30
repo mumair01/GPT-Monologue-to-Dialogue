@@ -2,10 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 10:10:51
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 12:29:13
+# @Last Modified time: 2024-05-30 16:56:08
 
 import sys
 import os
+from itertools import chain
 from functools import partial
 import pandas as pd
 import torch
@@ -26,6 +27,10 @@ from datasets import (
     DatasetDict,
 )
 import pytorch_lightning as pl
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class HFLanguageModelingDM(pl.LightningDataModule):
@@ -104,7 +109,18 @@ class HFLanguageModelingDM(pl.LightningDataModule):
         Returns a method that takes in some data and tokenizes the utterance_key
         attribute of the data.
         """
-        return self.tokenizer(data[self.utterance_key], truncation=True)
+        # print(data[self.utterance_key])
+
+        # If the data is a list of lists, it should be merged into a single list
+        # instead
+        if isinstance(data[self.utterance_key], list) and isinstance(
+            data[self.utterance_key][0], list
+        ):
+            text = list(chain.from_iterable(data[self.utterance_key]))
+        else:
+            text = data[self.utterance_key]
+        res = self.tokenizer(text, truncation=True)
+        return res
 
     # def _df_splits_to_datasets(
     #     self,

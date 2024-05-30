@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-21 11:43:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-24 12:47:45
+# @Last Modified time: 2024-05-30 17:07:12
 
 
 import sys
@@ -73,7 +73,10 @@ class ICCHFLMDM(HFLanguageModelingDM):
         # Create a dataframe map from the dataset.
         df_map = dict()
         for name, df in dset_splits.data_df_map.items():
-            remove_labels = [c for c in df.columns if c != "utterance"]
+
+            remove_labels = [
+                c for c in df.columns if c != "utterance" and c != "conversationID"
+            ]
             # df.drop(labels=remove_labels)
             df = df.drop(remove_labels, axis=1)
             df = df.rename(columns={"utterance": "text"})
@@ -86,9 +89,11 @@ class ICCHFLMDM(HFLanguageModelingDM):
         # Now, group the data by conversation.
         if self.group_by_conversation:
             for split in df_map.keys():
+
                 datasets[split] = group_by(
                     datasets[split], "conversationID", partial(join, key="text")
                 )
+
         return datasets
 
 
