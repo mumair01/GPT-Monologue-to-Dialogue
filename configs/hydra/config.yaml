@@ -1,8 +1,8 @@
 hydra:
   #output_subdir: /Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/cache
-  run:
+  #run:
   #   # Ex output dir: .../outputs/finetune/turngpt_icc_5_train_37_test/2022-08-10_141516
-     dir: ${env.paths.root}/${now:%Y-%m-%d_%H-%M-%S}/
+     #dir: ${env.paths.root}/${now:%Y-%m-%d_%H-%M-%S}/
   job:
     chdir: True
 
@@ -10,5 +10,5 @@ hydra:
 env:
   seed : 42
   # paths:
-    root:  /Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/cache
+   #sroot:  /Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/cache
 
