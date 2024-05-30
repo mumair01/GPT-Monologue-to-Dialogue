@@ -1,0 +1,17 @@
+
+load:
+  pretrained_model_name_or_path : "gpt2"
+  model_head : "LMHead"
+  load_pretrained_configs : true 
+  omit_speaker_ids : false
+  no_train_first_n : 5 
+  learning_rate : 1e-4
+  tokenizer_additional_special_tokens: []
+
+finetune:
+  dm :  
+  save_dir : 
+  max_epochs : 1
+  log_every_n_steps : 1 
+  save_top_k : 1
+  report_to : 

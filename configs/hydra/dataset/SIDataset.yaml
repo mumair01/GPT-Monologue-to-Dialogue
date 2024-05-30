@@ -1,0 +1,5 @@
+defaults:
+  - base
+data_dir : "data/raw/speaker_identity_stims"
+additional_special_tokens : {}
+add_eos_tok_bw_turns : false

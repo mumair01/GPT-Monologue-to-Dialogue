@@ -2,13 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-22 13:57:18
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 09:09:39
+# @Last Modified time: 2024-05-30 13:48:55
 
 
 import sys
 import os
 import wandb
 
+from omegaconf import DictConfig, OmegaConf
 from typing import Dict, Any, List, Tuple, Optional, Callable
 
 
@@ -42,6 +43,7 @@ class WANDBTracker(MLTracker):
         run_name: Optional[str] = None,
         logging_dir: Optional[str] = None,
         log_model: Optional[str] = "end",
+        configs: Optional[DictConfig] = None,
         **wandb_init_kwargs,
     ):
 
@@ -60,6 +62,11 @@ class WANDBTracker(MLTracker):
             name=run_name,
             settings=wandb.Settings(start_method="fork"),
             dir=logging_dir,
+            config=(
+                OmegaConf.to_container(configs, resolve=True, throw_on_missing=True)
+                if configs is not None
+                else None
+            ),
             **wandb_init_kwargs,
         )
 

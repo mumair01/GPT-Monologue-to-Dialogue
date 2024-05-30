@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-12-15 15:43:18
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-23 14:26:59
+# @Last Modified time: 2024-05-29 16:59:08
 
 
 import os
@@ -43,7 +43,7 @@ def prepend_path_if_possible(data: Any, path_prefix: str) -> Any:
 # Path to the root of the repo.
 _ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 _MODULE_PATH = os.path.dirname(__file__)
-_CONFIGS_DIR = os.path.join(_ROOT_PATH, "configs")
+_CONFIGS_DIR = os.path.join(_ROOT_PATH, "configs/base")
 
 _DSET_CONFIG_FPATH = os.path.join(_CONFIGS_DIR, "DsetConfigs.toml")
 _PIPELINES_CONFIG_FPATH = os.path.join(_CONFIGS_DIR, "pipelineConfigs.toml")

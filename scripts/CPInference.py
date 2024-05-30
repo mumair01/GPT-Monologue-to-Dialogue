@@ -2,9 +2,10 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-23 17:27:58
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-24 16:53:28
+# @Last Modified time: 2024-05-30 14:37:44
 import sys
 import os
+import hydra
 from omegaconf import DictConfig, OmegaConf
 import json
 import pandas as pd
@@ -30,6 +31,7 @@ from LLMDialogue.utils.logging import (
     create_file_handler,
     create_stream_handler,
 )
+from LLMDialogue.tasks import CPInference_task
 
 from scripts.configs import *
 
@@ -48,6 +50,7 @@ configure_logger(
         # ),
     ]
 )
+
 
 ##########################
 # CONFIGURATION DICTIONARY
@@ -130,123 +133,25 @@ _MODELS = {
 ##########################
 
 
-def get_config_hash(config: DictConfig) -> str:
-    """
-    Generates a unique hash for a DictConfig with potentially nested dictionaries.
-    """
-
-    def hash_dict(d):
-        if isinstance(d, DictConfig):
-            sorted_subdict = {k: hash_dict(v) for k, v in sorted(d.items())}
-            return hash(json.dumps(sorted_subdict))
-        else:
-            return str(d)
-
-    sorted_dict = {k: hash_dict(v) for k, v in sorted(config.items())}
-    json_str = json.dumps(sorted_dict)
-    return hash(json_str)
-
-
-def predict_speaker_identity_dset(
-    model: LanguageModel,
-    dset: SpeakerIdentityDataset,
-    save_dir: str,
-    N: int = -1,
-    context_buffer_size: int = 512,
-) -> Tuple:
-    assert isinstance(model, LanguageModel)
-    assert isinstance(dset, SpeakerIdentityDataset)
-    splits = objectify(dset)
-    test_df = splits.data_df_map["test"]
-    # This is a list of all of the conversation IDs.
-    conv_ids = list(set(test_df["conversationID"].tolist()))
-    results = list()
-    for conv_id in conv_ids:
-        # Get the utterances for this conversation.
-        utterances = test_df[test_df["conversationID"] == conv_id]["utterance"].tolist()
-        # Set up the pipeline.
-        pipe_config = CPPipelineConfig(
-            model=model,
-            utterances=utterances,
-            N=N,
-            context_buffer_size=context_buffer_size,
-            # TODO: I can index this so that each individual json is saved as well.
-            cache_dir=f"{save_dir}/stimuli/{conv_id}",
-        )
-        pipe = CPPipeline(pipe_config)
-        pipe.run()
-        res = pipe.info().data
-        # Create a dataframe from the results and save.
-        res_df = pd.DataFrame(res)
-        results.append(res_df.copy())
-    # Concat the df into a larger one and save
-    df = pd.concat(results)
-    save_fpath = f"{save_dir}/CP.csv"
-    df.to_csv(save_fpath)
-    return df, save_fpath
-
-
-##########################
-# TASK FUNCTION
-##########################
-
-
-def CPInference(
-    cfg: DictConfig,
-):
-    logger.info("Starting CPInference experiment with configurations:")
-    logger.info(OmegaConf.to_yaml(cfg))
-
-    # Update the save directory path using unique arguments and date/time.
-    now = datetime.now()
-    save_dir = (
-        f"{cfg.save_dir}/{get_config_hash(cfg)}/{now.strftime('%d_%m_%Y__%H_%M_%S')}"
-    )
-    os.makedirs(save_dir, exist_ok=True)
-
-    # Load the model first.
-    model_conf = OmegaConf.to_object(cfg.model.configs.load)
-    model = _MODELS[cfg.model.name](cfg.seed)
-    logger.info("Loading model with configurations:")
-    logger.info(model_conf)
-    logger.warning(
-        f"Make sure that the correct model is loaded if you intended to load a finetuned model! "
-    )
-    model.load(**model_conf)
-
-    # Load the dataset
-    print(cfg.dataset.configs)
-    dset_conf = OmegaConf.to_object(cfg.dataset.configs)
-    dset = load(
-        dset_name=cfg.dataset.name,
-        config_name=dset_conf["variant_name"],
-        **dset_conf,
-    )
-
-    # Run the inference function.
-    predict_speaker_identity_dset(
-        model=model,
-        dset=dset,
-        save_dir=save_dir,
-        **CPPipeline_CONFIGS,
-    )
-
-    # Save the configurations file.
-    with open(f"{save_dir}/CPInference_configs.yaml", "w") as fp:
-        OmegaConf.save(config=conf, f=fp.name)
-        loaded = OmegaConf.load(fp.name)
-        assert conf == loaded
-
-    logger.info(f"Experiment completed - results path: {save_dir}")
+@hydra.main(
+    config_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/configs/hydra",
+    version_base=None,
+    config_name="config",
+)
+def main(cfg: DictConfig):
+    print(OmegaConf.to_yaml(cfg))
+    CPInference_task(cfg)
 
 
 if __name__ == "__main__":
-    jobs = [
-        CP_INFERENCE_CONFIGS_LABELS_GPT2_5_TRAIN_37_TEST,
-        CP_INFERENCE_CONFIGS_LABELS_GPT2_28_TRAIN_14_TEST,
-        CP_INFERENCE_CONFIGS_NO_LABELS_TURNGPT_5_TRAIN_37_TEST,
-        CP_INFERENCE_CONFIGS_NO_LABELS_TURNGPT_28_TRAIN_14_TEST,
-    ]
-    for job in jobs:
-        conf = OmegaConf.create(job)
-        CPInference(conf)
+    main()
+
+    # jobs = [
+    #     CP_INFERENCE_CONFIGS_LABELS_GPT2_5_TRAIN_37_TEST,
+    #     CP_INFERENCE_CONFIGS_LABELS_GPT2_28_TRAIN_14_TEST,
+    #     CP_INFERENCE_CONFIGS_NO_LABELS_TURNGPT_5_TRAIN_37_TEST,
+    #     CP_INFERENCE_CONFIGS_NO_LABELS_TURNGPT_28_TRAIN_14_TEST,
+    # ]
+    # for job in jobs:
+    #     conf = OmegaConf.create(job)
+    #     CPInference(conf)

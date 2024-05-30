@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-15 09:12:45
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-24 11:59:11
+# @Last Modified time: 2024-05-29 16:33:49
 
 
 import sys
@@ -11,6 +11,7 @@ from copy import deepcopy
 import pandas as pd
 import toml
 import glob
+from omegaconf import OmegaConf, DictConfig
 from pathlib import Path
 import shutil
 import json
@@ -424,3 +425,11 @@ def remove_keys_from_dict(d: Dict, keys: List[str] | str) -> Dict:
         if k in d_new:
             del d_new[k]
     return d_new
+
+
+def save_dict_conf(fpath: str, conf: DictConfig) -> str:
+    # Save the configurations file.
+    with open(fpath, "w") as fp:
+        OmegaConf.save(config=conf, f=fp.name)
+        loaded = OmegaConf.load(fp.name)
+        assert conf == loaded

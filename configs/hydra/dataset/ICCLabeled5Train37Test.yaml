@@ -1,0 +1,5 @@
+defaults:
+  - ICCLabeledBase
+data_files:
+  train: "data/raw/ICC/5_train_37_test_set/train"
+  test : "data/raw/ICC/5_train_37_test_set/test"

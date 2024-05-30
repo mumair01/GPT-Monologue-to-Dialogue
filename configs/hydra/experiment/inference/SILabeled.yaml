@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - inference/base
+  - /model : gpt2Labels
+  - /dataset : SIDatasetLabeled
+
+task : CPInference
+model_type : gpt2
+
+  

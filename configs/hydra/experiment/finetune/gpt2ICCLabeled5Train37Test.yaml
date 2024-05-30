@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /tracker : wandb
+  - /model : gpt2Labels
+  - /dm : ICCHFLMDM
+  - /dataset : ICCLabeled5Train37Test 
+
+task : finetune
+dm_type: ICCHFLMDM
+model_type : gpt2
+tracker_type : wandb
+
+  

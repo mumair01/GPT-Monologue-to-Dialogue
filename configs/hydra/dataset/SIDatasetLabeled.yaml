@@ -1,0 +1,10 @@
+defaults:
+  - SIDataset
+
+  
+variant_name : "labels"
+additional_special_tokens : 
+  sp_start_token : "<START>"
+  sp_end_token : "<END>"
+  eos_token : "|<endoftext>|"
+

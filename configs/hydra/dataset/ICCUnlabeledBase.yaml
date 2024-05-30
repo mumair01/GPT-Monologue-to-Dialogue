@@ -1,0 +1,7 @@
+
+defaults:
+  - base
+variant_name : "no_labels"
+add_eos_tok_bw_turns : false
+additional_special_tokens:
+  eos_token : "<ts>"

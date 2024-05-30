@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-22 08:12:56
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-28 14:27:15
+# @Last Modified time: 2024-05-30 11:52:23
 
 
 import sys
@@ -59,6 +59,10 @@ class CPPipelineConfig(PipelineConfig):
         probability_method: str,
         **kwargs,
     ):
+
+        assert (
+            probability_method in _PROBABILITY_METHODS
+        ), f"Method must be in {_PROBABILITY_METHODS}"
         config_kwargs = {
             "name": _PIPELINE_NAME,
             "model": model,
@@ -67,6 +71,7 @@ class CPPipelineConfig(PipelineConfig):
             "context_buffer_size": context_buffer_size,
             "probability_method": probability_method,
         }
+
         # Remove a key if it exists in kwargs.
         config_keys = list(config_kwargs.keys())
         for k in config_keys:

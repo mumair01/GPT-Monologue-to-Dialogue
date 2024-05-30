@@ -1,0 +1,12 @@
+dset_variant :
+tokenizer :
+save_dir : 
+batch_size : 16 
+max_length : 1024 
+chunk_size : 128 
+num_workers : 1 
+pin_memory : True 
+num_proc : 
+use_cache : False 
+batched : True 
+group_by_conversation : True

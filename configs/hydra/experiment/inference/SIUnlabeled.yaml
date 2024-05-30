@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - inference/base
+  - /model : turnGptBase
+  - /dataset : SIDatasetUnlabeled
+
+task : CPInference
+model_type : turngpt
+
+  

@@ -1,0 +1,6 @@
+dset_name : "speakerIdentity"
+pipeline:
+  N : -1
+  context_buffer_size : 512
+  probability_method: "eos"
+

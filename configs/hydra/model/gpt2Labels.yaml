@@ -1,0 +1,6 @@
+defaults:
+  - gpt2Base 
+load:
+  tokenizer_pad_token : "<PAD>"
+  tokenizer_eos_token: "<|endoftext|>"
+  tokenizer_additional_special_tokens: ["<SP1>", "<SP2>", "<START>", "<END>"]

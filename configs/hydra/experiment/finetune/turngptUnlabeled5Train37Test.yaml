@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /tracker : wandb
+  - /model : turnGptBase
+  - /dm : ICCSLFTDM
+  - /dataset : ICCUnlabeled5Train37Test
+
+task : finetune
+dm_type: ICCSLFTDM
+model_type : turngpt
+tracker_type : wandb
+
+  

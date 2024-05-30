@@ -1,0 +1,8 @@
+defaults:
+  - base
+variant_name : "labels"
+add_eos_tok_bw_turns : false
+additional_special_tokens:
+  sp_start_token : "<START>"
+  sp_end_token : "<END>"
+  eos_token : "|<endoftext>|"

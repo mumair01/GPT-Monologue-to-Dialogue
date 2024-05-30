@@ -1,0 +1,9 @@
+api_key : 
+
+project : "gpt_monologue_to_dialogue"
+entity : "hilab"
+mode : "online"
+run_name :
+logging_dir : 
+log_model : "end"
+configs : 

@@ -2,10 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-23 15:33:54
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-24 15:24:47
+# @Last Modified time: 2024-05-30 13:29:46
 
 
 import sys
+import hydra
 import os
 from omegaconf import DictConfig, OmegaConf
 from typing import List, Dict, Tuple, Callable
@@ -14,22 +15,12 @@ from typing import List, Dict, Tuple, Callable
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 
-from LLMDialogue.pipelines import CPPipelineConfig, CPPipeline
-from LLMDialogue.models import GPT2, TurnGPT, LanguageModel
-from LLMDialogue.dm.ICCdm import ICCHFLMDM, ICCSpokenLanguageModelingDM
-from LLMDialogue.datasets.speakerIdentity import SpeakerIdentityDataset, objectify
-from LLMDialogue.pipelines import (
-    LLMFinetunePipeline,
-    LLMFinetunePipelineConfig,
-)
-from LLMDialogue.pipelines.utils import run_pipeline_with_tracker
+from LLMDialogue.tasks import finetune_task
 from LLMDialogue.utils.logging import (
     configure_logger,
     create_file_handler,
     create_stream_handler,
 )
-
-from LLMDialogue.utils.general import remove_keys_from_dict
 from scripts.configs import *
 
 import logging
@@ -73,7 +64,7 @@ FINETUNE_GPT2_LABELS_5_TRAIN_37_TEST = {
 FINETUNE_GPT2_LABELS_28_TRAIN_14_TEST = {
     "seed": GLOBAL_SEED,
     "tracker": {
-        "tracker_type": "wandb",
+        "tracker_type": "none",
         "configs": deepcopy(WANDB_CONFIGS),
     },
     "model": {
@@ -125,95 +116,27 @@ FINETUNE_TURNGPT_NO_LABELS_28_TRAIN_14_TEST = {
 ##########################
 
 
-_MODELS = {
-    "gpt2": GPT2,
-    "turngpt": TurnGPT,
-}
-
-_DMS = {
-    "ICCHFLMDM": ICCHFLMDM,
-    "ICCSpokenLanguageModelingDM": ICCSpokenLanguageModelingDM,
-}
-
-# This needs to be set to avoid deadlocks.
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-
-def finetune(cfg: DictConfig):
-    """
-    This is the task function for fine-tuning.
-    TODO: Port this to work with hydra zen later.
-
-    Parameters
-    ----------
-    cfg : DictConfig
-        A configuration object that defines each component for the experiment.
-    """
-    logger.info("Starting finetuning experiment with configurations:")
-    logger.info(OmegaConf.to_yaml(cfg))
-
-    # Load the model first.
-
-    model_conf = OmegaConf.to_object(cfg.model.configs.load)
-    model = _MODELS[cfg.model.name](cfg.seed)
-    logger.info("Loading model with configurations:")
-    logger.info(model_conf)
-    model.load(**model_conf)
-
-    # Load the data module.
-    dm_configs = OmegaConf.to_object(cfg.dm.configs)
-    dm_configs.update(
-        {
-            "tokenizer": model.tokenizer,
-            "save_dir": f"{BaseConfigs.datasets.cachePath}/dm",
-        }
-    )
-    logger.info(
-        f"Loading data module of type {type(_DMS[cfg.dm.name])} with configurations:"
-    )
-    logger.info(dm_configs)
-    dm = _DMS[cfg.dm.name](**dm_configs)
-    # Create the finetune pipeline
-    logger.info("Loading LLM Fine-tuning pipeline")
-    pipe_config = LLMFinetunePipelineConfig(
-        model=model,
-        dm=dm,
-        # NOTE: If we want to disable the tracker, then it needs to be done here as well.
-        report_to=cfg.tracker.tracker_type,
-        finetune_kwargs=OmegaConf.to_object(cfg.model.configs.finetune),
-    )
-    finetune_pipeline = LLMFinetunePipeline(pipe_config)
-
-    logger.info(f"Using MLTracker of type: {cfg.tracker.tracker_type}")
-    tracker_kwargs = OmegaConf.to_object(cfg.tracker.configs)
-    logging_dir = f"{pipe_config.cache_dir}/trainer_logs"
-    os.makedirs(logging_dir, exist_ok=True)
-    tracker_kwargs.update({"logging_dir": logging_dir})
-    run_pipeline_with_tracker(
-        pipe=finetune_pipeline,
-        tracker_type=cfg.tracker.tracker_type,
-        **tracker_kwargs,
-    )
-
-    # Save the configurations file.
-    with open(f"{pipe_config.cache_dir}/finetune_configs.yaml", "w") as fp:
-        OmegaConf.save(config=conf, f=fp.name)
-        loaded = OmegaConf.load(fp.name)
-        assert conf == loaded
-
-    logger.info(f"Experiment completed - results path: {pipe_config.cache_dir}")
+@hydra.main(
+    config_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GPT-Monologue-to-Dialogue/configs/hydra",
+    version_base=None,
+    config_name="config",
+)
+def main(cfg: DictConfig):
+    print(OmegaConf.to_yaml(cfg))
+    finetune_task(cfg)
 
 
 if __name__ == "__main__":
+    main()
 
-    # Finetune using all of the configs
-    jobs = [
-        FINETUNE_GPT2_LABELS_28_TRAIN_14_TEST,
-        FINETUNE_GPT2_LABELS_5_TRAIN_37_TEST,
-        # FINETUNE_TURNGPT_NO_LABELS_28_TRAIN_14_TEST,
-        # FINETUNE_TURNGPT_NO_LABELS_5_TRAIN_37_TEST,
-    ]
+    # # Finetune using all of the configs
+    # jobs = [
+    #     FINETUNE_GPT2_LABELS_28_TRAIN_14_TEST,
+    #     # FINETUNE_GPT2_LABELS_5_TRAIN_37_TEST,
+    #     # FINETUNE_TURNGPT_NO_LABELS_28_TRAIN_14_TEST,
+    #     # FINETUNE_TURNGPT_NO_LABELS_5_TRAIN_37_TEST,
+    # ]
 
-    for job in jobs:
-        conf = OmegaConf.create(job)
-        finetune(conf)
+    # for job in jobs:
+    #     conf = OmegaConf.create(job)
+    #     finetune_task(conf)
