@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-29 16:30:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-30 16:10:54
+# @Last Modified time: 2024-05-31 13:19:39
 
 
 import sys
@@ -23,7 +23,7 @@ from LLMDialogue.pipelines import (
     LLMFinetunePipeline,
     LLMFinetunePipelineConfig,
 )
-from LLMDialogue.pipelines.utils import run_pipeline_with_tracker
+from LLMDialogue.pipelines.utils import run_pipeline_with_tracker, get_dirname
 from LLMDialogue.utils.logging import (
     configure_logger,
     create_file_handler,
@@ -50,19 +50,22 @@ _MODELS = {
 
 def get_config_hash(config: DictConfig) -> str:
     """
-    Generates a unique hash for a DictConfig with potentially nested dictionaries.
+    Generates a unique hash for a DictConfig with potentially nested dictionaries,
+    ensuring all hashes are positive.
     """
 
     def hash_dict(d):
         if isinstance(d, DictConfig):
             sorted_subdict = {k: hash_dict(v) for k, v in sorted(d.items())}
-            return hash(json.dumps(sorted_subdict))
+            # Use bitwise AND with a large positive number to keep the hash positive
+            return hash(json.dumps(sorted_subdict)) & 0x7FFFFFFF
         else:
             return str(d)
 
     sorted_dict = {k: hash_dict(v) for k, v in sorted(config.items())}
     json_str = json.dumps(sorted_dict)
-    return hash(json_str)
+    # Use bitwise AND with a large positive number to keep the hash positive
+    return hash(json_str) & 0x7FFFFFFF
 
 
 def predict_speaker_identity_dset(
@@ -115,15 +118,9 @@ def CPInference_task(
     root_save_dir = f"{BaseConfigs.pipeline.cachePath}Inference"
     os.makedirs(root_save_dir, exist_ok=True)
 
-    # Update the save directory path using unique arguments and date/time.
-    now = datetime.now()
-    save_dir = (
-        f"{root_save_dir}/{get_config_hash(cfg)}/{now.strftime('%d_%m_%Y__%H_%M_%S')}"
-    )
-    os.makedirs(save_dir, exist_ok=True)
-
     # Load the model first.
     model_conf = OmegaConf.to_object(cfg.model.load)
+
     model = _MODELS[cfg.model_type](cfg.env.seed)
     logger.info("Loading model with configurations:")
     logger.info(model_conf)
@@ -132,10 +129,17 @@ def CPInference_task(
     )
     model.load(**model_conf)
 
+    # Update the save directory path using unique arguments and date/time.
+    now = datetime.now()
+    save_dir = f"{root_save_dir}/CP_{cfg.model_type}_tok={cfg.dataset.add_eos_tok_bw_turns}_method={cfg.inference.pipeline.probability_method}/{get_config_hash(cfg)}/{now.strftime('%d_%m_%Y__%H_%M_%S')}"
+    os.makedirs(save_dir, exist_ok=True)
+
     # Load the dataset
     OmegaConf.update(cfg, "dataset.seed", cfg.env.seed)
     dset_conf = OmegaConf.to_object(cfg.dataset)
     dset_conf["data_dir"] = os.path.join(BaseConfigs.root_path, dset_conf["data_dir"])
+    logger.info("Loading the dataset with configurations:")
+    logger.info(dset_conf)
     dset = load(
         dset_name=cfg.inference.dset_name,
         config_name=dset_conf["variant_name"],
@@ -143,6 +147,7 @@ def CPInference_task(
     )
 
     # Run the inference function.
+    logger.info("Starting to run the prediction pipeline...")
     predict_speaker_identity_dset(
         model=model,
         dset=dset,
@@ -151,6 +156,8 @@ def CPInference_task(
     )
 
     # Save the configurations file.
-    save_dict_conf(f"{save_dir}/CPInference_configs.yaml", cfg)
+    save_fpath = f"{save_dir}/CPInference_configs.yaml"
+    save_dict_conf(save_fpath, cfg)
+    logger.info(f"Saved experiment configurations to: {save_fpath}")
 
     logger.info(f"Experiment completed - results path: {save_dir}")

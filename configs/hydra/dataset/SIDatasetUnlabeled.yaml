@@ -1,6 +1,6 @@
 defaults:
   - SIDataset
-variant_name : "labels"
+variant_name : "no_labels"
 additional_special_tokens : 
   eos_token : "<ts>"
 

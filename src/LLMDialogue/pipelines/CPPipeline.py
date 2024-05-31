@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2024-05-22 08:12:56
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2024-05-30 11:52:23
+# @Last Modified time: 2024-05-31 13:10:25
 
 
 import sys
@@ -59,7 +59,6 @@ class CPPipelineConfig(PipelineConfig):
         probability_method: str,
         **kwargs,
     ):
-
         assert (
             probability_method in _PROBABILITY_METHODS
         ), f"Method must be in {_PROBABILITY_METHODS}"
